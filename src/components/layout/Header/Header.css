@@ -1,0 +1,43 @@
+.header {
+	color: var(--primary-color);
+	background-color: var(--brand-color-blue);
+	padding: 0.75rem 1rem;
+}
+
+.header__container {
+	display: flex;
+	gap: 3rem;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.header__logo {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	font-weight: 500;
+	text-decoration: none;
+	color: inherit;
+}
+
+.header__logo__img {
+	height: 2rem;
+}
+
+.header__menu {
+	display: flex;
+	gap: 3rem;
+	list-style: none;
+}
+
+.header__menu a {
+	display: inline-flex;
+	gap: 0.5rem;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
+	transition: opacity 200ms ease;
+}
+.header__menu a:hover {
+	opacity: 0.8;
+}
