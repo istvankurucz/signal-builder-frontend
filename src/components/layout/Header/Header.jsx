@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import logo from "../../../assets/images/avl.png";
 import Container from "../Container/Container";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,22 +17,34 @@ function Header() {
 				<nav className="header__nav">
 					<ul className="header__menu">
 						<li className="header__menu__item">
-							<Link to="/generation" title="Generation">
+							<NavLink
+								to="/generation"
+								title="Generation"
+								className={({ isActive }) => (isActive ? "active" : "")}
+							>
 								<FontAwesomeIcon icon={faChartLine} />
 								<span>Generation</span>
-							</Link>
+							</NavLink>
 						</li>
 						<li className="header__menu__item">
-							<Link to="/import" title="Import">
+							<NavLink
+								to="/import"
+								title="Import"
+								className={({ isActive }) => (isActive ? "active" : "")}
+							>
 								<FontAwesomeIcon icon={faFileImport} />
 								<span>Import</span>
-							</Link>
+							</NavLink>
 						</li>
 						<li className="header__menu__item">
-							<Link to="/export" title="Export">
+							<NavLink
+								to="/export"
+								title="Export"
+								className={({ isActive }) => (isActive ? "active" : "")}
+							>
 								<FontAwesomeIcon icon={faFileExport} />
 								<span>Export</span>
-							</Link>
+							</NavLink>
 						</li>
 					</ul>
 				</nav>

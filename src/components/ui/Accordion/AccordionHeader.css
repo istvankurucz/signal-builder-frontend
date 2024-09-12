@@ -1,0 +1,16 @@
+.accordionHeader {
+	width: 100%;
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.accordionHeader__icon {
+	transition: rotate 200ms ease;
+}
+.accordionHeader--open .accordionHeader__icon {
+	rotate: 90deg;
+}

@@ -1,0 +1,35 @@
+.input {
+	display: inline-flex;
+}
+
+.input--vertical {
+	flex-direction: column;
+	gap: 0.25rem;
+}
+.input--horizontal {
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+}
+
+.input--secondary {
+	--border-color: var(--secondary-color);
+}
+.input--accent {
+	--border-color: var(--accent-color);
+}
+
+.input__input {
+	--width: 10rem;
+
+	width: var(--width);
+	background-color: var(--primary-color);
+	border: 0.1rem solid var(--info-color);
+	border-radius: var(--br);
+	padding: 0.3rem 0.75rem;
+	transition: border-color 200ms ease;
+}
+.input__input:focus {
+	border-color: var(--border-color);
+	outline: none;
+}
