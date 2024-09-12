@@ -1,7 +1,12 @@
 .header {
-	background-color: var(--primary-color);
+	background-color: var(--theme-bg-color);
 	border-bottom: 1px solid var(--info-color);
 	padding: 0.75rem 1rem;
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
 }
 
 .header__container {
@@ -43,4 +48,40 @@
 .header__menu a:hover,
 .header__menu a.active {
 	color: var(--secondary-color);
+}
+
+.header__ham {
+	display: none;
+	border: 0.1rem solid var(--info-color);
+	padding: 0.75rem;
+}
+
+@media screen and (max-width: 576px) {
+	.header__nav {
+		max-height: 0;
+		background-color: var(--theme-bg-color);
+		border-top: 1px solid var(--info-color);
+		border-bottom: 1px solid var(--info-color);
+		padding: 0 1rem;
+		overflow: hidden;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		transition: max-height 300ms ease, padding 300ms ease;
+	}
+	.header__nav--show {
+		display: block;
+		max-height: 200px;
+		padding: 1rem;
+	}
+
+	.header__menu {
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.header__ham {
+		display: inline-flex;
+	}
 }

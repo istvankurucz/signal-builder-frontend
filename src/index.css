@@ -25,8 +25,9 @@
 	--secondary-color: #005a99;
 	--accent-color: #2fa738;
 	--info-color: lightgray;
-	--success-color: ;
-	--danger-color: ;
+	--success-color: green;
+	--danger-color: darkred;
+	--warning-color: orange;
 	--text-color: #000f1a;
 
 	/* Border-radius */
@@ -41,13 +42,16 @@ html {
 }
 
 body {
+	--theme-text-color: var(--text-color);
+	--theme-bg-color: var(--primary-color);
+
 	font-family: "Open Sans", sans-serif;
 	font-optical-sizing: auto;
 	font-weight: 400;
 	font-style: normal;
 	font-variation-settings: "wdth" 100;
-	color: var(--text-color);
-	background-color: var(--primary-color);
+	color: var(--theme-text-color);
+	background-color: var(--theme-bg-color);
 }
 
 a {

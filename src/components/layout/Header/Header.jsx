@@ -1,11 +1,20 @@
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faChartLine, faFileExport, faFileImport } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../../assets/images/avl.png";
 import Container from "../Container/Container";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faFileExport, faFileImport } from "@fortawesome/free-solid-svg-icons";
+import Button from "../../ui/Button/Button";
 import "./Header.css";
 
 function Header() {
+	const [showNav, setShowNav] = useState(false);
+	const location = useLocation();
+
+	useEffect(() => {
+		setShowNav(false);
+	}, [location.pathname]);
+
 	return (
 		<header className="header">
 			<Container centered className="header__container">
@@ -14,7 +23,7 @@ function Header() {
 					<span className="header__logo__text">Function generator</span>
 				</Link>
 
-				<nav className="header__nav">
+				<nav className={`header__nav${showNav ? " header__nav--show" : ""}`}>
 					<ul className="header__menu">
 						<li className="header__menu__item">
 							<NavLink
@@ -48,6 +57,14 @@ function Header() {
 						</li>
 					</ul>
 				</nav>
+
+				<Button
+					variant="primary"
+					className="header__ham"
+					onClick={() => setShowNav((show) => !show)}
+				>
+					<FontAwesomeIcon icon={faBars} />
+				</Button>
 			</Container>
 		</header>
 	);

@@ -1,0 +1,58 @@
+.feedback {
+	--color: var(--text-color);
+	--bg-color: var(--info-color);
+	--divider-color: gray;
+	--px: 1.5rem;
+	--py: 0.75rem;
+
+	max-width: 360px;
+	color: var(--color);
+	background-color: var(--bg-color);
+	border-radius: var(--br-l);
+	position: fixed;
+	top: -25%;
+	left: 50%;
+	translate: -50% 0;
+	z-index: 10;
+	transition: top 300ms ease;
+}
+
+.feedback--success {
+	--color: var(--primary-color);
+	--bg-color: var(--success-color);
+	--divider-color: var(--info-color);
+}
+
+.feedback--danger {
+	--color: var(--primary-color);
+	--bg-color: var(--danger-color);
+	--divider-color: var(--info-color);
+}
+
+.feedback--info {
+	--color: var(--text-color);
+	--bg-color: var(--info-color);
+	--divider-color: gray;
+}
+
+.feedback__header {
+	display: flex;
+	gap: 2rem;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--py) var(--px);
+}
+
+.feedback--show {
+	top: 1rem;
+}
+
+.feedback__message {
+	font-size: 1rem;
+}
+
+.feedback__details {
+	font-size: var(--fs-s);
+	border-top: 0.1rem solid var(--divider-color);
+	padding: var(--py) var(--px);
+}

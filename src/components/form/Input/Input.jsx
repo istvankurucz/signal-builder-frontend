@@ -10,6 +10,7 @@ const Input = forwardRef(
 			label,
 			id,
 			width = "10rem",
+			unit = null,
 			className = "",
 			...rest
 		},
@@ -24,13 +25,17 @@ const Input = forwardRef(
 				<label htmlFor={id} className="input__label">
 					{label}
 				</label>
-				<input
-					type={type}
-					id={id}
-					style={{ "--width": width }}
-					className="input__input"
-					{...rest}
-				/>
+
+				<div className="input__container">
+					<input
+						type={type}
+						id={id}
+						style={{ "--width": width }}
+						className="input__input"
+						{...rest}
+					/>
+					{unit != null && <span className="input__unit">{unit}</span>}
+				</div>
 			</div>
 		);
 	}
