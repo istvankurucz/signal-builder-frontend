@@ -1,0 +1,4 @@
+.modalHeader {
+	border-bottom: var(--modal-border);
+	padding: var(--py) var(--py);
+}

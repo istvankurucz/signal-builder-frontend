@@ -1,0 +1,12 @@
+.modal {
+	--modal-border: 0.1rem solid var(--info-color);
+	--px: 2rem;
+	--py: 1rem;
+
+	max-width: 600px;
+	width: calc(100% - 2rem);
+	max-height: 90vh;
+	background-color: var(--theme-bg-color);
+	border-radius: var(--br-l);
+	overflow-y: auto;
+}
