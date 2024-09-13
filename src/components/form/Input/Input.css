@@ -39,7 +39,8 @@
 .input__container:has(.input__unit) .input__input {
 	padding-right: calc(var(--unit-width) + 0.75rem);
 }
-.input__input:focus {
+.input__input:focus,
+.input__input:not(:placeholder-shown) {
 	border-color: var(--border-color);
 	outline: none;
 }

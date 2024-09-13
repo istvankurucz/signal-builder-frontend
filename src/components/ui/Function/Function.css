@@ -1,0 +1,51 @@
+.function {
+	background-color: whitesmoke;
+	border-radius: var(--br-l);
+	padding: 0.5rem 1rem;
+}
+
+.function__header {
+	flex: 1;
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.function__type {
+	font-size: var(--fs-xs);
+	font-weight: 700;
+	text-transform: uppercase;
+	color: var(--theme-bg-color);
+	background-color: var(--secondary-color);
+	border-radius: var(--br);
+	padding: 0.25rem 0.5rem;
+}
+
+.function__remove {
+	margin-left: auto;
+}
+
+.function__body {
+	margin-left: 1.5rem;
+}
+
+.function__subtitle {
+	margin-bottom: 0.5rem;
+}
+
+.function__settings__name {
+	display: flex;
+	gap: 2rem;
+	margin-bottom: 1.5rem;
+}
+
+.function__params__container {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.function__params__input .input__label {
+	width: 6rem;
+	font-size: var(--fs-s);
+}

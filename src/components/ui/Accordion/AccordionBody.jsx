@@ -2,12 +2,10 @@ import "./AccordionBody.css";
 
 function AccordionBody({ isOpen, className = "", children }) {
 	return (
-		<div
-			className={`accordionBody${isOpen ? " accordionBody--open" : ""}${
-				className !== "" ? ` ${className}` : ""
-			}`}
-		>
-			<div className="accordionBody__content">{children}</div>
+		<div className={`accordionBody${isOpen ? " accordionBody--open" : ""}`}>
+			<div className={`accordionBody__content${className !== "" ? ` ${className}` : ""}`}>
+				{children}
+			</div>
 		</div>
 	);
 }

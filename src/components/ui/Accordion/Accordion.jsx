@@ -3,8 +3,8 @@ import AccordionHeader from "./AccordionHeader";
 import AccordionBody from "./AccordionBody";
 import "./Accordion.css";
 
-function Accordion({ className = "", children }) {
-	const [isOpen, setIsOpen] = useState(false);
+function Accordion({ defaultOpen = false, className = "", children }) {
+	const [isOpen, setIsOpen] = useState(defaultOpen);
 
 	const childrenWithProps = Children.map(children, (child) =>
 		cloneElement(child, { isOpen, setIsOpen })

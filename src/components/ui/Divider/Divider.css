@@ -1,0 +1,41 @@
+.divider {
+	--length: 100%;
+	--color: var(--info-color);
+	--margin: 1.5rem;
+
+	width: var(--length);
+	height: 0.1rem;
+	background-color: var(--color);
+	margin-block: var(--margin);
+	margin-inline: auto;
+	position: relative;
+}
+
+.divider--info {
+	--color: var(--info-color);
+}
+.divider--primary {
+	--color: var(--primary-color);
+}
+.divider--secondary {
+	--color: var(--secondary-color);
+}
+
+.divider--vertical {
+	width: 0.1rem;
+	height: auto;
+	margin-block: 0;
+	margin-inline: var(--margin);
+}
+
+.divider__text {
+	display: inline-block;
+	font-size: var(--fs-s);
+	color: var(--color);
+	background-color: var(--theme-bg-color);
+	padding: 0.5rem 1rem;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+}

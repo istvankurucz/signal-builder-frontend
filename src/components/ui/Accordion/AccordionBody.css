@@ -5,6 +5,7 @@
 }
 .accordionBody--open {
 	grid-template-rows: 1fr;
+	padding-top: 0.5rem;
 }
 
 .accordionBody__content {

@@ -1,0 +1,24 @@
+.generation__container {
+	--chart-width: 600px;
+	--gap: 5rem;
+
+	display: flex;
+	gap: var(--gap);
+}
+
+.generation__datasets {
+	width: calc(100% - var(--chart-width) - var(--gap));
+}
+
+.generation__datasets__new,
+.generation__datasets__select {
+	margin-bottom: 2rem;
+}
+
+.generation__chart {
+	min-width: var(--chart-width);
+	flex-shrink: 0;
+	align-self: flex-start;
+	position: sticky;
+	top: 5rem;
+}

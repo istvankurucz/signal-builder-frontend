@@ -1,0 +1,7 @@
+.shadowBox {
+	--p: 1rem;
+
+	border-radius: var(--br-l);
+	box-shadow: 0 0.25rem 0.75rem lightgray;
+	padding: var(--p);
+}

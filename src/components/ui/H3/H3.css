@@ -1,0 +1,5 @@
+.h3 {
+	font-size: var(--fs);
+	font-weight: 600;
+	margin-bottom: 1rem;
+}

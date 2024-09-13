@@ -1,7 +1,19 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import {
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+	Title,
+	Tooltip,
+	Legend,
+} from "chart.js";
 import Feedback from "./components/ui/Feedback/Feedback";
 import Generation from "./pages/Generation/Generation";
 import "./App.css";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function App() {
 	return (

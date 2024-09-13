@@ -1,0 +1,13 @@
+.p {
+	--color: var(--text-color);
+
+	color: var(--color);
+	margin-bottom: 1rem;
+}
+
+.p--text {
+	--color: var(--text-color);
+}
+.p--info {
+	--color: var(--info-color);
+}
