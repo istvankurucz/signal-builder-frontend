@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Button from "../Button/Button";
@@ -5,9 +6,8 @@ import Accordion from "../Accordion/Accordion";
 import Input from "../../form/Input/Input";
 import H3 from "../H3/H3";
 import Select from "../../form/Select/Select";
-import "./Function.css";
-import { useState } from "react";
 import Divider from "../Divider/Divider";
+import "./Function.css";
 
 const functionTypes = ["Const", "Linear", "Sine", "Step", "Ramp-up"];
 
@@ -60,7 +60,8 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 							direction="horizontal"
 							label="Name:"
 							placeholder="Name"
-							width="20rem"
+							// width="20rem"
+							fullW
 							id={`${id}--name`}
 						/>
 						<Button type="submit">Save</Button>
@@ -73,7 +74,9 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 						direction="horizontal"
 						label="Function type:"
 						id="22"
-						width="7rem"
+						// width="7rem"
+						fullW
+						className="function__settings__type"
 					/>
 				</div>
 

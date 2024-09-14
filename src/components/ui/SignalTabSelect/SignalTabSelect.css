@@ -1,45 +1,45 @@
-.datasetTabSelect {
+.signalTabSelect {
 	display: flex;
 	gap: 1rem;
 	overflow-x: auto;
 	position: relative;
 }
 
-.datasetTabSelect::-webkit-scrollbar {
+.signalTabSelect::-webkit-scrollbar {
 	height: 0.33rem;
 	background-color: lightgray;
 	border-radius: var(--br-pill);
 }
-.datasetTabSelect::-webkit-scrollbar-thumb {
+.signalTabSelect::-webkit-scrollbar-thumb {
 	background-color: gray;
 	border-radius: var(--br-pill);
 }
 
-.datasetTabSelect__options {
+.signalTabSelect__options {
 	display: flex;
 	font-size: var(--fs-s);
 	list-style: none;
 }
 
-.datasetTabSelect__option {
+.signalTabSelect__option {
 	white-space: nowrap;
 	border-left: 1px solid var(--info-color);
 	border-right: 1px solid var(--info-color);
 	padding: 0.5rem 1rem;
 	cursor: pointer;
 }
-.datasetTabSelect .datasetTabSelect__option:first-child {
+.signalTabSelect .signalTabSelect__option:first-child {
 	border-left: none;
 }
-.datasetTabSelect .datasetTabSelect__option:last-child {
+.signalTabSelect .signalTabSelect__option:last-child {
 	border-right: none;
 }
-.datasetTabSelect__option--selected {
+.signalTabSelect__option--selected {
 	color: var(--theme-bg-color);
 	background-color: var(--secondary-color);
 }
 
-.datasetTabSelect__arrow {
+.signalTabSelect__arrow {
 	--margin: -1rem;
 
 	background-color: var(--theme-bg-color);
@@ -50,11 +50,11 @@
 	top: 0;
 	transition: color 200ms ease;
 }
-.datasetTabSelect__arrow:hover {
+.signalTabSelect__arrow:hover {
 	color: var(--secondary-color);
 }
 
-.datasetTabSelect__arrow::after {
+.signalTabSelect__arrow::after {
 	--size: 1rem;
 	--direction: right;
 
@@ -66,20 +66,20 @@
 	bottom: 0;
 }
 
-.datasetTabSelect__arrow--left {
+.signalTabSelect__arrow--left {
 	margin-right: var(--margin);
 	left: 0;
 }
-.datasetTabSelect__arrow--left::after {
+.signalTabSelect__arrow--left::after {
 	--direction: right;
 
 	right: calc(-1 * var(--size));
 }
-.datasetTabSelect__arrow--right {
+.signalTabSelect__arrow--right {
 	margin-left: var(--margin);
 	right: 0;
 }
-.datasetTabSelect__arrow--right::after {
+.signalTabSelect__arrow--right::after {
 	--direction: left;
 
 	left: calc(-1 * var(--size));

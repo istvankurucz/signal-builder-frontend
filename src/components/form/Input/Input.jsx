@@ -10,6 +10,7 @@ const Input = forwardRef(
 			label,
 			id,
 			width = "10rem",
+			fullW = false,
 			unit = null,
 			className = "",
 			...rest
@@ -18,7 +19,7 @@ const Input = forwardRef(
 	) => {
 		return (
 			<div
-				className={`input input--${direction} input--${variant}${
+				className={`input input--${direction} input--${variant}${fullW ? " input--full" : ""}${
 					className !== "" ? ` ${className}` : ""
 				}`}
 			>

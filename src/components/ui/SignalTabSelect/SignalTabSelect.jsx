@@ -2,9 +2,9 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import checkIfElementOverflows from "../../../utils/dom/checkIfElementOverflows";
-import "./DatasetTabSelect.css";
+import "./SignalTabSelect.css";
 
-function DatasetTabSelect({ index = 0, setIndex, options, className = "" }) {
+function SignalTabSelect({ index = 0, setIndex, options, className = "" }) {
 	const [isOverflowing, setIsOverflowing] = useState(false);
 	const tabSelectRef = useRef();
 
@@ -19,23 +19,23 @@ function DatasetTabSelect({ index = 0, setIndex, options, className = "" }) {
 	}, [tabSelectRef.current]);
 
 	return (
-		<div className={`datasetTabSelect${className ? ` ${className}` : ""}`} ref={tabSelectRef}>
+		<div className={`signalTabSelect${className ? ` ${className}` : ""}`} ref={tabSelectRef}>
 			{isOverflowing && (
 				<button
 					type="button"
-					className="datasetTabSelect__arrow datasetTabSelect__arrow--left"
+					className="signalTabSelect__arrow signalTabSelect__arrow--left"
 					onClick={() => scrollTabSelect("right")}
 				>
 					<FontAwesomeIcon icon={faAngleLeft} />
 				</button>
 			)}
 
-			<ul className="datasetTabSelect__options">
+			<ul className="signalTabSelect__options">
 				{options.map((option, i) => (
 					<li
 						key={option}
-						className={`datasetTabSelect__option${
-							index === i ? " datasetTabSelect__option--selected" : ""
+						className={`signalTabSelect__option${
+							index === i ? " signalTabSelect__option--selected" : ""
 						}`}
 						onClick={() => setIndex(i)}
 					>
@@ -47,7 +47,7 @@ function DatasetTabSelect({ index = 0, setIndex, options, className = "" }) {
 			{isOverflowing && (
 				<button
 					type="button"
-					className="datasetTabSelect__arrow datasetTabSelect__arrow--right"
+					className="signalTabSelect__arrow signalTabSelect__arrow--right"
 					onClick={() => scrollTabSelect("left")}
 				>
 					<FontAwesomeIcon icon={faAngleRight} />
@@ -57,4 +57,4 @@ function DatasetTabSelect({ index = 0, setIndex, options, className = "" }) {
 	);
 }
 
-export default DatasetTabSelect;
+export default SignalTabSelect;

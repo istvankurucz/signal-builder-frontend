@@ -7,41 +7,40 @@ import Input from "../../form/Input/Input";
 import Button from "../Button/Button";
 import Accordion from "../Accordion/Accordion";
 import Function from "../Function/Function";
-import Divider from "../Divider/Divider";
-import "./Dataset.css";
+import "./Signal.css";
 
-function Dataset({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, className = "" }) {
+function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, className = "" }) {
 	return (
-		<ShadowBox className={`dataset${className !== "" ? ` ${className}` : ""}`}>
-			<header className="dataset__header">
-				<H2 className="dataset__title">{name}</H2>
+		<ShadowBox className={`signal${className !== "" ? ` ${className}` : ""}`}>
+			<header className="signal__header">
+				<H2 className="signal__title">{name}</H2>
 
-				<Button variant="danger" outlined title="Remove dataset">
+				<Button variant="danger" outlined title="Remove signal">
 					<FontAwesomeIcon icon={faTrashCan} />
 				</Button>
 			</header>
 
-			<Accordion defaultOpen className="dataset__settings">
+			<Accordion defaultOpen className="signal__settings">
 				<Accordion.Header icon={faCaretRight}>
-					<H3 className="dataset__subtitle">Settings</H3>
+					<H3 className="signal__subtitle">Settings</H3>
 				</Accordion.Header>
 
 				<Accordion.Body>
-					<form className="dataset__settings__name">
+					<form className="signal__settings__name">
 						<Input
 							direction="horizontal"
 							label="Name:"
 							placeholder="Name"
-							width="20rem"
+							fullW
 							id={`${id}-name`}
 						/>
 						<Button type="submit">Save</Button>
 					</form>
 
-					<div className="dataset__settings__params">
+					<div className="signal__settings__params">
 						<Input
 							type="number"
-							direction="horizontal"
+							direction="vertical"
 							label="Offset:"
 							placeholder="Offset"
 							width="7rem"
@@ -49,7 +48,7 @@ function Dataset({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, clas
 						/>
 						<Input
 							type="number"
-							direction="horizontal"
+							direction="vertical"
 							label="Scale (x):"
 							placeholder="Scale (x)"
 							width="7rem"
@@ -57,7 +56,7 @@ function Dataset({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, clas
 						/>
 						<Input
 							type="number"
-							direction="horizontal"
+							direction="vertical"
 							label="Scale (y):"
 							placeholder="Scale (y)"
 							width="7rem"
@@ -67,12 +66,12 @@ function Dataset({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, clas
 				</Accordion.Body>
 			</Accordion>
 
-			<Accordion defaultOpen className="dataset__functions">
+			<Accordion defaultOpen className="signal__functions">
 				<Accordion.Header icon={faCaretRight}>
-					<H3 className="dataset__subtitle">Functions</H3>
+					<H3 className="signal__subtitle">Functions</H3>
 				</Accordion.Header>
 
-				<Accordion.Body className="dataset__functions__container">
+				<Accordion.Body className="signal__functions__container">
 					<Function id="2" type="const" name="Function 1" />
 					<Function id="3" type="linear" name="Function 2" />
 					<Function id="4" type="sine" name="Function 3" />
@@ -84,4 +83,4 @@ function Dataset({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, clas
 	);
 }
 
-export default Dataset;
+export default Signal;

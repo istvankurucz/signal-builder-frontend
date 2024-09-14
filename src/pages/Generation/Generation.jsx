@@ -8,11 +8,11 @@ import Button from "../../components/ui/Button/Button";
 import H2 from "../../components/ui/H2/H2";
 import ShadowBox from "../../components/layout/ShadowBox/ShadowBox";
 import P from "../../components/ui/P/P";
-import DatasetTabSelect from "../../components/ui/DatasetTabSelect/DatasetTabSelect";
+import SignalTabSelect from "../../components/ui/SignalTabSelect/SignalTabSelect";
+import Signal from "../../components/ui/Signal/Signal";
 import "./Generation.css";
-import Dataset from "../../components/ui/Dataset/Dataset";
 
-const datasets = new Array(10).fill(null).map((_, i) => `Dataset ${i + 1}`);
+const signals = new Array(10).fill(null).map((_, i) => `Signal ${i + 1}`);
 
 function Generation() {
 	const [index, setIndex] = useState(0);
@@ -47,26 +47,26 @@ function Generation() {
 	return (
 		<Page className="generation">
 			<Container centered className="generation__container">
-				<section className="generation__datasets">
-					<ShadowBox className="generation__datasets__new">
-						<H2>Add dataset</H2>
+				<section className="generation__signals">
+					<ShadowBox className="generation__signals__new">
+						<H2>Add signal</H2>
 
-						<P variant="info">Click on the button below to add a new dataset.</P>
+						<P variant="info">Click on the button below to add a new signal.</P>
 
 						<Button variant="accent">
 							<FontAwesomeIcon icon={faAdd} />
-							Add dataset
+							Add signal
 						</Button>
 					</ShadowBox>
 
-					<DatasetTabSelect
+					<SignalTabSelect
 						index={index}
 						setIndex={setIndex}
-						options={datasets}
-						className="generation__datasets__select"
+						options={signals}
+						className="generation__signals__select"
 					/>
 
-					<Dataset id="1" name="Dataset 1" />
+					<Signal id="1" name="Signal 1" />
 				</section>
 
 				<section className="generation__chart">

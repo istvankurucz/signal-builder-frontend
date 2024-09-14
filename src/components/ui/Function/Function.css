@@ -1,4 +1,5 @@
 .function {
+	min-width: 400px;
 	background-color: whitesmoke;
 	border-radius: var(--br-l);
 	padding: 0.5rem 1rem;
@@ -34,9 +35,14 @@
 }
 
 .function__settings__name {
+	max-width: 500px;
 	display: flex;
 	gap: 2rem;
 	margin-bottom: 1.5rem;
+}
+
+.function__settings__type {
+	max-width: 300px;
 }
 
 .function__params__container {

@@ -11,9 +11,10 @@ function Select({
 	label,
 	id,
 	width = "10rem",
+	fullW = false,
 	className = "",
 }) {
-	const [showOptions, setShowOptions] = useState(true);
+	const [showOptions, setShowOptions] = useState(false);
 
 	// Hide the options if the user clicks out from the select
 	useLayoutEffect(() => {
@@ -31,7 +32,11 @@ function Select({
 	}, [showOptions]);
 
 	return (
-		<div className={`select select--${direction}${className ? ` ${className}` : ""}`}>
+		<div
+			className={`select select--${direction}${fullW ? " select--full" : ""}${
+				className ? ` ${className}` : ""
+			}`}
+		>
 			<label htmlFor={id} className="select__label">
 				{label}
 			</label>

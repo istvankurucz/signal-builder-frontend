@@ -6,12 +6,12 @@
 	gap: var(--gap);
 }
 
-.generation__datasets {
+.generation__signals {
 	width: calc(100% - var(--chart-width) - var(--gap));
 }
 
-.generation__datasets__new,
-.generation__datasets__select {
+.generation__signals__new,
+.generation__signals__select {
 	margin-bottom: 2rem;
 }
 

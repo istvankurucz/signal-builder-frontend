@@ -3,6 +3,7 @@
 	position: relative;
 }
 
+/* #region Directions */
 .input--vertical {
 	flex-direction: column;
 	gap: 0.25rem;
@@ -12,7 +13,9 @@
 	gap: 1rem;
 	align-items: center;
 }
+/* #endregion */
 
+/* #region Variants */
 .input--secondary {
 	--border-color: var(--secondary-color);
 }
@@ -25,6 +28,23 @@
 
 	position: relative;
 }
+/* #endregion */
+
+/* #region Full width */
+.input--full {
+	width: 100%;
+}
+.input--full .input__container {
+	flex: 1;
+}
+.input--full .input__input {
+	width: 100%;
+}
+/* #endregion */
+
+.input__label {
+	white-space: nowrap;
+}
 
 .input__input {
 	--width: 10rem;
@@ -36,6 +56,18 @@
 	padding: 0.3rem 0.75rem;
 	transition: border-color 200ms ease;
 }
+/* #region Hide arrows on type number */
+.input__input::-webkit-outer-spin-button,
+.input__input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.input__input[type="number"] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+/* #endregion */
 .input__container:has(.input__unit) .input__input {
 	padding-right: calc(var(--unit-width) + 0.75rem);
 }

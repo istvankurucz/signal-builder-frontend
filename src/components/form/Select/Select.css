@@ -7,6 +7,7 @@
 	gap: var(--gap);
 }
 
+/* #region Directions */
 .select--vertical {
 	flex-direction: column;
 	gap: 0.25rem;
@@ -15,6 +16,24 @@
 	flex-direction: row;
 	gap: 1rem;
 	align-items: center;
+}
+/* #endregion */
+
+/* #region Full width */
+.select--full {
+	width: 100%;
+}
+
+.select--full .select__selected {
+	flex: 1;
+}
+.select--full .select__selected__input {
+	flex: 1;
+}
+/* #endregion */
+
+.select__label {
+	white-space: nowrap;
 }
 
 .select__selected {
@@ -27,6 +46,10 @@
 	padding: 0.3rem 0.75rem;
 	position: relative;
 	cursor: pointer;
+	transition: box-shadow 200ms ease;
+}
+.select__selected:hover {
+	box-shadow: inset 0 0 0.5rem var(--info-color);
 }
 
 .select__selected__input {
