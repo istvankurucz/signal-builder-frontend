@@ -9,4 +9,10 @@
 	background-color: var(--theme-bg-color);
 	border-radius: var(--br-l);
 	overflow-y: auto;
+	translate: 0 -3rem;
+	transition: translate 200ms ease;
+}
+
+.overlay--show .modal {
+	translate: 0 0;
 }

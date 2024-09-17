@@ -9,5 +9,5 @@
 	--color: var(--text-color);
 }
 .p--info {
-	--color: var(--info-color);
+	--color: darkgray;
 }

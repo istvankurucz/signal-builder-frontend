@@ -1,0 +1,11 @@
+.dropdownItem {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	white-space: nowrap;
+	padding: 0.5rem 1.5rem;
+	cursor: pointer;
+}
+.dropdownItem:hover {
+	background-color: var(--info-color);
+}

@@ -1,0 +1,10 @@
+.dropdownButton--icon {
+	width: 2rem;
+	height: 2rem;
+	display: grid;
+	place-items: center;
+	background-color: transparent;
+	border-color: transparent;
+	border-radius: var(--br-pill);
+	padding: 0;
+}

@@ -19,7 +19,10 @@ function SignalTabSelect({ index = 0, setIndex, options, className = "" }) {
 	}, [tabSelectRef.current]);
 
 	return (
-		<div className={`signalTabSelect${className ? ` ${className}` : ""}`} ref={tabSelectRef}>
+		<div
+			className={`signalTabSelect scrollbar${className ? ` ${className}` : ""}`}
+			ref={tabSelectRef}
+		>
 			{isOverflowing && (
 				<button
 					type="button"

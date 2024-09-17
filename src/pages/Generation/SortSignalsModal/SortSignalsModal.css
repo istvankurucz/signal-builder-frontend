@@ -1,0 +1,21 @@
+.sortSignals__element {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	user-select: none;
+	cursor: pointer;
+}
+
+.sortSignals__element__icon {
+	color: var(--info-color);
+	cursor: grab;
+}
+
+@keyframes vibration {
+	from {
+		translate: -0.25rem 0;
+	}
+	to {
+		translate: 0.25rem 0;
+	}
+}

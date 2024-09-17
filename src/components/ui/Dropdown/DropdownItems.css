@@ -1,0 +1,16 @@
+.dropdownItems {
+	display: none;
+	list-style: none;
+	background-color: var(--theme-bg-color);
+	border-radius: var(--br);
+	box-shadow: 0.1rem 0.1rem 0.5rem var(--info-color);
+	padding-block: 0.25rem;
+	position: absolute;
+	top: calc(100% + 0.25rem);
+	right: 0;
+	z-index: 10;
+}
+
+.dropdownItems--show {
+	display: block;
+}

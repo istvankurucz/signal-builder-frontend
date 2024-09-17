@@ -22,8 +22,12 @@
 	padding: 0.25rem 0.5rem;
 }
 
-.function__remove {
+.function__options {
 	margin-left: auto;
+}
+
+.function__option--danger {
+	color: var(--danger-color);
 }
 
 .function__body {

@@ -16,6 +16,17 @@
 	margin-bottom: 0;
 }
 
+.signal__header__more__button {
+	transition: background-color 200ms ease;
+}
+.signal__header__more__button:hover {
+	background-color: var(--info-color);
+}
+
+.signal__header__more__item--danger {
+	color: var(--danger-color);
+}
+
 .signal__subtitle {
 	margin-bottom: 0;
 }

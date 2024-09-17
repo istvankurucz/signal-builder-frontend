@@ -35,7 +35,7 @@ function Header() {
 			<Container centered className="header__container">
 				<Link className="header__logo">
 					<img src={logo} alt="AVL" className="header__logo__img" />
-					<span className="header__logo__text">Function generator</span>
+					<span className="header__logo__text">Signal builder</span>
 				</Link>
 
 				<nav className={`header__nav${showNav ? " header__nav--show" : ""}`}>
@@ -44,7 +44,8 @@ function Header() {
 							<NavLink
 								to="/generation"
 								title="Generation"
-								className={({ isActive }) => (isActive ? "active" : "")}>
+								className={({ isActive }) => (isActive ? "active" : "")}
+							>
 								<FontAwesomeIcon icon={faChartLine} />
 								<span>Generation</span>
 							</NavLink>
@@ -53,7 +54,8 @@ function Header() {
 							<NavLink
 								to="/import"
 								title="Import"
-								className={({ isActive }) => (isActive ? "active" : "")}>
+								className={({ isActive }) => (isActive ? "active" : "")}
+							>
 								<FontAwesomeIcon icon={faFileImport} />
 								<span>Import</span>
 							</NavLink>
@@ -62,7 +64,8 @@ function Header() {
 							<NavLink
 								to="/export"
 								title="Export"
-								className={({ isActive }) => (isActive ? "active" : "")}>
+								className={({ isActive }) => (isActive ? "active" : "")}
+							>
 								<FontAwesomeIcon icon={faFileExport} />
 								<span>Export</span>
 							</NavLink>
@@ -73,7 +76,8 @@ function Header() {
 				<Button
 					variant="primary"
 					className="header__ham"
-					onClick={() => setShowNav((show) => !show)}>
+					onClick={() => setShowNav((show) => !show)}
+				>
 					<FontAwesomeIcon icon={faBars} />
 				</Button>
 			</Container>

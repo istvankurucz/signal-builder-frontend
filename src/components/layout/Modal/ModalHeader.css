@@ -1,4 +1,7 @@
 .modalHeader {
+	display: flex;
+	gap: 2rem;
+	justify-content: space-between;
 	border-bottom: var(--modal-border);
 	padding: var(--py) var(--py);
 }

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleRight, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faEllipsisV, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Button from "../Button/Button";
 import Accordion from "../Accordion/Accordion";
 import Input from "../../form/Input/Input";
 import H3 from "../H3/H3";
 import Select from "../../form/Select/Select";
 import Divider from "../Divider/Divider";
+import Dropdown from "../Dropdown/Dropdown";
 import "./Function.css";
 
 const functionTypes = ["Const", "Linear", "Sine", "Step", "Ramp-up"];
@@ -40,15 +41,17 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 				<div className="function__type">{getFunctionTag(type)}</div>
 				<h4 className="function__title">{name}</h4>
 
-				<Button
-					variant="danger"
-					outlined
-					title="Remove function"
-					className="function__remove"
-					onClick={removeFunction}
-				>
-					<FontAwesomeIcon icon={faTrashCan} />
-				</Button>
+				<Dropdown className="function__options">
+					<Dropdown.Button type="icon" onClick={removeFunction}>
+						<FontAwesomeIcon icon={faEllipsisV} />
+					</Dropdown.Button>
+					<Dropdown.Items>
+						<Dropdown.Item className="function__option--danger">
+							<FontAwesomeIcon icon={faTrashCan} />
+							Delete
+						</Dropdown.Item>
+					</Dropdown.Items>
+				</Dropdown>
 			</Accordion.Header>
 
 			<Accordion.Body className="function__body">
@@ -60,7 +63,6 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 							direction="horizontal"
 							label="Name:"
 							placeholder="Name"
-							// width="20rem"
 							fullW
 							id={`${id}--name`}
 						/>
@@ -74,7 +76,6 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 						direction="horizontal"
 						label="Function type:"
 						id="22"
-						// width="7rem"
 						fullW
 						className="function__settings__type"
 					/>

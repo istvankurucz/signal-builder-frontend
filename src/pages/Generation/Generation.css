@@ -6,19 +6,56 @@
 	gap: var(--gap);
 }
 
-.generation__signals {
+.generation__section--signals {
 	width: calc(100% - var(--chart-width) - var(--gap));
 }
 
-.generation__signals__new,
-.generation__signals__select {
-	margin-bottom: 2rem;
+.generation__signals__general {
+	margin-bottom: 3rem;
 }
 
-.generation__chart {
+.generation__signals__select {
+	margin-bottom: 1.5rem;
+}
+
+.generation__signals__general__p {
+	font-size: var(--fs-s);
+	margin-bottom: 1.5rem;
+}
+
+.generation__signals__general__buttons {
+	display: flex;
+	gap: 2rem;
+}
+
+.generation__section--chart {
 	min-width: var(--chart-width);
 	flex-shrink: 0;
 	align-self: flex-start;
 	position: sticky;
 	top: 5rem;
+}
+
+.generation__chart {
+	width: var(--chart-width);
+	height: calc(var(--chart-width) / 1.9);
+	background-color: var(--theme-bg-color);
+	position: relative;
+}
+.generation__chart--zoom {
+	width: 100%;
+	max-width: var(--max-width);
+	height: 80%;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+}
+
+.generation__chart__zoom {
+	font-size: var(--fs-xl);
+	color: var(--info-color);
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
 }

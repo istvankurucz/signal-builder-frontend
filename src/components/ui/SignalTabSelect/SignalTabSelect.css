@@ -5,16 +5,6 @@
 	position: relative;
 }
 
-.signalTabSelect::-webkit-scrollbar {
-	height: 0.33rem;
-	background-color: lightgray;
-	border-radius: var(--br-pill);
-}
-.signalTabSelect::-webkit-scrollbar-thumb {
-	background-color: gray;
-	border-radius: var(--br-pill);
-}
-
 .signalTabSelect__options {
 	display: flex;
 	font-size: var(--fs-s);

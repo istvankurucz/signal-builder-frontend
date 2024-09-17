@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import "./Select.css";
@@ -16,6 +16,8 @@ function Select({
 }) {
 	const [showOptions, setShowOptions] = useState(false);
 
+	const selectedRef = useRef();
+
 	// Hide the options if the user clicks out from the select
 	useLayoutEffect(() => {
 		function handleClick(e) {
@@ -31,6 +33,35 @@ function Select({
 		return () => window.removeEventListener("click", handleClick);
 	}, [showOptions]);
 
+	// Show / hide the select if the user navigates with Tab
+	useLayoutEffect(() => {
+		function navWithKeys(e) {
+			if (showOptions) {
+				if (e.key === "Enter") {
+					if (document.activeElement.matches(".select__option")) {
+						const value = document.activeElement.textContent;
+
+						const lowercaseOptions = options.map((option) => option.toLowerCase());
+						const newIndex = lowercaseOptions.indexOf(value.toLowerCase());
+
+						setIndex(newIndex);
+						setShowOptions(false);
+					}
+				}
+
+				if (e.key === "Escape") setShowOptions(false);
+			} else {
+				if (selectedRef.current === document.activeElement && e.key === "Enter") {
+					setShowOptions(true);
+				}
+			}
+		}
+
+		window.addEventListener("keydown", navWithKeys);
+
+		return () => window.removeEventListener("keydown", navWithKeys);
+	}, [showOptions]);
+
 	return (
 		<div
 			className={`select select--${direction}${fullW ? " select--full" : ""}${
@@ -41,14 +72,27 @@ function Select({
 				{label}
 			</label>
 
-			<div className="select__selected" onClick={() => setShowOptions((show) => !show)}>
+			<div
+				className="select__selected"
+				tabIndex={0}
+				onClick={() => setShowOptions((show) => !show)}
+				ref={selectedRef}
+			>
+				<input
+					type="text"
+					id={id}
+					value={options[index]}
+					className="select__selected__input"
+					hidden
+					readOnly
+				/>
 				<div style={{ "--width": width }} className="select__selected__input">
 					{options[index]}
 				</div>
 				<FontAwesomeIcon icon={faCaretDown} />
 
 				{showOptions && (
-					<ul className="select__options">
+					<ul className="select__options scrollbar">
 						{options.map((option, i) => (
 							<li
 								key={option}
@@ -56,6 +100,7 @@ function Select({
 									index === i ? " select__option--selected" : ""
 								}`}
 								onClick={() => setIndex(i)}
+								tabIndex={0}
 							>
 								{option}
 							</li>
