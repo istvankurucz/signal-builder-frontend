@@ -1,0 +1,10 @@
+.loadSignals__signals {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	background-color: var(--info-color-light);
+	border-radius: var(--br);
+	padding: 1rem;
+	padding-left: 2.5rem;
+	margin-top: -0.5rem;
+}

@@ -12,7 +12,7 @@ function ElementSortButtons({
 	className = "",
 }) {
 	function moveElementUp() {
-		if (activeIndex === 0) return;
+		if (activeIndex <= 0) return;
 
 		let newElements = [...tempElements];
 		newElements = swapArrayElements(newElements, activeIndex, activeIndex - 1);
@@ -22,7 +22,7 @@ function ElementSortButtons({
 	}
 
 	function moveElementDown() {
-		if (activeIndex === tempElements.length - 1) return;
+		if (activeIndex === -1 || activeIndex === tempElements.length - 1) return;
 
 		let newElements = [...tempElements];
 		newElements = swapArrayElements(newElements, activeIndex, activeIndex + 1);

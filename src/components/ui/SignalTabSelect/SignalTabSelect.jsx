@@ -1,11 +1,16 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import checkIfElementOverflows from "../../../utils/dom/checkIfElementOverflows";
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import checkIfElementOverflows from "../../../utils/dom/checkIfElementOverflows";
 import "./SignalTabSelect.css";
 
-function SignalTabSelect({ index = 0, setIndex, options, className = "" }) {
+function SignalTabSelect({ className = "" }) {
+	const [{ signals }] = useStateValue();
 	const [isOverflowing, setIsOverflowing] = useState(false);
+	const [searchParams, setSearcParams] = useSearchParams();
+
 	const tabSelectRef = useRef();
 
 	function scrollTabSelect(direction = "right") {
@@ -16,7 +21,7 @@ function SignalTabSelect({ index = 0, setIndex, options, className = "" }) {
 	// Checks if the content of the tab select element overflows
 	useLayoutEffect(() => {
 		setIsOverflowing(checkIfElementOverflows(tabSelectRef.current));
-	}, [tabSelectRef.current]);
+	}, [tabSelectRef.current, signals]);
 
 	return (
 		<div
@@ -34,15 +39,17 @@ function SignalTabSelect({ index = 0, setIndex, options, className = "" }) {
 			)}
 
 			<ul className="signalTabSelect__options">
-				{options.map((option, i) => (
+				{signals.map((signal) => (
 					<li
-						key={option}
+						key={signal.id}
 						className={`signalTabSelect__option${
-							index === i ? " signalTabSelect__option--selected" : ""
+							searchParams.get("signalId") === signal.id
+								? " signalTabSelect__option--selected"
+								: ""
 						}`}
-						onClick={() => setIndex(i)}
+						onClick={() => setSearcParams({ signalId: signal.id }, { replace: true })}
 					>
-						{option}
+						{signal.name}
 					</li>
 				))}
 			</ul>

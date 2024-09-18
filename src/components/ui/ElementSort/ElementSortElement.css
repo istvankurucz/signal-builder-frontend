@@ -14,3 +14,12 @@
 	color: var(--secondary-color);
 	border-color: var(--secondary-color);
 }
+
+@keyframes vibration {
+	from {
+		translate: -0.25rem 0;
+	}
+	to {
+		translate: 0.25rem 0;
+	}
+}

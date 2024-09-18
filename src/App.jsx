@@ -12,10 +12,13 @@ import {
 import Feedback from "./components/ui/Feedback/Feedback";
 import Generation from "./pages/Generation/Generation";
 import "./App.css";
+import useSaveSignals from "./hooks/storage/useSaveSignals";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function App() {
+	useSaveSignals();
+
 	return (
 		<>
 			<Feedback />

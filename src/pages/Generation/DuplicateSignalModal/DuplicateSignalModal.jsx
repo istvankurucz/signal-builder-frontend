@@ -4,8 +4,12 @@ import Button from "../../../components/ui/Button/Button";
 import P from "../../../components/ui/P/P";
 import Input from "../../../components/form/Input/Input";
 import "./DuplicateSignalModal.css";
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
 
 function DuplicateSignalModal({ show, setShow }) {
+	const [, dispatch] = useStateValue();
+
+	function duplicateSignal() {}
 	return (
 		<Overlay show={show}>
 			<Modal>

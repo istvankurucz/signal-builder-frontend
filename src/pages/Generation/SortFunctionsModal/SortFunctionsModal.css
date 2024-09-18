@@ -1,0 +1,19 @@
+.sortFunctions__element {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	background-color: var(--info-color-light);
+	cursor: pointer;
+}
+
+.sortFunctions__element__icon {
+	color: var(--info-color-dark);
+}
+.sortFunctions__element__icon:hover {
+	cursor: grab;
+}
+
+.sortFunctions__element__text {
+	font-weight: 500;
+	margin-left: -0.5rem;
+}

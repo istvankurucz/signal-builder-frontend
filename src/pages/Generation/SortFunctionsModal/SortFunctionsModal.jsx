@@ -1,12 +1,14 @@
 import { useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../../components/layout/Modal/Modal";
 import Overlay from "../../../components/layout/Overlay/Overlay";
 import Button from "../../../components/ui/Button/Button";
 import ElementSort from "../../../components/ui/ElementSort/ElementSort";
 import useDragAndDropSort from "../../../hooks/dom/dragAndDrop/useDragAndDropSort";
+import ShadowBox from "../../../components/layout/ShadowBox/ShadowBox";
+import FunctionTag from "../../../components/ui/Function/FunctionTag/FunctionTag";
 import "./SortFunctionsModal.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
 
 const functions = ["sine", "const", "linear", "step", "ramp-up"];
 const initialTempFunctions = functions.map((func) => ({
@@ -53,14 +55,18 @@ function SortFunctionsModal({ show, setShow }) {
 								onDragEnd={handleDragEnd}
 								onClick={() => setActiveIndex(i)}
 							>
-								<div className="sortFunctions__element">
+								<ShadowBox className="sortFunctions__element">
 									<FontAwesomeIcon
 										icon={faGripVertical}
 										title="Draggable"
 										className="sortFunctions__element__icon"
 									/>
+									<FunctionTag
+										name={element.function}
+										className="sortFunctions__element__tag"
+									/>
 									<span className="sortFunctions__element__text">{element.function}</span>
-								</div>
+								</ShadowBox>
 							</ElementSort.Element>
 						))}
 					</ElementSort>

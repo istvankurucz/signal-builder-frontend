@@ -1,0 +1,9 @@
+.functionTag {
+	font-size: var(--fs-xs);
+	font-weight: 700;
+	text-transform: uppercase;
+	color: var(--theme-bg-color);
+	background-color: var(--secondary-color);
+	border-radius: var(--br);
+	padding: 0.25rem 0.5rem;
+}

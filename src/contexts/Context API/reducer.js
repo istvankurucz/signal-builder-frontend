@@ -1,4 +1,7 @@
+import getSignals from "../../utils/storage/getSignals";
+
 export const initialState = {
+	signals: [],
 	feedback: {
 		show: false,
 		type: "info",
@@ -9,6 +12,12 @@ export const initialState = {
 
 export default function reducer(state, action) {
 	switch (action.type) {
+		case "SET_SIGNALS":
+			return {
+				...state,
+				signals: action.signals,
+			};
+
 		case "SET_FEEDBACK":
 			return {
 				...state,

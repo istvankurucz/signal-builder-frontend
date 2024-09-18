@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+	faAdd,
+	faBan,
 	faCaretRight,
 	faClone,
 	faEllipsisV,
@@ -13,15 +15,66 @@ import H3 from "../H3/H3";
 import Input from "../../form/Input/Input";
 import Button from "../Button/Button";
 import Accordion from "../Accordion/Accordion";
-import Function from "../Function/Function";
+import FunctionComponent from "../Function/Function";
 import Dropdown from "../Dropdown/Dropdown";
 import SortFunctionsModal from "../../../pages/Generation/SortFunctionsModal/SortFunctionsModal";
 import DuplicateSignalModal from "../../../pages/Generation/DuplicateSignalModal/DuplicateSignalModal";
+import DeleteSignalModal from "../../../pages/Generation/DeleteSignalModal/DeleteSignalModal";
+import useSignal from "../../../hooks/signal/useSignal";
+import P from "../P/P";
+import Function from "../../../utils/classes/Function";
 import "./Signal.css";
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
 
-function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, className = "" }) {
-	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(true);
+function Signal({ className = "" }) {
+	const [{ signals }, dispatch] = useStateValue();
+	const signal = useSignal();
+	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
 	const [showDuplicateSignalModal, setShowDuplicateSignalModal] = useState(false);
+	const [showDeleteSignalModal, setShowDeleteSignalModal] = useState(false);
+
+	console.log("Signal: ", signal);
+
+	function addFunction(signals = [], signalId = "") {
+		// Check if there is a signal
+		if (signalId === "") return null;
+
+		// Set the functions of the signal
+		const newFunction = new Function();
+		const signal = signals.find((signal) => signal.id === signalId);
+
+		const newFunctions = [...signal.functions, newFunction];
+		signal.functions = newFunctions;
+
+		// Overwrite the signals
+		return signals.map((s) => {
+			if (s.id === signalId) return signal;
+			else return s;
+		});
+	}
+
+	function createFunction(e) {
+		e.stopPropagation();
+
+		// Create the new signals
+		const newSignals = addFunction(signals, signal.id);
+
+		dispatch({
+			type: "SET_SIGNALS",
+			signals: newSignals,
+		});
+
+		// Show feedback
+		dispatch({
+			type: "SET_FEEDBACK",
+			feedback: {
+				show: true,
+				type: "info",
+				message: "Function created.",
+				details: "",
+			},
+		});
+	}
 
 	return (
 		<>
@@ -30,10 +83,11 @@ function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, class
 				show={showDuplicateSignalModal}
 				setShow={setShowDuplicateSignalModal}
 			/>
+			<DeleteSignalModal show={showDeleteSignalModal} setShow={setShowDeleteSignalModal} />
 
 			<ShadowBox className={`signal${className !== "" ? ` ${className}` : ""}`}>
 				<header className="signal__header">
-					<H2 className="signal__title">{name}</H2>
+					<H2 className="signal__title">{signal.name}</H2>
 
 					<Dropdown className="signal__header__more">
 						<Dropdown.Button type="icon" className="signal__header__more__button">
@@ -55,7 +109,10 @@ function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, class
 								<FontAwesomeIcon icon={faClone} />
 								Duplicate
 							</Dropdown.Item>
-							<Dropdown.Item className="signal__header__more__item signal__header__more__item--danger">
+							<Dropdown.Item
+								className="signal__header__more__item signal__header__more__item--danger"
+								onClick={() => setShowDeleteSignalModal(true)}
+							>
 								<FontAwesomeIcon icon={faTrashCan} />
 								Delete
 							</Dropdown.Item>
@@ -75,7 +132,8 @@ function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, class
 								label="Name:"
 								placeholder="Name"
 								fullW
-								id={`${id}-name`}
+								id={`${signal.id}-name`}
+								defaultValue={signal.name}
 							/>
 							<Button type="submit">Save</Button>
 						</form>
@@ -87,7 +145,8 @@ function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, class
 								label="Offset:"
 								placeholder="Offset"
 								width="7rem"
-								id={`${id}-offset`}
+								id={`${signal.id}-offset`}
+								defaultValue={signal.offset}
 							/>
 							<Input
 								type="number"
@@ -95,7 +154,8 @@ function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, class
 								label="Scale (x):"
 								placeholder="Scale (x)"
 								width="7rem"
-								id={`${id}-scaleX`}
+								id={`${signal.id}-scaleX`}
+								defaultValue={signal.scale.x}
 							/>
 							<Input
 								type="number"
@@ -103,23 +163,42 @@ function Signal({ id, name, functions, offset = 0, scale = { x: 0, y: 0 }, class
 								label="Scale (y):"
 								placeholder="Scale (y)"
 								width="7rem"
-								id={`${id}-scaleY`}
+								id={`${signal.id}-scaleY`}
+								defaultValue={signal.scale.y}
 							/>
 						</div>
 					</Accordion.Body>
 				</Accordion>
 
 				<Accordion defaultOpen className="signal__functions">
-					<Accordion.Header icon={faCaretRight}>
+					<Accordion.Header icon={faCaretRight} className="signal__functions__header">
 						<H3 className="signal__subtitle">Functions</H3>
+
+						<Button variant="accent" round title="Add function" onClick={createFunction}>
+							<FontAwesomeIcon icon={faAdd} />
+						</Button>
 					</Accordion.Header>
 
 					<Accordion.Body className="signal__functions__container">
-						<Function id="2" type="const" name="Function 1" />
-						<Function id="3" type="linear" name="Function 2" />
-						<Function id="4" type="sine" name="Function 3" />
-						<Function id="5" type="step" name="Function 4" />
-						<Function id="6" type="ramp-up" name="Function 5" />
+						{signal.functions.length === 0 ? (
+							<div className="signal__functions__noFunction">
+								<FontAwesomeIcon
+									icon={faBan}
+									className="signal__functions__noFunction__icon"
+								/>
+								<P>There is no function.</P>
+							</div>
+						) : (
+							signal.functions.map((f) => (
+								<FunctionComponent
+									key={f.id}
+									id={f.id}
+									type={f.type}
+									name={f.name}
+									params={null}
+								/>
+							))
+						)}
 					</Accordion.Body>
 				</Accordion>
 			</ShadowBox>

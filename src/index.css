@@ -22,10 +22,11 @@
 	/* Colors */
 	/* variants */
 	--primary-color: #fff;
-	--primary-color-dark: whitesmoke;
 	--secondary-color: #005a99;
 	--accent-color: #2fa738;
 	--info-color: lightgray;
+	--info-color-light: whitesmoke;
+	--info-color-dark: darkgray;
 	--success-color: green;
 	--danger-color: darkred;
 	--warning-color: orange;

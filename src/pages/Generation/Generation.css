@@ -28,6 +28,23 @@
 	gap: 2rem;
 }
 
+.generation__signals__noSignal {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+	padding-block: 2rem;
+}
+
+.generation__signals__noSignal__icon {
+	font-size: 4rem;
+	color: var(--info-color);
+}
+
+.generation__signals__noSignal__description {
+	text-align: center;
+}
+
 .generation__section--chart {
 	min-width: var(--chart-width);
 	flex-shrink: 0;

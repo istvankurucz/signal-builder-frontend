@@ -1,6 +1,6 @@
 .function {
 	min-width: 400px;
-	background-color: whitesmoke;
+	background-color: var(--info-color-light);
 	border-radius: var(--br-l);
 	padding: 0.5rem 1rem;
 }
@@ -10,16 +10,6 @@
 	display: flex;
 	gap: 0.5rem;
 	align-items: center;
-}
-
-.function__type {
-	font-size: var(--fs-xs);
-	font-weight: 700;
-	text-transform: uppercase;
-	color: var(--theme-bg-color);
-	background-color: var(--secondary-color);
-	border-radius: var(--br);
-	padding: 0.25rem 0.5rem;
 }
 
 .function__options {
@@ -58,4 +48,10 @@
 .function__params__input .input__label {
 	width: 6rem;
 	font-size: var(--fs-s);
+}
+
+.function__param--const {
+	display: flex;
+	gap: 2rem;
+	align-items: center;
 }

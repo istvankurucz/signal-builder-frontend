@@ -8,27 +8,14 @@ import H3 from "../H3/H3";
 import Select from "../../form/Select/Select";
 import Divider from "../Divider/Divider";
 import Dropdown from "../Dropdown/Dropdown";
+import FunctionTag from "./FunctionTag/FunctionTag";
+import Checkbox from "../../form/Checkbox/Checkbox";
 import "./Function.css";
 
 const functionTypes = ["Const", "Linear", "Sine", "Step", "Ramp-up"];
 
 function Function({ id, type = "sine", name, params, className = "" }) {
 	const [functionTypeIndex, setFunctionTypeIndex] = useState(0);
-
-	function getFunctionTag(type) {
-		switch (type) {
-			case "sine":
-				return "sin";
-			case "const":
-				return "const";
-			case "linear":
-				return "lin";
-			case "step":
-				return "step";
-			case "ramp-up":
-				return "ramp-up";
-		}
-	}
 
 	function removeFunction(e) {
 		e.stopPropagation();
@@ -38,7 +25,7 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 	return (
 		<Accordion defaultOpen className={`function${className ? ` ${className}` : ""}`}>
 			<Accordion.Header icon={faAngleRight} className="function__header">
-				<div className="function__type">{getFunctionTag(type)}</div>
+				<FunctionTag name={type} />
 				<h4 className="function__title">{name}</h4>
 
 				<Dropdown className="function__options">
@@ -65,6 +52,7 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 							placeholder="Name"
 							fullW
 							id={`${id}--name`}
+							defaultValue={name}
 						/>
 						<Button type="submit">Save</Button>
 					</form>
@@ -75,7 +63,7 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 						options={functionTypes}
 						direction="horizontal"
 						label="Function type:"
-						id="22"
+						id={`${id}--type`}
 						fullW
 						className="function__settings__type"
 					/>
@@ -88,7 +76,7 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 
 					<div className="function__params__container">
 						{type === "const" && (
-							<>
+							<div className="function__param function__param--const">
 								<Input
 									type="number"
 									direction="horizontal"
@@ -98,7 +86,8 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									id={`${id}--const`}
 									className="function__params__input"
 								/>
-							</>
+								<Checkbox label="Keep last value" id={`${id}--const-lastValue`} />
+							</div>
 						)}
 						{type === "linear" && (
 							<>
