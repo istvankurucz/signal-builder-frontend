@@ -11,15 +11,27 @@ import Dropdown from "../Dropdown/Dropdown";
 import FunctionTag from "./FunctionTag/FunctionTag";
 import Checkbox from "../../form/Checkbox/Checkbox";
 import "./Function.css";
+import getSignalById from "../../../utils/signal/getSignalById";
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
+import { useSearchParams } from "react-router-dom";
+import getFunctionById from "../../../utils/function/getFunctionById";
+import removeFunction from "../../../utils/function/removeFunction";
 
 const functionTypes = ["Const", "Linear", "Sine", "Step", "Ramp-up"];
 
 function Function({ id, type = "sine", name, params, className = "" }) {
+	const [{ signals }, dispatch] = useStateValue();
 	const [functionTypeIndex, setFunctionTypeIndex] = useState(0);
+	const [searchParams] = useSearchParams();
 
-	function removeFunction(e) {
+	function deleteFunction(e) {
 		e.stopPropagation();
-		console.log("removed");
+
+		// Get the signal
+		const signal = getSignalById(signals, searchParams.get("signalId"));
+
+		// Remove the function
+		removeFunction(signals, dispatch, signal, id);
 	}
 
 	return (
@@ -29,11 +41,11 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 				<h4 className="function__title">{name}</h4>
 
 				<Dropdown className="function__options">
-					<Dropdown.Button type="icon" onClick={removeFunction}>
+					<Dropdown.Button type="icon" onClick={(e) => e.stopPropagation()}>
 						<FontAwesomeIcon icon={faEllipsisV} />
 					</Dropdown.Button>
 					<Dropdown.Items>
-						<Dropdown.Item className="function__option--danger">
+						<Dropdown.Item className="function__option--danger" onClick={deleteFunction}>
 							<FontAwesomeIcon icon={faTrashCan} />
 							Delete
 						</Dropdown.Item>

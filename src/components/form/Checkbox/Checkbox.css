@@ -29,6 +29,7 @@
 .checkbox__marker {
 	width: 1rem;
 	height: 1rem;
+	flex-shrink: 0;
 	display: inline-block;
 	background-color: var(--theme-bg-color);
 	border: 1px solid var(--info-color);

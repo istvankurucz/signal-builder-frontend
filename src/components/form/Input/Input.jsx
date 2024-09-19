@@ -33,6 +33,7 @@ const Input = forwardRef(
 						id={id}
 						style={{ "--width": width }}
 						className="input__input"
+						ref={ref}
 						{...rest}
 					/>
 					{unit != null && <span className="input__unit">{unit}</span>}

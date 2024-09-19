@@ -1,9 +1,9 @@
-import Signal from "../classes/Signal";
+import checkValidSignal from "../signal/checkValidSignal";
 
 function checkSignals(signals = []) {
 	let valid = true;
 	signals.forEach((signal) => {
-		if (signal instanceof Signal === false) valid = false;
+		if (!checkValidSignal(signal)) valid = false;
 	});
 
 	return valid;

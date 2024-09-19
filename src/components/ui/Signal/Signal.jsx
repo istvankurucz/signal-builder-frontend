@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faAdd,
@@ -24,7 +26,9 @@ import useSignal from "../../../hooks/signal/useSignal";
 import P from "../P/P";
 import Function from "../../../utils/classes/Function";
 import "./Signal.css";
-import { useStateValue } from "../../../contexts/Context API/StateProvider";
+import getSignalById from "../../../utils/signal/getSignalById";
+import addFunction from "../../../utils/function/addFunction";
+import updateSignals from "../../../utils/signal/updateSignals";
 
 function Signal({ className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
@@ -32,37 +36,68 @@ function Signal({ className = "" }) {
 	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
 	const [showDuplicateSignalModal, setShowDuplicateSignalModal] = useState(false);
 	const [showDeleteSignalModal, setShowDeleteSignalModal] = useState(false);
+	const [searchParams, setSearcParams] = useSearchParams();
 
-	console.log("Signal: ", signal);
+	const nameRef = useRef();
+	const offsetRef = useRef();
+	const scaleXRef = useRef();
+	const scaleYRef = useRef();
 
-	function addFunction(signals = [], signalId = "") {
-		// Check if there is a signal
-		if (signalId === "") return null;
+	// console.log("Signal: ", signal);
 
-		// Set the functions of the signal
-		const newFunction = new Function();
-		const signal = signals.find((signal) => signal.id === signalId);
+	function updateSignalName(e) {
+		e.preventDefault();
 
-		const newFunctions = [...signal.functions, newFunction];
-		signal.functions = newFunctions;
+		// Get the current signal
+		const signal = getSignalById(signals, searchParams.get("signalId"));
 
-		// Overwrite the signals
-		return signals.map((s) => {
-			if (s.id === signalId) return signal;
-			else return s;
-		});
+		// Update the name
+		signal.setName(nameRef.current.value);
+
+		// Update signals array
+		updateSignals(signals, dispatch, signal);
+	}
+
+	function updateSignalOffset() {
+		// Get the current signal
+		const signal = getSignalById(signals, searchParams.get("signalId"));
+
+		// Update the name
+		signal.setOffset(parseFloat(offsetRef.current.value));
+
+		// Update signals array
+		updateSignals(signals, dispatch, signal);
+	}
+
+	function updateSignalScale() {
+		// Get the current signal
+		const signal = getSignalById(signals, searchParams.get("signalId"));
+
+		// Update the name
+		const newScale = {
+			x: parseFloat(scaleXRef.current.value),
+			y: parseFloat(scaleYRef.current.value),
+		};
+		signal.setScale(newScale);
+
+		// Update signals array
+		updateSignals(signals, dispatch, signal);
 	}
 
 	function createFunction(e) {
 		e.stopPropagation();
 
-		// Create the new signals
-		const newSignals = addFunction(signals, signal.id);
+		// Create the funciton
+		const newFunction = new Function();
 
-		dispatch({
-			type: "SET_SIGNALS",
-			signals: newSignals,
-		});
+		// Update the signal
+		const newSignal = addFunction(signal, newFunction);
+
+		// Update signals array with the new signal
+		updateSignals(signals, dispatch, newSignal);
+
+		// Navigate to the newly created signal
+		setSearcParams({ signalId: newSignal.id });
 
 		// Show feedback
 		dispatch({
@@ -87,7 +122,7 @@ function Signal({ className = "" }) {
 
 			<ShadowBox className={`signal${className !== "" ? ` ${className}` : ""}`}>
 				<header className="signal__header">
-					<H2 className="signal__title">{signal.name}</H2>
+					<H2 className="signal__title">{signal?.name}</H2>
 
 					<Dropdown className="signal__header__more">
 						<Dropdown.Button type="icon" className="signal__header__more__button">
@@ -126,14 +161,15 @@ function Signal({ className = "" }) {
 					</Accordion.Header>
 
 					<Accordion.Body>
-						<form className="signal__settings__name">
+						<form onSubmit={updateSignalName} className="signal__settings__name">
 							<Input
 								direction="horizontal"
 								label="Name:"
 								placeholder="Name"
 								fullW
-								id={`${signal.id}-name`}
-								defaultValue={signal.name}
+								id={`${signal?.id}-name`}
+								defaultValue={signal?.name}
+								ref={nameRef}
 							/>
 							<Button type="submit">Save</Button>
 						</form>
@@ -145,8 +181,10 @@ function Signal({ className = "" }) {
 								label="Offset:"
 								placeholder="Offset"
 								width="7rem"
-								id={`${signal.id}-offset`}
-								defaultValue={signal.offset}
+								id={`${signal?.id}-offset`}
+								defaultValue={signal?.offset}
+								onChange={updateSignalOffset}
+								ref={offsetRef}
 							/>
 							<Input
 								type="number"
@@ -154,8 +192,10 @@ function Signal({ className = "" }) {
 								label="Scale (x):"
 								placeholder="Scale (x)"
 								width="7rem"
-								id={`${signal.id}-scaleX`}
-								defaultValue={signal.scale.x}
+								id={`${signal?.id}-scaleX`}
+								defaultValue={signal?.scale.x}
+								onChange={updateSignalScale}
+								ref={scaleXRef}
 							/>
 							<Input
 								type="number"
@@ -163,8 +203,10 @@ function Signal({ className = "" }) {
 								label="Scale (y):"
 								placeholder="Scale (y)"
 								width="7rem"
-								id={`${signal.id}-scaleY`}
-								defaultValue={signal.scale.y}
+								id={`${signal?.id}-scaleY`}
+								defaultValue={signal?.scale.y}
+								onChange={updateSignalScale}
+								ref={scaleYRef}
 							/>
 						</div>
 					</Accordion.Body>
@@ -180,7 +222,7 @@ function Signal({ className = "" }) {
 					</Accordion.Header>
 
 					<Accordion.Body className="signal__functions__container">
-						{signal.functions.length === 0 ? (
+						{signal?.functions.length === 0 ? (
 							<div className="signal__functions__noFunction">
 								<FontAwesomeIcon
 									icon={faBan}
@@ -189,7 +231,7 @@ function Signal({ className = "" }) {
 								<P>There is no function.</P>
 							</div>
 						) : (
-							signal.functions.map((f) => (
+							signal?.functions.map((f) => (
 								<FunctionComponent
 									key={f.id}
 									id={f.id}

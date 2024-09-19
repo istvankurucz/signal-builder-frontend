@@ -1,6 +1,10 @@
 import { useLayoutEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { useStateValue } from "../../contexts/Context API/StateProvider";
+import useLoadSignals from "../../hooks/storage/useLoadSignals";
+import LoadSignalsModal from "./LoadSignalsModal/LoadSignalsModal";
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Line } from "react-chartjs-2";
 import {
 	faAdd,
 	faBan,
@@ -18,11 +22,8 @@ import SignalTabSelect from "../../components/ui/SignalTabSelect/SignalTabSelect
 import SignalComponent from "../../components/ui/Signal/Signal";
 import SortSignalsModal from "./SortSignalsModal/SortSignalsModal";
 import "./Generation.css";
-import { useStateValue } from "../../contexts/Context API/StateProvider";
 import Signal from "../../utils/classes/Signal";
-import useLoadSignals from "../../hooks/storage/useLoadSignals";
-import LoadSignalsModal from "./LoadSignalsModal/LoadSignalsModal";
-import { useSearchParams } from "react-router-dom";
+import addSignalToSignals from "../../utils/signal/addSignalToSignals";
 
 // const signals = new Array(10).fill(null).map((_, i) => `Signal ${i + 1}`);
 
@@ -36,7 +37,7 @@ function Generation() {
 	useLoadSignals(setShowLoadSignalsModal);
 	const [, setSearcParams] = useSearchParams();
 
-	// console.log("Signals: ", signals);
+	console.log("Signals: ", signals);
 
 	// Variables
 	const chartData = {
@@ -86,12 +87,8 @@ function Generation() {
 		// Create the new signal
 		const newSignal = new Signal();
 
-		// Add the signal to Context API
-		const newSignals = [...signals, newSignal];
-		dispatch({
-			type: "SET_SIGNALS",
-			signals: newSignals,
-		});
+		// Add the signal to local state
+		addSignalToSignals(signals, dispatch, newSignal);
 
 		// Set the signalID in search params
 		setSearcParams({ signalId: newSignal.id });

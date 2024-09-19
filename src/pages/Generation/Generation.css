@@ -60,7 +60,7 @@
 	position: relative;
 }
 .generation__chart--zoom {
-	width: 100%;
+	width: 95%;
 	max-width: var(--max-width);
 	height: 80%;
 	position: fixed;

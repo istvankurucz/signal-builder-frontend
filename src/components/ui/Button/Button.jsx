@@ -37,7 +37,7 @@ const Button = forwardRef(
 
 		return (
 			<button
-				type="button"
+				type={type}
 				className={`button button--${variant}${fullW ? " button--full" : ""}${
 					outlined ? " button--outlined" : ""
 				}${centered ? " button--centered" : ""}${round ? " button--round" : ""}${

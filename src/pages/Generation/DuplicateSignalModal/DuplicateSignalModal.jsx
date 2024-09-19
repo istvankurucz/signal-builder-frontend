@@ -1,15 +1,57 @@
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
+import { useSearchParams } from "react-router-dom";
 import Overlay from "../../../components/layout/Overlay/Overlay";
 import Modal from "../../../components/layout/Modal/Modal";
 import Button from "../../../components/ui/Button/Button";
 import P from "../../../components/ui/P/P";
 import Input from "../../../components/form/Input/Input";
 import "./DuplicateSignalModal.css";
-import { useStateValue } from "../../../contexts/Context API/StateProvider";
+import Signal from "../../../utils/classes/Signal";
+import getSignalById from "../../../utils/signal/getSignalById";
+import addSignalToSignals from "../../../utils/signal/addSignalToSignals";
+import useDuplicateSignalName from "../../../hooks/signal/useDuplicateSignalName";
 
 function DuplicateSignalModal({ show, setShow }) {
-	const [, dispatch] = useStateValue();
+	const [{ signals }, dispatch] = useStateValue();
+	const [searchParams, setSearcParams] = useSearchParams();
+	const [name, setName] = useDuplicateSignalName();
 
-	function duplicateSignal() {}
+	function duplicateSignal(e) {
+		e.preventDefault();
+
+		// Create the new signal
+		const newSignal = new Signal();
+
+		// Get the signal to be copied
+		const signal = getSignalById(signals, searchParams.get("signalId"));
+
+		// Copy the properties
+		newSignal.setName(name);
+		newSignal.setOffset(signal.offset);
+		newSignal.setScale(signal.scale);
+		newSignal.setFunctions(signal.functions);
+
+		// Add the new signal to signals
+		addSignalToSignals(signals, dispatch, newSignal);
+
+		// Set the signalID in search params
+		setSearcParams({ signalId: newSignal.id });
+
+		// Hide the modal
+		setShow(false);
+
+		// Show feedback
+		dispatch({
+			type: "SET_FEEDBACK",
+			feedback: {
+				show: true,
+				type: "info",
+				message: "Signal duplicated.",
+				details: "",
+			},
+		});
+	}
+
 	return (
 		<Overlay show={show}>
 			<Modal>
@@ -18,11 +60,18 @@ function DuplicateSignalModal({ show, setShow }) {
 					<Modal.Close setShow={setShow} />
 				</Modal.Header>
 
-				<form>
+				<form onSubmit={duplicateSignal}>
 					<Modal.Body>
 						<P variant="info">Enter the name of the new signal.</P>
 
-						<Input label="Name" placeholder="Name" id="duplicateSignalName" fullW />
+						<Input
+							label="Name"
+							placeholder="Name"
+							id="duplicateSignalName"
+							fullW
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+						/>
 					</Modal.Body>
 
 					<Modal.Footer>
