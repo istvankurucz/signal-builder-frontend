@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -26,62 +25,66 @@ import useSignal from "../../../hooks/signal/useSignal";
 import P from "../P/P";
 import Function from "../../../utils/classes/Function";
 import "./Signal.css";
-import getSignalById from "../../../utils/signal/getSignalById";
 import addFunction from "../../../utils/function/addFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
 
 function Signal({ className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
 	const signal = useSignal();
+	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
 	const [showDuplicateSignalModal, setShowDuplicateSignalModal] = useState(false);
 	const [showDeleteSignalModal, setShowDeleteSignalModal] = useState(false);
-	const [searchParams, setSearcParams] = useSearchParams();
 
+	//#region Refs
+	const timeoutRef = useRef();
 	const nameRef = useRef();
 	const offsetRef = useRef();
 	const scaleXRef = useRef();
 	const scaleYRef = useRef();
+	//#endregion
 
-	// console.log("Signal: ", signal);
+	//#region Functions
+	function onInputChange(property, value) {
+		if (property === "name") {
+			updateSignalProperty(property, value);
+			return;
+		}
+
+		// Clear the current timeout
+		if (property === lastUpdatedProperty) clearTimeout(timeoutRef.current);
+
+		// Update the last updated property name
+		setLastUpdatedProperty(property);
+
+		// Set a new timeout for update
+		timeoutRef.current = setTimeout(() => {
+			updateSignalProperty(property, value);
+		}, 500);
+	}
+
+	function updateSignalProperty(property, value) {
+		// Set the property of the signal
+		switch (property) {
+			case "name":
+				signal.setName(value);
+				break;
+			case "offset":
+				signal.setOffset(value);
+				break;
+			case "scale":
+				signal.setScale(value);
+				break;
+		}
+
+		// Update signals array
+		updateSignals(signals, dispatch);
+	}
 
 	function updateSignalName(e) {
 		e.preventDefault();
 
-		// Get the current signal
-		const signal = getSignalById(signals, searchParams.get("signalId"));
-
-		// Update the name
-		signal.setName(nameRef.current.value);
-
-		// Update signals array
-		updateSignals(signals, dispatch, signal);
-	}
-
-	function updateSignalOffset() {
-		// Get the current signal
-		const signal = getSignalById(signals, searchParams.get("signalId"));
-
-		// Update the name
-		signal.setOffset(parseFloat(offsetRef.current.value));
-
-		// Update signals array
-		updateSignals(signals, dispatch, signal);
-	}
-
-	function updateSignalScale() {
-		// Get the current signal
-		const signal = getSignalById(signals, searchParams.get("signalId"));
-
-		// Update the name
-		const newScale = {
-			x: parseFloat(scaleXRef.current.value),
-			y: parseFloat(scaleYRef.current.value),
-		};
-		signal.setScale(newScale);
-
-		// Update signals array
-		updateSignals(signals, dispatch, signal);
+		updateSignalProperty("name", nameRef.current.value);
 	}
 
 	function createFunction(e) {
@@ -91,25 +94,12 @@ function Signal({ className = "" }) {
 		const newFunction = new Function();
 
 		// Update the signal
-		const newSignal = addFunction(signal, newFunction);
+		addFunction(signal, newFunction);
 
 		// Update signals array with the new signal
-		updateSignals(signals, dispatch, newSignal);
-
-		// Navigate to the newly created signal
-		setSearcParams({ signalId: newSignal.id });
-
-		// Show feedback
-		dispatch({
-			type: "SET_FEEDBACK",
-			feedback: {
-				show: true,
-				type: "info",
-				message: "Function created.",
-				details: "",
-			},
-		});
+		updateSignals(signals, dispatch);
 	}
+	//#endregion
 
 	return (
 		<>
@@ -130,13 +120,15 @@ function Signal({ className = "" }) {
 						</Dropdown.Button>
 
 						<Dropdown.Items>
-							<Dropdown.Item
-								className="signal__header__more__item"
-								onClick={() => setShowSortFunctionsModal(true)}
-							>
-								<FontAwesomeIcon icon={faSort} />
-								Sort functions
-							</Dropdown.Item>
+							{signal?.functions.length > 1 && (
+								<Dropdown.Item
+									className="signal__header__more__item"
+									onClick={() => setShowSortFunctionsModal(true)}
+								>
+									<FontAwesomeIcon icon={faSort} />
+									Sort functions
+								</Dropdown.Item>
+							)}
 							<Dropdown.Item
 								className="signal__header__more__item"
 								onClick={() => setShowDuplicateSignalModal(true)}
@@ -183,7 +175,9 @@ function Signal({ className = "" }) {
 								width="7rem"
 								id={`${signal?.id}-offset`}
 								defaultValue={signal?.offset}
-								onChange={updateSignalOffset}
+								onChange={() =>
+									onInputChange("offset", parseFloat(offsetRef.current.value))
+								}
 								ref={offsetRef}
 							/>
 							<Input
@@ -194,7 +188,12 @@ function Signal({ className = "" }) {
 								width="7rem"
 								id={`${signal?.id}-scaleX`}
 								defaultValue={signal?.scale.x}
-								onChange={updateSignalScale}
+								onChange={() =>
+									onInputChange("scale", {
+										x: parseFloat(scaleXRef.current.value),
+										y: parseFloat(scaleYRef.current.value),
+									})
+								}
 								ref={scaleXRef}
 							/>
 							<Input
@@ -205,7 +204,12 @@ function Signal({ className = "" }) {
 								width="7rem"
 								id={`${signal?.id}-scaleY`}
 								defaultValue={signal?.scale.y}
-								onChange={updateSignalScale}
+								onChange={() =>
+									onInputChange("scale", {
+										x: parseFloat(scaleXRef.current.value),
+										y: parseFloat(scaleYRef.current.value),
+									})
+								}
 								ref={scaleYRef}
 							/>
 						</div>
@@ -231,15 +235,7 @@ function Signal({ className = "" }) {
 								<P>There is no function.</P>
 							</div>
 						) : (
-							signal?.functions.map((f) => (
-								<FunctionComponent
-									key={f.id}
-									id={f.id}
-									type={f.type}
-									name={f.name}
-									params={null}
-								/>
-							))
+							signal?.functions.map((f) => <FunctionComponent key={f.id} func={f} />)
 						)}
 					</Accordion.Body>
 				</Accordion>

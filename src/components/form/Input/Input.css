@@ -83,9 +83,12 @@
 	place-items: center;
 	font-size: var(--fs-xs);
 	background-color: var(--info-color);
-	border-radius: 0 var(--br) var(--br) 0;
 	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
+	top: 0.1rem;
+	bottom: 0.1rem;
+	right: 0.1rem;
+}
+.input__input:focus + .input__unit,
+.input__input:not(:placeholder-shown) + .input__unit {
+	border-radius: 0 var(--br-s) var(--br-s) 0;
 }

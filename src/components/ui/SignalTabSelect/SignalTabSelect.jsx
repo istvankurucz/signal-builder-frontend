@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import checkIfElementOverflows from "../../../utils/dom/checkIfElementOverflows";
 import { useStateValue } from "../../../contexts/Context API/StateProvider";
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import checkIfElementOverflows from "../../../utils/dom/checkIfElementOverflows";
 import "./SignalTabSelect.css";
 
 function SignalTabSelect({ className = "" }) {
@@ -42,6 +42,7 @@ function SignalTabSelect({ className = "" }) {
 				{signals.map((signal) => (
 					<li
 						key={signal.id}
+						title={signal.name}
 						className={`signalTabSelect__option${
 							searchParams.get("signalId") === signal.id
 								? " signalTabSelect__option--selected"

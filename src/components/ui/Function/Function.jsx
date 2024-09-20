@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faEllipsisV, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Button from "../Button/Button";
@@ -12,18 +14,34 @@ import FunctionTag from "./FunctionTag/FunctionTag";
 import Checkbox from "../../form/Checkbox/Checkbox";
 import "./Function.css";
 import getSignalById from "../../../utils/signal/getSignalById";
-import { useStateValue } from "../../../contexts/Context API/StateProvider";
-import { useSearchParams } from "react-router-dom";
-import getFunctionById from "../../../utils/function/getFunctionById";
 import removeFunction from "../../../utils/function/removeFunction";
+import updateSignals from "../../../utils/signal/updateSignals";
+import functionTypes from "../../../assets/function/functionTypes";
 
-const functionTypes = ["Const", "Linear", "Sine", "Step", "Ramp-up"];
-
-function Function({ id, type = "sine", name, params, className = "" }) {
+function Function({ func, className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
+	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [functionTypeIndex, setFunctionTypeIndex] = useState(0);
 	const [searchParams] = useSearchParams();
 
+	//#region Refs
+	const timeoutRef = useRef();
+	const nameRef = useRef();
+	const startTimeRef = useRef();
+	const lengthRef = useRef();
+	const offsetRef = useRef();
+	const constValueRef = useRef();
+	const slopeRef = useRef();
+	const frequencyRef = useRef();
+	const amplitudeRef = useRef();
+	const phaseRef = useRef();
+	const stepValueRef = useRef();
+	const stepTimeRef = useRef();
+	const rampStartTimeRef = useRef();
+	const rampEndTimeRef = useRef();
+	//#endregion
+
+	//#region Functions
 	function deleteFunction(e) {
 		e.stopPropagation();
 
@@ -31,14 +49,93 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 		const signal = getSignalById(signals, searchParams.get("signalId"));
 
 		// Remove the function
-		removeFunction(signals, dispatch, signal, id);
+		removeFunction(signals, dispatch, signal, func.id);
 	}
+
+	function onInputChange(property, value) {
+		if (property === "name" || property === "type") {
+			updateFunctionProperty(property, value);
+			return;
+		}
+
+		// Clear the current timeout
+		if (property === lastUpdatedProperty) clearTimeout(timeoutRef.current);
+
+		// Update the last updated property name
+		setLastUpdatedProperty(property);
+
+		// Set up a new timeout for updating
+		timeoutRef.current = setTimeout(() => updateFunctionProperty(property, value), 500);
+	}
+
+	function updateFunctionProperty(property, value) {
+		// Set the property of the function
+		switch (property) {
+			case "name":
+				func.setName(value);
+				break;
+			case "type":
+				func.setType(value);
+				break;
+			case "startTime":
+				func.setStartTime(value);
+				break;
+			case "length":
+				func.setLength(value);
+				break;
+			case "offset":
+				func.setOffset(value);
+				break;
+			case "constValue":
+				func.setConstValue(value);
+				break;
+			case "slope":
+				func.setSlope(value);
+				break;
+			case "frequency":
+				func.setFrequency(value);
+				break;
+			case "amplitude":
+				func.setAmplitude(value);
+				break;
+			case "phase":
+				func.setPhase(value);
+				break;
+			case "stepValue":
+				func.setStepTime(value);
+				break;
+			case "stepTime":
+				func.setStepTime(value);
+				break;
+			case "rampStartTime":
+				func.setRampStartTime(value);
+				break;
+			case "rampEndTime":
+				func.setRampEndTime(value);
+				break;
+		}
+
+		// Update the local signals array
+		updateSignals(signals, dispatch);
+	}
+
+	function updateFunctionName(e) {
+		e.preventDefault();
+
+		updateFunctionProperty("name", nameRef.current.value);
+	}
+
+	// Update function type
+	useEffect(() => {
+		updateFunctionProperty("type", functionTypes[functionTypeIndex]);
+	}, [functionTypes, functionTypeIndex]);
+	//#endregion
 
 	return (
 		<Accordion defaultOpen className={`function${className ? ` ${className}` : ""}`}>
 			<Accordion.Header icon={faAngleRight} className="function__header">
-				<FunctionTag name={type} />
-				<h4 className="function__title">{name}</h4>
+				<FunctionTag name={func.type} />
+				<h4 className="function__title">{func.name}</h4>
 
 				<Dropdown className="function__options">
 					<Dropdown.Button type="icon" onClick={(e) => e.stopPropagation()}>
@@ -57,14 +154,16 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 				<div className="function__settings">
 					<H3 className="function__subtitle">Settings</H3>
 
-					<form className="function__settings__name">
+					<form onSubmit={updateFunctionName} className="function__settings__name">
 						<Input
 							direction="horizontal"
 							label="Name:"
 							placeholder="Name"
 							fullW
-							id={`${id}--name`}
-							defaultValue={name}
+							id={`${func.id}--name`}
+							required
+							defaultValue={func.name}
+							ref={nameRef}
 						/>
 						<Button type="submit">Save</Button>
 					</form>
@@ -75,7 +174,7 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 						options={functionTypes}
 						direction="horizontal"
 						label="Function type:"
-						id={`${id}--type`}
+						id={`${func.id}--type`}
 						fullW
 						className="function__settings__type"
 					/>
@@ -87,7 +186,7 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 					<H3 className="function__subtitle">Parameters</H3>
 
 					<div className="function__params__container">
-						{type === "const" && (
+						{func.type === "const" && (
 							<div className="function__param function__param--const">
 								<Input
 									type="number"
@@ -95,13 +194,18 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Const:"
 									placeholder="Const"
 									width="10rem"
-									id={`${id}--const`}
+									id={`${func.id}--const`}
 									className="function__params__input"
+									defaultValue={func.constValue}
+									onChange={() =>
+										onInputChange("constValue", parseFloat(constValueRef.current.value))
+									}
+									ref={constValueRef}
 								/>
-								<Checkbox label="Keep last value" id={`${id}--const-lastValue`} />
+								<Checkbox label="Keep last value" id={`${func.id}--const-lastValue`} />
 							</div>
 						)}
-						{type === "linear" && (
+						{func.type === "linear" && (
 							<>
 								<Input
 									type="number"
@@ -109,12 +213,17 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Slope:"
 									placeholder="Slope"
 									width="10rem"
-									id={`${id}--slope`}
+									id={`${func.id}--slope`}
 									className="function__params__input"
+									defaultValue={func.slope}
+									onChange={() =>
+										onInputChange("slope", parseFloat(slopeRef.current.value))
+									}
+									ref={slopeRef}
 								/>
 							</>
 						)}
-						{type === "sine" && (
+						{func.type === "sine" && (
 							<>
 								<Input
 									type="number"
@@ -122,9 +231,14 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Frequency:"
 									placeholder="Frequency"
 									width="10rem"
-									id={`${id}--frequency`}
+									id={`${func.id}--frequency`}
 									unit="Hz"
 									className="function__params__input"
+									defaultValue={func.frequency}
+									onChange={() =>
+										onInputChange("frequency", parseFloat(frequencyRef.current.value))
+									}
+									ref={frequencyRef}
 								/>
 
 								<Input
@@ -133,8 +247,13 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Amplitude:"
 									placeholder="Amplitude"
 									width="10rem"
-									id={`${id}--amplitude`}
+									id={`${func.id}--amplitude`}
 									className="function__params__input"
+									defaultValue={func.amplitude}
+									onChange={() =>
+										onInputChange("amplitude", parseFloat(amplitudeRef.current.value))
+									}
+									ref={amplitudeRef}
 								/>
 								<Input
 									type="number"
@@ -142,13 +261,18 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Phase:"
 									placeholder="Phase"
 									width="10rem"
-									id={`${id}--phase`}
+									id={`${func.id}--phase`}
 									unit="deg"
 									className="function__params__input"
+									defaultValue={func.phase}
+									onChange={() =>
+										onInputChange("phase", parseFloat(phaseRef.current.value))
+									}
+									ref={phaseRef}
 								/>
 							</>
 						)}
-						{type === "step" && (
+						{func.type === "step" && (
 							<>
 								<Input
 									type="number"
@@ -156,8 +280,13 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Step value:"
 									placeholder="Step value"
 									width="10rem"
-									id={`${id}--stepValue`}
+									id={`${func.id}--stepValue`}
 									className="function__params__input"
+									defaultValue={func.stepValue}
+									onChange={() =>
+										onInputChange("stepValue", parseFloat(stepValueRef.current.value))
+									}
+									ref={stepValueRef}
 								/>
 								<Input
 									type="number"
@@ -165,13 +294,18 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Step time:"
 									placeholder="Step time"
 									width="10rem"
-									id={`${id}--stepTime`}
+									id={`${func.id}--stepTime`}
 									unit="s"
 									className="function__params__input"
+									defaultValue={func.stepTime}
+									onChange={() =>
+										onInputChange("stepTime", parseFloat(stepTimeRef.current.value))
+									}
+									ref={stepTimeRef}
 								/>
 							</>
 						)}
-						{type === "ramp-up" && (
+						{func.type === "ramp-up" && (
 							<>
 								<Input
 									type="number"
@@ -179,9 +313,17 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Ramp start:"
 									placeholder="Ramp start"
 									width="10rem"
-									id={`${id}--rampStart`}
+									id={`${func.id}--rampStart`}
 									unit="s"
 									className="function__params__input"
+									defaultValue={func.rampStartTime}
+									onChange={() =>
+										onInputChange(
+											"rampStartTime",
+											parseFloat(rampStartTimeRef.current.value)
+										)
+									}
+									ref={rampStartTimeRef}
 								/>
 								<Input
 									type="number"
@@ -189,9 +331,14 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Ramp end:"
 									placeholder="Ramp end"
 									width="10rem"
-									id={`${id}--rampEnd`}
+									id={`${func.id}--rampEnd`}
 									unit="s"
 									className="function__params__input"
+									defaultValue={func.rampEndTime}
+									onChange={() =>
+										onInputChange("rampEndTime", parseFloat(rampEndTimeRef.current.value))
+									}
+									ref={rampEndTimeRef}
 								/>
 								<Input
 									type="number"
@@ -199,20 +346,30 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 									label="Slope:"
 									placeholder="Slope"
 									width="10rem"
-									id={`${id}--slope`}
+									id={`${func.id}--slope`}
 									className="function__params__input"
+									defaultValue={func.slope}
+									onChange={() =>
+										onInputChange("slope", parseFloat(slopeRef.current.value))
+									}
+									ref={slopeRef}
 								/>
 							</>
 						)}
-						{type !== "const" && (
+						{func.type !== "const" && (
 							<>
 								<Input
 									direction="horizontal"
 									label="Offset:"
 									placeholder="Offset"
 									width="10rem"
-									id={`${id}--offset`}
+									id={`${func.id}--offset`}
 									className="function__params__input"
+									defaultValue={func.offset}
+									onChange={() =>
+										onInputChange("offset", parseFloat(offsetRef.current.value))
+									}
+									ref={offsetRef}
 								/>
 							</>
 						)}
@@ -223,8 +380,13 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 							placeholder="Start"
 							width="10rem"
 							unit="s"
-							id={`${id}--start`}
+							id={`${func.id}--start`}
 							className="function__params__input"
+							defaultValue={func.startTime}
+							onChange={() =>
+								onInputChange("startTime", parseFloat(startTimeRef.current.value))
+							}
+							ref={startTimeRef}
 						/>
 						<Input
 							type="number"
@@ -233,8 +395,11 @@ function Function({ id, type = "sine", name, params, className = "" }) {
 							placeholder="Length"
 							width="10rem"
 							unit="s"
-							id={`${id}--length`}
+							id={`${func.id}--length`}
 							className="function__params__input"
+							defaultValue={func.length}
+							onChange={() => onInputChange("length", parseFloat(lengthRef.current.value))}
+							ref={lengthRef}
 						/>
 					</div>
 				</div>

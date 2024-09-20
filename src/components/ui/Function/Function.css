@@ -38,6 +38,10 @@
 .function__settings__type {
 	max-width: 300px;
 }
+.function__settings__type .select__selected__input::first-letter,
+.function__settings__type .select__option::first-letter {
+	text-transform: uppercase;
+}
 
 .function__params__container {
 	display: flex;

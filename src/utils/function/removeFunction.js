@@ -18,13 +18,7 @@ export default function removeFunction(signals = [], dispatch, signal, functionI
 	signal.setFunctions(newFunctions);
 
 	// Create the new signals array with the updated signal
-	const newSignals = updateSignals(signals, dispatch, signal);
-
-	// Update the local state
-	dispatch({
-		type: "SET_SIGNALS",
-		signals: newSignals,
-	});
+	updateSignals(signals, dispatch);
 
 	// Return the new array of signals
 	return newFunctions;

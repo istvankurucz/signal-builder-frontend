@@ -12,10 +12,13 @@
 }
 
 .signalTabSelect__option {
+	max-width: 200px;
 	white-space: nowrap;
+	text-overflow: ellipsis;
 	border-left: 1px solid var(--info-color);
 	border-right: 1px solid var(--info-color);
 	padding: 0.5rem 1rem;
+	overflow: hidden;
 	cursor: pointer;
 }
 .signalTabSelect .signalTabSelect__option:first-child {

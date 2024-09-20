@@ -1,3 +1,4 @@
+import Function from "../classes/Function";
 import Signal from "../classes/Signal";
 
 export default function getSignals() {
@@ -7,15 +8,34 @@ export default function getSignals() {
 	if (signalsString == null) return [];
 
 	// Create Signal objects from the strings
-	return JSON.parse(signalsString).map(
-		(signal) =>
-			new Signal(
-				signal.id,
-				signal.name,
-				signal.offset,
-				signal.scacle,
-				signal.functions,
-				signal.visible
-			)
-	);
+	return JSON.parse(signalsString).map((signal) => {
+		const functions = signal.functions.map((f) => {
+			return new Function(
+				f.id,
+				f.name,
+				f.type,
+				f.startTime,
+				f.length,
+				f.offset,
+				f.constValue,
+				f.slope,
+				f.frequency,
+				f.amplitude,
+				f.phase,
+				f.stepValue,
+				f.stepTime,
+				f.rampStartTime,
+				f.rampEndTime
+			);
+		});
+
+		return new Signal(
+			signal.id,
+			signal.name,
+			signal.offset,
+			signal.scacle,
+			functions,
+			signal.visible
+		);
+	});
 }

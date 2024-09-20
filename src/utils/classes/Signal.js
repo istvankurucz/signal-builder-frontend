@@ -44,6 +44,11 @@ class Signal {
 			return;
 		}
 
+		if (isNaN(offset)) {
+			this.offset = 0;
+			return;
+		}
+
 		this.offset = offset;
 	}
 
@@ -58,6 +63,13 @@ class Signal {
 		}
 		if (typeof scale.x !== "number" || typeof scale.y !== "number") {
 			console.log("The values (x, y) for scale must be numbers.");
+			return;
+		}
+
+		if (isNaN(scale.x) || isNaN(scale.y)) {
+			if (isNaN(scale.x)) this.scale = { ...this.scale, x: 1 };
+			if (isNaN(scale.y)) this.scale = { ...this.scale, y: 1 };
+
 			return;
 		}
 
