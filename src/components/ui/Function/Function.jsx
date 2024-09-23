@@ -17,9 +17,13 @@ import getSignalById from "../../../utils/signal/getSignalById";
 import removeFunction from "../../../utils/function/removeFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
 import functionTypes from "../../../assets/function/functionTypes";
+import Tooltip from "../Tooltip/Tooltip";
+import FunctionParamsTooltip from "./FunctionParamsTooltip/FunctionParamsTooltip";
 
 function Function({ func, className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
+	const [isOpen, setIsOpen] = useState(true);
+	const [showParamsTooltip, setShowParamsTooltip] = useState(false);
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [functionTypeIndex, setFunctionTypeIndex] = useState(0);
 	const [searchParams] = useSearchParams();
@@ -42,6 +46,28 @@ function Function({ func, className = "" }) {
 	//#endregion
 
 	//#region Functions
+	function handleMouseEnter() {
+		// Remove overflow hidden from the upper accordion
+		const functionsBody = document.querySelector(
+			".signal__functions__container.accordionBody__content"
+		);
+		functionsBody.style.overflow = "visible";
+
+		// Show the tooltip
+		setShowParamsTooltip(true);
+	}
+
+	function handleMouseLeave() {
+		// Set back overflow hidden on the upper accordion
+		const functionsBody = document.querySelector(
+			".signal__functions__container.accordionBody__content"
+		);
+		functionsBody.style.overflow = "hidden";
+
+		// Hide the tooltip
+		setShowParamsTooltip(false);
+	}
+
 	function deleteFunction(e) {
 		e.stopPropagation();
 
@@ -133,9 +159,21 @@ function Function({ func, className = "" }) {
 
 	return (
 		<Accordion defaultOpen className={`function${className ? ` ${className}` : ""}`}>
-			<Accordion.Header icon={faAngleRight} className="function__header">
-				<FunctionTag name={func.type} />
-				<h4 className="function__title">{func.name}</h4>
+			<Accordion.Header
+				icon={faAngleRight}
+				className="function__header"
+				onClick={() => setIsOpen((open) => !open)}
+			>
+				<div
+					className="function__header__main"
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+				>
+					<FunctionTag name={func.type} />
+					<h4 className="function__title">{func.name}</h4>
+
+					<FunctionParamsTooltip show={!isOpen && showParamsTooltip} func={func} />
+				</div>
 
 				<Dropdown className="function__options">
 					<Dropdown.Button type="icon" onClick={(e) => e.stopPropagation()}>

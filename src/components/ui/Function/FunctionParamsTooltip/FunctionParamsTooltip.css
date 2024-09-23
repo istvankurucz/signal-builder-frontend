@@ -1,0 +1,23 @@
+.functionParamsTooltip {
+	min-width: 150px;
+	max-width: 400px;
+	font-size: 0.75rem;
+}
+
+.functionParamsTooltip__container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.functionParamsTooltip__row {
+	display: flex;
+	gap: 2rem;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.functionParamsTooltip__row__value {
+	font-weight: 500;
+	white-space: nowrap;
+}

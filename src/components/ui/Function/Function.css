@@ -8,6 +8,14 @@
 .function__header {
 	flex: 1;
 	display: flex;
+	gap: 1rem;
+	align-items: center;
+	position: relative;
+}
+
+.function__header__main {
+	flex: 1;
+	display: flex;
 	gap: 0.5rem;
 	align-items: center;
 }

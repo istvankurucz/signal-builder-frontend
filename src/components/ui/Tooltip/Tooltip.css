@@ -1,0 +1,29 @@
+.tooltip {
+	display: none;
+	color: var(--theme-bg-color);
+	background-color: var(--theme-text-color);
+	border-radius: var(--br);
+	padding: 0.5rem 1rem;
+	position: absolute;
+}
+.tooltip--top {
+	bottom: 100%;
+}
+.tooltip--right {
+	right: 0;
+}
+
+.tooltip--show {
+	display: block;
+}
+
+.tooltip::after {
+	content: "";
+	width: 0.5rem;
+	height: 0.5rem;
+	background-color: inherit;
+	position: absolute;
+	left: calc(50% - 0.25rem);
+	bottom: -0.25rem;
+	rotate: 45deg;
+}

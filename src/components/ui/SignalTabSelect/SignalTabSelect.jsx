@@ -21,6 +21,9 @@ function SignalTabSelect({ className = "" }) {
 	// Checks if the content of the tab select element overflows
 	useLayoutEffect(() => {
 		setIsOverflowing(checkIfElementOverflows(tabSelectRef.current));
+
+		// Scroll to the right if a new signal is added
+		tabSelectRef.current.scrollLeft = tabSelectRef.current.scrollWidth;
 	}, [tabSelectRef.current, signals]);
 
 	return (

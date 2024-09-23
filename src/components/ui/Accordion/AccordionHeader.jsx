@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./AccordionHeader.css";
 
-function AccordionHeader({ isOpen, setIsOpen, icon, className = "", children }) {
+function AccordionHeader({ isOpen, setIsOpen, icon, onClick, className = "", children, ...rest }) {
 	const accordionHeaderRef = useRef();
 
 	// Show / hide accordion body by keyboard navigation
@@ -22,9 +22,14 @@ function AccordionHeader({ isOpen, setIsOpen, icon, className = "", children }) 
 		<div
 			role="button"
 			className={`accordionHeader${isOpen ? " accordionHeader--open" : ""}`}
-			onClick={() => setIsOpen((open) => !open)}
+			onClick={() => {
+				setIsOpen((open) => !open);
+
+				if (onClick != null) onClick();
+			}}
 			tabIndex={0}
 			ref={accordionHeaderRef}
+			{...rest}
 		>
 			{icon && <FontAwesomeIcon icon={icon} className="accordionHeader__icon" />}
 			<div className={`accordionHeader__content${className !== "" ? ` ${className}` : ""}`}>

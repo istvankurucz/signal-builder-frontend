@@ -31,6 +31,16 @@
 	margin-bottom: 0;
 }
 
+.signal__functions__header__buttons {
+	display: flex;
+	gap: 1rem;
+}
+
+.signal__functions__add,
+.signal__functions__jump {
+	padding: 0.25rem 0.5rem;
+}
+
 .signal__settings {
 	margin-bottom: 2rem;
 }

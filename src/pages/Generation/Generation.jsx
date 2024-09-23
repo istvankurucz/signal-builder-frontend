@@ -37,7 +37,7 @@ function Generation() {
 	useLoadSignals(setShowLoadSignalsModal);
 	const [, setSearcParams] = useSearchParams();
 
-	console.log("Signals: ", signals);
+	// console.log("Signals: ", signals);
 
 	// Variables
 	const chartData = {
@@ -142,7 +142,7 @@ function Generation() {
 								options={signals.map((signal) => signal.name)}
 								className="generation__signals__select"
 							/>
-							<SignalComponent id="1" name="Signal 1" />
+							<SignalComponent />
 						</>
 					) : (
 						<div className="generation__signals__noSignal">
@@ -167,11 +167,13 @@ function Generation() {
 					>
 						<Button
 							variant="primary"
-							round
 							title={zoomChart ? "Zoom out" : "Zoom in"}
 							className="generation__chart__zoom"
 							onClick={() => setZoomChart((zoom) => !zoom)}
 						>
+							<span className="generation__chart__zoom__text">
+								{zoomChart ? "Zoom out" : "Zoom in"}
+							</span>
 							<FontAwesomeIcon
 								icon={zoomChart ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
 							/>

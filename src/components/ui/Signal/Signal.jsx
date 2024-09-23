@@ -3,6 +3,7 @@ import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faAdd,
+	faArrowDown,
 	faBan,
 	faCaretRight,
 	faClone,
@@ -32,6 +33,7 @@ function Signal({ className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
 	const signal = useSignal();
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
+	const [showJumpButton, setShowJumpButton] = useState(false);
 	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
 	const [showDuplicateSignalModal, setShowDuplicateSignalModal] = useState(false);
 	const [showDeleteSignalModal, setShowDeleteSignalModal] = useState(false);
@@ -87,6 +89,12 @@ function Signal({ className = "" }) {
 		updateSignalProperty("name", nameRef.current.value);
 	}
 
+	function jumpToBottom(e) {
+		e.stopPropagation();
+
+		window.scrollTo(0, document.documentElement.scrollHeight);
+	}
+
 	function createFunction(e) {
 		e.stopPropagation();
 
@@ -98,6 +106,12 @@ function Signal({ className = "" }) {
 
 		// Update signals array with the new signal
 		updateSignals(signals, dispatch);
+
+		// Show jump button
+		setShowJumpButton(true);
+
+		// After 3 seconds hide the jump button
+		setTimeout(() => setShowJumpButton(false), 3 * 1000);
 	}
 	//#endregion
 
@@ -220,9 +234,28 @@ function Signal({ className = "" }) {
 					<Accordion.Header icon={faCaretRight} className="signal__functions__header">
 						<H3 className="signal__subtitle">Functions</H3>
 
-						<Button variant="accent" round title="Add function" onClick={createFunction}>
-							<FontAwesomeIcon icon={faAdd} />
-						</Button>
+						<div className="signal__functions__header__buttons">
+							{showJumpButton && (
+								<Button
+									variant="secondary"
+									outlined
+									className="signal__functions__jump"
+									onClick={jumpToBottom}
+								>
+									<FontAwesomeIcon icon={faArrowDown} />
+									Jump to function
+								</Button>
+							)}
+
+							<Button
+								variant="accent"
+								onClick={createFunction}
+								className="signal__functions__add"
+							>
+								<FontAwesomeIcon icon={faAdd} />
+								Add function
+							</Button>
+						</div>
 					</Accordion.Header>
 
 					<Accordion.Body className="signal__functions__container">
