@@ -25,7 +25,7 @@ import "./Generation.css";
 import Signal from "../../utils/classes/Signal";
 import addSignalToSignals from "../../utils/signal/addSignalToSignals";
 
-// const signals = new Array(10).fill(null).map((_, i) => `Signal ${i + 1}`);
+const timeValues = new Array(1000).fill(null).map((_, i) => i * 0.01);
 
 function Generation() {
 	// States
@@ -41,13 +41,13 @@ function Generation() {
 
 	// Variables
 	const chartData = {
-		labels: ["1", "2", "3"],
+		labels: timeValues,
 		datasets: [
 			{
 				label: "Numbers",
-				data: [1, 2, 3],
-				backgroundColor: "blue",
-				borderColor: "lightblue",
+				data: timeValues.map((v) => Math.sin(v)),
+				// backgroundColor: "blue",
+				// borderColor: "lightblue",
 			},
 		],
 	};
@@ -55,6 +55,37 @@ function Generation() {
 	const chartOptions = {
 		animation: false,
 		responsive: true,
+		elements: {
+			line: {
+				backgroundColor: "blue",
+				borderColor: "red",
+				borderWidth: 3,
+			},
+			point: {
+				radius: 0,
+			},
+		},
+		scales: {
+			x: {
+				title: {
+					display: true,
+					text: "Time [s]",
+					padding: {
+						top: 0,
+						bottom: 0,
+					},
+				},
+				ticks: {
+					callback: (_, index) => timeValues[index].toFixed(2),
+				},
+			},
+			y: {
+				// title: {
+				// 	display: true,
+				// 	text: "Value",
+				// },
+			},
+		},
 		plugins: {
 			title: {
 				display: true,
