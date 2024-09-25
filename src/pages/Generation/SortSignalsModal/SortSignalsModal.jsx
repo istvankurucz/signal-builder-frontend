@@ -1,4 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import useDragAndDropSort from "../../../hooks/dom/dragAndDrop/useDragAndDropSort";
+import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../../components/layout/Modal/Modal";
@@ -7,16 +9,10 @@ import Button from "../../../components/ui/Button/Button";
 import ShadowBox from "../../../components/layout/ShadowBox/ShadowBox";
 import ElementSort from "../../../components/ui/ElementSort/ElementSort";
 import "./SortSignalsModal.css";
-import useDragAndDropSort from "../../../hooks/dom/dragAndDrop/useDragAndDropSort";
-
-const signals = new Array(5).fill(null).map((_, i) => `Signal ${i + 1}`);
-const initialTempSignals = signals.map((signal) => ({
-	text: signal,
-	id: signal.split(" ")[1],
-	dragging: false,
-}));
+import updateSignals from "../../../utils/signal/updateSignals";
 
 function SortSignalsModal({ show, setShow }) {
+	const [{ signals }, dispatch] = useStateValue();
 	const {
 		tempElements,
 		setTempElements,
@@ -25,9 +21,39 @@ function SortSignalsModal({ show, setShow }) {
 		handleDragStart,
 		handleDragEnd,
 		handleDragOver,
-	} = useDragAndDropSort(initialTempSignals);
+	} = useDragAndDropSort();
 
 	const elementsRef = useRef();
+
+	// Update the initial temp elements when the local states loaded
+	useEffect(() => {
+		if (signals.length === 0) return;
+
+		const newTempSignals = signals.map((signal) => ({
+			id: signal.id,
+			text: signal.name,
+			dragging: false,
+		}));
+		setTempElements(newTempSignals);
+	}, [signals]);
+
+	//#region Functions
+	function sortSignals() {
+		// Sort the signals
+		const sortedSignals = tempElements.map((element) =>
+			signals.find((signal) => signal.id === element.id)
+		);
+
+		// Update signals array
+		updateSignals(sortedSignals, dispatch);
+
+		// Reset the active index
+		setActiveIndex(-1);
+
+		// Hide the modal
+		setShow(false);
+	}
+	//#endregion
 
 	return (
 		<Overlay show={show}>
@@ -72,7 +98,7 @@ function SortSignalsModal({ show, setShow }) {
 					<Button variant="info" onClick={() => setShow(false)}>
 						Cancel
 					</Button>
-					<Button>Save</Button>
+					<Button onClick={sortSignals}>Save</Button>
 				</Modal.Footer>
 			</Modal>
 		</Overlay>

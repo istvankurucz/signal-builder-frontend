@@ -8,6 +8,7 @@ import { Line } from "react-chartjs-2";
 import {
 	faAdd,
 	faBan,
+	faCaretRight,
 	faMagnifyingGlassMinus,
 	faMagnifyingGlassPlus,
 	faSort,
@@ -24,17 +25,22 @@ import SortSignalsModal from "./SortSignalsModal/SortSignalsModal";
 import "./Generation.css";
 import Signal from "../../utils/classes/Signal";
 import addSignalToSignals from "../../utils/signal/addSignalToSignals";
+import H3 from "../../components/ui/H3/H3";
+import Accordion from "../../components/ui/Accordion/Accordion";
+import Checkbox from "../../components/form/Checkbox/Checkbox";
+import getSignalById from "../../utils/signal/getSignalById";
+import updateSignals from "../../utils/signal/updateSignals";
 
 const timeValues = new Array(1000).fill(null).map((_, i) => i * 0.01);
 
 function Generation() {
 	// States
 	const [{ signals }, dispatch] = useStateValue();
-	const [index, setIndex] = useState(0);
-	const [showSortSignalsModal, setShowSortSignalsModal] = useState(false);
 	const [showLoadSignalsModal, setShowLoadSignalsModal] = useState(false);
-	const [zoomChart, setZoomChart] = useState(false);
+	const [showSortSignalsModal, setShowSortSignalsModal] = useState(false);
 	useLoadSignals(setShowLoadSignalsModal);
+	const [zoomChart, setZoomChart] = useState(false);
+	const [index, setIndex] = useState(0);
 	const [, setSearcParams] = useSearchParams();
 
 	// console.log("Signals: ", signals);
@@ -88,12 +94,15 @@ function Generation() {
 		},
 		plugins: {
 			title: {
-				display: true,
+				display: false,
 				text: "Numbers",
 				font: {
 					size: 20,
 				},
 				color: "black",
+			},
+			legend: {
+				display: false,
 			},
 		},
 	};
@@ -134,6 +143,26 @@ function Generation() {
 				details: "",
 			},
 		});
+	}
+
+	function changeSignalVisibility(e, signalId = "") {
+		// Check if there is a signal ID
+		if (signalId === "") {
+			console.log("No signal ID was provided.");
+			return;
+		}
+
+		// Get the signal from state
+		const signal = getSignalById(signals, signalId);
+
+		// Check if the signal exists
+		if (signal == null) return;
+
+		// Update the visible property
+		signal.setVisible(e.target.checked);
+
+		// Update signals array
+		updateSignals(signals, dispatch);
 	}
 
 	return (
@@ -211,6 +240,24 @@ function Generation() {
 						</Button>
 
 						<Line data={chartData} options={chartOptions} />
+
+						<Accordion defaultOpen className="generation__chart__legend">
+							<Accordion.Header icon={faCaretRight}>
+								<H3 className="generation__chart__legend__title">Signals</H3>
+							</Accordion.Header>
+
+							<Accordion.Body className="generation__chart__legend__container">
+								{signals.map((signal) => (
+									<Checkbox
+										key={signal.id}
+										label={signal.name}
+										id={signal.id}
+										defaultChecked={signal.visible}
+										onChange={(e) => changeSignalVisibility(e, signal.id)}
+									/>
+								))}
+							</Accordion.Body>
+						</Accordion>
 					</ShadowBox>
 				</section>
 			</Container>

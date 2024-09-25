@@ -12,20 +12,20 @@ import Divider from "../Divider/Divider";
 import Dropdown from "../Dropdown/Dropdown";
 import FunctionTag from "./FunctionTag/FunctionTag";
 import Checkbox from "../../form/Checkbox/Checkbox";
+import FunctionParamsTooltip from "./FunctionParamsTooltip/FunctionParamsTooltip";
 import "./Function.css";
 import getSignalById from "../../../utils/signal/getSignalById";
 import removeFunction from "../../../utils/function/removeFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
 import functionTypes from "../../../assets/function/functionTypes";
-import Tooltip from "../Tooltip/Tooltip";
-import FunctionParamsTooltip from "./FunctionParamsTooltip/FunctionParamsTooltip";
 
-function Function({ func, className = "" }) {
+function FunctionComponent({ func, className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
 	const [isOpen, setIsOpen] = useState(true);
 	const [showParamsTooltip, setShowParamsTooltip] = useState(false);
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
-	const [functionTypeIndex, setFunctionTypeIndex] = useState(0);
+	const [functionTypeIndex, setFunctionTypeIndex] = useState(-1);
+	const [keepConstValue, setKeepConstValue] = useState(false);
 	const [searchParams] = useSearchParams();
 
 	//#region Refs
@@ -153,9 +153,29 @@ function Function({ func, className = "" }) {
 
 	// Update function type
 	useEffect(() => {
+		if (functionTypeIndex === -1) return;
+
 		updateFunctionProperty("type", functionTypes[functionTypeIndex]);
 	}, [functionTypes, functionTypeIndex]);
 	//#endregion
+
+	// Set the default index for function type select if the function is loaded
+	useEffect(() => {
+		if (func == null) return;
+
+		const defaultIndex = functionTypes.indexOf(func.type);
+		setFunctionTypeIndex(defaultIndex);
+	}, [signals, functionTypes]);
+
+	useEffect(() => {
+		if (!keepConstValue) return;
+
+		const signal = getSignalById(signals, searchParams.get("signalId"));
+		const functionIndex = signal.functions.map((f) => f.id).indexOf(func.id);
+		if (functionIndex === 0) return;
+
+		// TODO
+	}, [keepConstValue]);
 
 	return (
 		<Accordion defaultOpen className={`function${className ? ` ${className}` : ""}`}>
@@ -207,7 +227,7 @@ function Function({ func, className = "" }) {
 					</form>
 
 					<Select
-						index={functionTypeIndex}
+						index={functionTypeIndex === -1 ? 0 : functionTypeIndex}
 						setIndex={setFunctionTypeIndex}
 						options={functionTypes}
 						direction="horizontal"
@@ -240,7 +260,12 @@ function Function({ func, className = "" }) {
 									}
 									ref={constValueRef}
 								/>
-								<Checkbox label="Keep last value" id={`${func.id}--const-lastValue`} />
+								<Checkbox
+									label="Keep last value"
+									id={`${func.id}--const-lastValue`}
+									checked={keepConstValue}
+									onChange={(e) => setKeepConstValue(e.target.checked)}
+								/>
 							</div>
 						)}
 						{func.type === "linear" && (
@@ -446,4 +471,4 @@ function Function({ func, className = "" }) {
 	);
 }
 
-export default Function;
+export default FunctionComponent;

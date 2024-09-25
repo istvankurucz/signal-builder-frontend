@@ -5,18 +5,16 @@ import Overlay from "../../../components/layout/Overlay/Overlay";
 import Button from "../../../components/ui/Button/Button";
 import H3 from "../../../components/ui/H3/H3";
 import P from "../../../components/ui/P/P";
-import getSignals from "../../../utils/storage/getSignals";
 import getSignalsUpdatedAt from "../../../utils/storage/getSignalsUpdatedAt";
 import "./LoadSignalsModal.css";
 
 function LoadSignalsModal({ show, setShow }) {
 	// States
-	const [, dispatch] = useStateValue();
+	const [{ signals }, dispatch] = useStateValue();
 	const [, setSearcParams] = useSearchParams();
 
 	// Variables
-	const signals = getSignals();
-	const lastSessionDate = getSignalsUpdatedAt().toLocaleString();
+	const lastSessionDate = getSignalsUpdatedAt()?.toLocaleString();
 
 	// Functions
 	function goBack() {

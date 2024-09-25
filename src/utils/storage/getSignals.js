@@ -33,7 +33,7 @@ export default function getSignals() {
 			signal.id,
 			signal.name,
 			signal.offset,
-			signal.scacle,
+			signal.scale,
 			functions,
 			signal.visible
 		);

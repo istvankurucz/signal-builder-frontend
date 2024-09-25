@@ -28,10 +28,12 @@ import Function from "../../../utils/classes/Function";
 import "./Signal.css";
 import addFunction from "../../../utils/function/addFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
+import useSignalInputs from "../../../hooks/signal/useSignalInputs";
 
 function Signal({ className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
 	const signal = useSignal();
+	const { name, setName, offset, setOffset, scale, setScale } = useSignalInputs();
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [showJumpButton, setShowJumpButton] = useState(false);
 	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
@@ -40,10 +42,6 @@ function Signal({ className = "" }) {
 
 	//#region Refs
 	const timeoutRef = useRef();
-	const nameRef = useRef();
-	const offsetRef = useRef();
-	const scaleXRef = useRef();
-	const scaleYRef = useRef();
 	//#endregion
 
 	//#region Functions
@@ -86,7 +84,7 @@ function Signal({ className = "" }) {
 	function updateSignalName(e) {
 		e.preventDefault();
 
-		updateSignalProperty("name", nameRef.current.value);
+		updateSignalProperty("name", name);
 	}
 
 	function jumpToBottom(e) {
@@ -174,8 +172,8 @@ function Signal({ className = "" }) {
 								placeholder="Name"
 								fullW
 								id={`${signal?.id}-name`}
-								defaultValue={signal?.name}
-								ref={nameRef}
+								value={name}
+								onChange={(e) => setName(e.target.value)}
 							/>
 							<Button type="submit">Save</Button>
 						</form>
@@ -188,11 +186,11 @@ function Signal({ className = "" }) {
 								placeholder="Offset"
 								width="7rem"
 								id={`${signal?.id}-offset`}
-								defaultValue={signal?.offset}
-								onChange={() =>
-									onInputChange("offset", parseFloat(offsetRef.current.value))
-								}
-								ref={offsetRef}
+								value={offset}
+								onChange={(e) => {
+									setOffset(parseFloat(e.target.value));
+									onInputChange("offset", parseFloat(e.target.value));
+								}}
 							/>
 							<Input
 								type="number"
@@ -201,14 +199,14 @@ function Signal({ className = "" }) {
 								placeholder="Scale (x)"
 								width="7rem"
 								id={`${signal?.id}-scaleX`}
-								defaultValue={signal?.scale.x}
-								onChange={() =>
+								value={scale.x}
+								onChange={(e) => {
+									setScale((prev) => ({ ...prev, x: parseFloat(e.target.value) }));
 									onInputChange("scale", {
-										x: parseFloat(scaleXRef.current.value),
-										y: parseFloat(scaleYRef.current.value),
-									})
-								}
-								ref={scaleXRef}
+										...scale,
+										x: parseFloat(e.target.value),
+									});
+								}}
 							/>
 							<Input
 								type="number"
@@ -217,14 +215,14 @@ function Signal({ className = "" }) {
 								placeholder="Scale (y)"
 								width="7rem"
 								id={`${signal?.id}-scaleY`}
-								defaultValue={signal?.scale.y}
-								onChange={() =>
+								value={scale.y}
+								onChange={(e) => {
+									setScale((prev) => ({ ...prev, y: parseFloat(e.target.value) }));
 									onInputChange("scale", {
-										x: parseFloat(scaleXRef.current.value),
-										y: parseFloat(scaleYRef.current.value),
-									})
-								}
-								ref={scaleYRef}
+										...scale,
+										y: parseFloat(e.target.value),
+									});
+								}}
 							/>
 						</div>
 					</Accordion.Body>

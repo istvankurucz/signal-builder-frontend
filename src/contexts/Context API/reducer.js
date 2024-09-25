@@ -1,5 +1,3 @@
-import getSignals from "../../utils/storage/getSignals";
-
 export const initialState = {
 	signals: [],
 	feedback: {

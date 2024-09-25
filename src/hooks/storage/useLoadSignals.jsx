@@ -21,12 +21,12 @@ function useLoadSignals(setShow) {
 
 			dispatch({
 				type: "SET_SIGNALS",
-				signals,
+				signals: signals,
 			});
 
 			setSearcParams({ signalId: signals[0].id });
 		}
-	}, [getSignals, dispatch]);
+	}, []);
 }
 
 export default useLoadSignals;

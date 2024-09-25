@@ -1,7 +1,3 @@
-.signal {
-	min-width: 450px;
-}
-
 .signal__header {
 	display: flex;
 	gap: 2rem;
