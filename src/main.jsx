@@ -7,11 +7,11 @@ import reducer, { initialState } from "./contexts/Context API/reducer.js";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
-	// <StrictMode>
-	<BrowserRouter>
-		<StateProvider initialState={initialState} reducer={reducer}>
-			<App />
-		</StateProvider>
-	</BrowserRouter>
-	// </StrictMode>
+	<StrictMode>
+		<BrowserRouter>
+			<StateProvider initialState={initialState} reducer={reducer}>
+				<App />
+			</StateProvider>
+		</BrowserRouter>
+	</StrictMode>
 );

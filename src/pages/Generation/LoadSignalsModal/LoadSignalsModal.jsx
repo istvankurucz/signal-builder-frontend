@@ -7,13 +7,15 @@ import H3 from "../../../components/ui/H3/H3";
 import P from "../../../components/ui/P/P";
 import getSignalsUpdatedAt from "../../../utils/storage/getSignalsUpdatedAt";
 import "./LoadSignalsModal.css";
+import getSignals from "../../../utils/storage/getSignals";
 
 function LoadSignalsModal({ show, setShow }) {
 	// States
-	const [{ signals }, dispatch] = useStateValue();
+	const [, dispatch] = useStateValue();
 	const [, setSearcParams] = useSearchParams();
 
 	// Variables
+	const signals = getSignals();
 	const lastSessionDate = getSignalsUpdatedAt()?.toLocaleString();
 
 	// Functions
