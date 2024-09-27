@@ -91,7 +91,7 @@ function FunctionComponent({ func, className = "" }) {
 		setLastUpdatedProperty(property);
 
 		// Set up a new timeout for updating
-		timeoutRef.current = setTimeout(() => updateFunctionProperty(property, value), 500);
+		timeoutRef.current = setTimeout(() => updateFunctionProperty(property, value), 1000);
 	}
 
 	function updateFunctionProperty(property, value) {
@@ -128,7 +128,7 @@ function FunctionComponent({ func, className = "" }) {
 				func.setPhase(value);
 				break;
 			case "stepValue":
-				func.setStepTime(value);
+				func.setStepValue(value);
 				break;
 			case "stepTime":
 				func.setStepTime(value);

@@ -32,8 +32,6 @@ import getSignalById from "../../utils/signal/getSignalById";
 import updateSignals from "../../utils/signal/updateSignals";
 import useMainChart from "../../hooks/chart/useMainChart";
 
-const timeValues = new Array(1000).fill(null).map((_, i) => i * 0.01);
-
 function Generation() {
 	// States
 	const [{ signals }, dispatch] = useStateValue();
@@ -42,73 +40,11 @@ function Generation() {
 	useLoadSignals(setShowLoadSignalsModal);
 	const [zoomChart, setZoomChart] = useState(false);
 	const [index, setIndex] = useState(0);
-	const { chartData } = useMainChart();
+	const { chartData, chartOptions } = useMainChart();
 	const [, setSearcParams] = useSearchParams();
 
 	console.log("Chart data: ", chartData);
 	// console.log("Signals: ", signals);
-
-	// Variables
-	// const chartData = {
-	// 	labels: timeValues,
-	// 	datasets: [
-	// 		{
-	// 			label: "Numbers",
-	// 			data: timeValues.map((v) => Math.sin(v)),
-	// 			// backgroundColor: "blue",
-	// 			// borderColor: "lightblue",
-	// 		},
-	// 	],
-	// };
-
-	// const chartOptions = {
-	// 	animation: false,
-	// 	responsive: true,
-	// 	elements: {
-	// 		// line: {
-	// 		// 	backgroundColor: "blue",
-	// 		// 	borderColor: "red",
-	// 		// 	borderWidth: 3,
-	// 		// },
-	// 		point: {
-	// 			radius: 1,
-	// 		},
-	// 	},
-	// 	scales: {
-	// 		x: {
-	// 			title: {
-	// 				display: true,
-	// 				text: "Time [s]",
-	// 				padding: {
-	// 					top: 0,
-	// 					bottom: 0,
-	// 				},
-	// 			},
-	// 			// ticks: {
-	// 			// 	callback: (_, index) => timeValues[index].toFixed(2),
-	// 			// },
-	// 		},
-	// 		y: {
-	// 			// title: {
-	// 			// 	display: true,
-	// 			// 	text: "Value",
-	// 			// },
-	// 		},
-	// 	},
-	// 	plugins: {
-	// 		title: {
-	// 			display: false,
-	// 			text: "Numbers",
-	// 			font: {
-	// 				size: 20,
-	// 			},
-	// 			color: "black",
-	// 		},
-	// 		legend: {
-	// 			display: false,
-	// 		},
-	// 	},
-	// };
 
 	// Hooks
 	// Zoom out from chart if clicked outside
@@ -242,8 +178,7 @@ function Generation() {
 							/>
 						</Button>
 
-						<Line data={chartData} />
-						{/* <Scatter data={chartData} options={chartOptions} /> */}
+						<Line data={chartData} options={chartOptions} />
 
 						<Accordion defaultOpen className="generation__chart__legend">
 							<Accordion.Header icon={faCaretRight}>

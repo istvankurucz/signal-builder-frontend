@@ -3,6 +3,9 @@ import getMinMaxXValue from "./getMinMaxXValue";
 import getNumberOfPoints from "./getNumberOfPoints";
 
 export default function sortSignalPoints(signalPoints = []) {
+	// Check if there are any points
+	if (signalPoints.length === 0) return { x: [], y: [] };
+
 	// Difference between x (time) values
 	const dt = signalPoints[0].x[1] - signalPoints[0].x[0];
 
@@ -14,7 +17,7 @@ export default function sortSignalPoints(signalPoints = []) {
 
 	// Create the x, y values for the whole signal
 	const xValues = createXValues(numberOfPoints, minX, dt);
-	const yValues = new Array(numberOfPoints).fill(0);
+	const yValues = new Array(numberOfPoints).fill(null);
 
 	// Sort the signal points
 	signalPoints.forEach((functionPoints) => {

@@ -60,7 +60,7 @@ function Signal({ className = "" }) {
 		// Set a new timeout for update
 		timeoutRef.current = setTimeout(() => {
 			updateSignalProperty(property, value);
-		}, 500);
+		}, 1000);
 	}
 
 	function updateSignalProperty(property, value) {
