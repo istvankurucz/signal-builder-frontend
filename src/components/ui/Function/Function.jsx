@@ -26,6 +26,7 @@ function FunctionComponent({ func, className = "" }) {
 	const [showParamsTooltip, setShowParamsTooltip] = useState(false);
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [functionTypeIndex, setFunctionTypeIndex] = useState(-1);
+	const [constValue, setConstValue] = useState(func.constValue);
 	const [searchParams] = useSearchParams();
 
 	//#region Refs
@@ -79,12 +80,7 @@ function FunctionComponent({ func, className = "" }) {
 	}
 
 	function onInputChange(property, value) {
-		if (
-			property === "name" ||
-			property === "type" ||
-			property === "constValue" ||
-			property === "keepLastValue"
-		) {
+		if (property === "name" || property === "type" || property === "keepLastValue") {
 			updateFunctionProperty(property, value);
 			return;
 		}
@@ -195,8 +191,9 @@ function FunctionComponent({ func, className = "" }) {
 		const beforeFunctionPoints = generatePoints(signal.functions[beforeIndex], 0.01);
 		// console.log("Points: ", beforeFunctionPoints);
 		const lastValue = beforeFunctionPoints.y[beforeFunctionPoints.y.length - 1];
-		// console.log("Last value: ", lastValue);
+		console.log("Last value: ", lastValue);
 
+		setConstValue(lastValue);
 		func.setConstValue(lastValue);
 	}, [JSON.stringify(signals)]);
 
@@ -205,13 +202,11 @@ function FunctionComponent({ func, className = "" }) {
 			<Accordion.Header
 				icon={faAngleRight}
 				className="function__header"
-				onClick={() => setIsOpen((open) => !open)}
-			>
+				onClick={() => setIsOpen((open) => !open)}>
 				<div
 					className="function__header__main"
 					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}
-				>
+					onMouseLeave={handleMouseLeave}>
 					<FunctionTag name={func.type} />
 					<h4 className="function__title">{func.name}</h4>
 
@@ -278,10 +273,12 @@ function FunctionComponent({ func, className = "" }) {
 									id={`${func.id}--const`}
 									className="function__params__input"
 									disabled={func.keepLastValue}
-									value={func.constValue}
-									onChange={() =>
-										onInputChange("constValue", parseFloat(constValueRef.current.value))
-									}
+									value={constValue}
+									onChange={(e) => {
+										const value = parseFloat(e.target.value);
+										setConstValue(value);
+										onInputChange("constValue", value);
+									}}
 									ref={constValueRef}
 								/>
 								<Checkbox
