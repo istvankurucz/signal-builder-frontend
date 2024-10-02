@@ -1,11 +1,18 @@
 import { useLayoutEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faChartLine, faFileExport, faFileImport } from "@fortawesome/free-solid-svg-icons";
+import {
+	faBars,
+	faChartLine,
+	faFileExport,
+	faFileImport,
+	faGear,
+} from "@fortawesome/free-solid-svg-icons";
 import logo from "../../../assets/images/avl.png";
 import Container from "../Container/Container";
 import Button from "../../ui/Button/Button";
 import "./Header.css";
+import Dropdown from "../../ui/Dropdown/Dropdown";
 
 function Header() {
 	const [showNav, setShowNav] = useState(false);
@@ -69,6 +76,14 @@ function Header() {
 								<FontAwesomeIcon icon={faFileExport} />
 								<span>Export</span>
 							</NavLink>
+						</li>
+						<li className="header__menu__item">
+							<Dropdown>
+								<Dropdown.Button type="icon" className="header__menu__item__settings">
+									<FontAwesomeIcon icon={faGear} />
+								</Dropdown.Button>
+								<Dropdown.Items>Theme: light - dark</Dropdown.Items>
+							</Dropdown>
 						</li>
 					</ul>
 				</nav>

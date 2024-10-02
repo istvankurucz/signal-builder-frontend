@@ -7,6 +7,7 @@ const defaultValues = {
 	length: 1,
 	offset: 0,
 	constValue: 0,
+	keepLastValue: false,
 	slope: 1,
 	frequency: 1,
 	amplitude: 1,
@@ -26,6 +27,7 @@ class Function {
 		length = defaultValues.length,
 		offset = defaultValues.offset,
 		constValue = defaultValues.constValue,
+		keepLastValue = defaultValues.keepLastValue,
 		slope = defaultValues.slope,
 		frequency = defaultValues.frequency,
 		amplitude = defaultValues.amplitude,
@@ -43,6 +45,7 @@ class Function {
 		this.length = length;
 		this.offset = offset;
 		this.constValue = constValue;
+		this.keepLastValue = keepLastValue;
 		this.slope = slope;
 		this.frequency = frequency;
 		this.amplitude = amplitude;
@@ -129,6 +132,15 @@ class Function {
 		}
 
 		this.constValue = constValue;
+	}
+
+	setKeepLastValue(keepLastValue) {
+		if (typeof keepLastValue !== "boolean") {
+			console.log("KeepLastValue parameter must be a boolean.");
+			return;
+		}
+
+		this.keepLastValue = keepLastValue;
 	}
 
 	setSlope(slope) {

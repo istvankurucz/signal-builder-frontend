@@ -46,6 +46,8 @@ html {
 body {
 	--theme-text-color: var(--text-color);
 	--theme-bg-color: var(--primary-color);
+	/* --theme-text-color: var(--primary-color);
+	--theme-bg-color: var(--text-color); */
 
 	font-family: "Open Sans", sans-serif;
 	font-optical-sizing: auto;

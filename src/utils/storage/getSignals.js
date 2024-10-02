@@ -18,6 +18,7 @@ export default function getSignals() {
 				f.length,
 				f.offset,
 				f.constValue,
+				f.keepLastValue,
 				f.slope,
 				f.frequency,
 				f.amplitude,

@@ -46,7 +46,7 @@ export default function generatePoints(func, dt = defaultDt) {
 	}
 }
 
-function generateConstPoints(constValue = 0, startTime = 0, length = 1, dt = defaultDt) {
+function generateConstPoints(constValue = 0, startTime = 0, length = 1, dt) {
 	// Get the number of points
 	const numberOfPoints = getNumberOfPoints(length, dt);
 
@@ -60,7 +60,7 @@ function generateConstPoints(constValue = 0, startTime = 0, length = 1, dt = def
 	return { x: xValues, y: roundValues(yValues) };
 }
 
-function generateLinearPoints(slope = 1, offset = 0, startTime = 0, length = 1, dt = defaultDt) {
+function generateLinearPoints(slope = 1, offset = 0, startTime = 0, length = 1, dt) {
 	// Get the number of points
 	const numberOfPoints = getNumberOfPoints(length, dt);
 
@@ -81,7 +81,7 @@ function generateSinePoints(
 	offset = 0,
 	startTime = 0,
 	length = 1,
-	dt = defaultDt
+	dt
 ) {
 	// Get the number of points
 	const numberOfPoints = getNumberOfPoints(length, dt);
@@ -111,7 +111,7 @@ function generateStepPoints(
 	offset = 0,
 	startTime = 0,
 	length = 1,
-	dt = defaultDt
+	dt
 ) {
 	// Get the number of points
 	const numberOfPoints = getNumberOfPoints(length, dt);
@@ -136,7 +136,7 @@ function generateRampUpPoints(
 	offset = 0,
 	startTime = 0,
 	length = 1,
-	dt = defaultDt
+	dt
 ) {
 	// Get the number of points
 	const numberOfPoints = getNumberOfPoints(length, dt);

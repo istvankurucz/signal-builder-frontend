@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import useLoadSignals from "../../hooks/storage/useLoadSignals";
 import LoadSignalsModal from "./LoadSignalsModal/LoadSignalsModal";
@@ -31,6 +31,8 @@ import Checkbox from "../../components/form/Checkbox/Checkbox";
 import getSignalById from "../../utils/signal/getSignalById";
 import updateSignals from "../../utils/signal/updateSignals";
 import useMainChart from "../../hooks/chart/useMainChart";
+import Input from "../../components/form/Input/Input";
+import chartColors from "../../assets/chart/chartColors";
 
 function Generation() {
 	// States
@@ -40,11 +42,14 @@ function Generation() {
 	useLoadSignals(setShowLoadSignalsModal);
 	const [zoomChart, setZoomChart] = useState(false);
 	const [index, setIndex] = useState(0);
-	const { chartData, chartOptions } = useMainChart();
+	const { chartData, chartOptions, sampling, setSampling } = useMainChart();
 	const [, setSearcParams] = useSearchParams();
 
 	console.log("Chart data: ", chartData);
 	// console.log("Signals: ", signals);
+
+	// Refs
+	const timeoutRef = useRef();
 
 	// Hooks
 	// Zoom out from chart if clicked outside
@@ -82,6 +87,21 @@ function Generation() {
 				details: "",
 			},
 		});
+	}
+
+	function handleSamplingChange(e) {
+		// Clear the timeout
+		clearTimeout(timeoutRef.current);
+
+		// Set a new timer
+		timeoutRef.current = setTimeout(() => {
+			// Get the input value
+			const newSampling = parseFloat(e.target.value);
+
+			// Change the sampling
+			if (isNaN(newSampling)) setSampling(1);
+			else setSampling(newSampling);
+		}, 1000);
 	}
 
 	function changeSignalVisibility(e, signalId = "") {
@@ -179,25 +199,38 @@ function Generation() {
 						</Button>
 
 						<Line data={chartData} options={chartOptions} />
+					</ShadowBox>
 
-						<Accordion defaultOpen className="generation__chart__legend">
-							<Accordion.Header icon={faCaretRight}>
-								<H3 className="generation__chart__legend__title">Signals</H3>
-							</Accordion.Header>
+					<Input
+						type="number"
+						direction="horizontal"
+						label="Sampling:"
+						id="generationSampling"
+						defaultValue={sampling}
+						unit="Hz"
+						className="generation__sampling"
+						onChange={handleSamplingChange}
+					/>
 
-							<Accordion.Body className="generation__chart__legend__container">
-								{signals.map((signal) => (
+					<Accordion defaultOpen className="generation__legend">
+						<Accordion.Header icon={faCaretRight}>
+							<H3 className="generation__legend__title">Signals</H3>
+						</Accordion.Header>
+
+						<Accordion.Body className="generation__legend__container">
+							{signals.map((signal, i) => (
+								<div key={signal.id} style={{ "--color": chartColors[i] }}>
 									<Checkbox
-										key={signal.id}
 										label={signal.name}
 										id={signal.id}
 										defaultChecked={signal.visible}
 										onChange={(e) => changeSignalVisibility(e, signal.id)}
+										className="generation__legend__checkbox"
 									/>
-								))}
-							</Accordion.Body>
-						</Accordion>
-					</ShadowBox>
+								</div>
+							))}
+						</Accordion.Body>
+					</Accordion>
 				</section>
 			</Container>
 		</Page>

@@ -18,6 +18,7 @@ import getSignalById from "../../../utils/signal/getSignalById";
 import removeFunction from "../../../utils/function/removeFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
 import functionTypes from "../../../assets/function/functionTypes";
+import generatePoints from "../../../utils/generation/generatePoints";
 
 function FunctionComponent({ func, className = "" }) {
 	const [{ signals }, dispatch] = useStateValue();
@@ -25,7 +26,6 @@ function FunctionComponent({ func, className = "" }) {
 	const [showParamsTooltip, setShowParamsTooltip] = useState(false);
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [functionTypeIndex, setFunctionTypeIndex] = useState(-1);
-	const [keepConstValue, setKeepConstValue] = useState(false);
 	const [searchParams] = useSearchParams();
 
 	//#region Refs
@@ -79,7 +79,12 @@ function FunctionComponent({ func, className = "" }) {
 	}
 
 	function onInputChange(property, value) {
-		if (property === "name" || property === "type") {
+		if (
+			property === "name" ||
+			property === "type" ||
+			property === "constValue" ||
+			property === "keepLastValue"
+		) {
 			updateFunctionProperty(property, value);
 			return;
 		}
@@ -114,6 +119,9 @@ function FunctionComponent({ func, className = "" }) {
 				break;
 			case "constValue":
 				func.setConstValue(value);
+				break;
+			case "keepLastValue":
+				func.setKeepLastValue(value);
 				break;
 			case "slope":
 				func.setSlope(value);
@@ -167,15 +175,30 @@ function FunctionComponent({ func, className = "" }) {
 		setFunctionTypeIndex(defaultIndex);
 	}, [signals, functionTypes]);
 
+	// Const keep last value logic
 	useEffect(() => {
-		if (!keepConstValue) return;
+		if (!func.keepLastValue) return;
 
 		const signal = getSignalById(signals, searchParams.get("signalId"));
-		const functionIndex = signal.functions.map((f) => f.id).indexOf(func.id);
-		if (functionIndex === 0) return;
 
-		// TODO
-	}, [keepConstValue]);
+		let minDiff = Number.POSITIVE_INFINITY;
+		let beforeIndex = 0;
+		signal.functions.forEach((f, i) => {
+			if (f.startTime + f.length - func.startTime < minDiff) {
+				minDiff = f.startTime + f.length - func.startTime;
+				beforeIndex = i;
+			}
+		});
+		// console.log("before index: ", beforeIndex);
+		// console.log("Before func: ", signal.functions[beforeIndex]);
+
+		const beforeFunctionPoints = generatePoints(signal.functions[beforeIndex], 0.01);
+		// console.log("Points: ", beforeFunctionPoints);
+		const lastValue = beforeFunctionPoints.y[beforeFunctionPoints.y.length - 1];
+		// console.log("Last value: ", lastValue);
+
+		func.setConstValue(lastValue);
+	}, [JSON.stringify(signals)]);
 
 	return (
 		<Accordion defaultOpen className={`function${className ? ` ${className}` : ""}`}>
@@ -254,7 +277,8 @@ function FunctionComponent({ func, className = "" }) {
 									width="10rem"
 									id={`${func.id}--const`}
 									className="function__params__input"
-									defaultValue={func.constValue}
+									disabled={func.keepLastValue}
+									value={func.constValue}
 									onChange={() =>
 										onInputChange("constValue", parseFloat(constValueRef.current.value))
 									}
@@ -263,8 +287,8 @@ function FunctionComponent({ func, className = "" }) {
 								<Checkbox
 									label="Keep last value"
 									id={`${func.id}--const-lastValue`}
-									checked={keepConstValue}
-									onChange={(e) => setKeepConstValue(e.target.checked)}
+									checked={func.keepLastValue}
+									onChange={(e) => onInputChange("keepLastValue", e.target.checked)}
 								/>
 							</div>
 						)}

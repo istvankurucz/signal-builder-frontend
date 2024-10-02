@@ -76,6 +76,10 @@
 	border-color: var(--border-color);
 	outline: none;
 }
+.input__input:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
 
 .input__unit {
 	width: var(--unit-width);

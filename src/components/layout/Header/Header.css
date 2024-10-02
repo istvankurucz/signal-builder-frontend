@@ -32,6 +32,7 @@
 .header__menu {
 	display: flex;
 	gap: 3rem;
+	align-items: center;
 	font-size: var(--fs-s);
 	font-weight: 500;
 	list-style: none;
@@ -48,6 +49,11 @@
 .header__menu a:hover,
 .header__menu a.active {
 	color: var(--secondary-color);
+}
+
+.header__menu__item__settings {
+	color: inherit;
+	margin-left: -2rem;
 }
 
 .header__ham {
