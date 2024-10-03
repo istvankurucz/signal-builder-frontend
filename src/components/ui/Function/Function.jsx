@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleRight, faEllipsisV, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import {
+	faAngleRight,
+	faEllipsisV,
+	faScrewdriverWrench,
+	faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "../Button/Button";
 import Accordion from "../Accordion/Accordion";
 import Input from "../../form/Input/Input";
@@ -14,20 +18,28 @@ import FunctionTag from "./FunctionTag/FunctionTag";
 import Checkbox from "../../form/Checkbox/Checkbox";
 import FunctionParamsTooltip from "./FunctionParamsTooltip/FunctionParamsTooltip";
 import "./Function.css";
-import getSignalById from "../../../utils/signal/getSignalById";
 import removeFunction from "../../../utils/function/removeFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
 import functionTypes from "../../../assets/function/functionTypes";
 import generatePoints from "../../../utils/generation/generatePoints";
+import useSignal from "../../../hooks/signal/useSignal";
+import { useSearchParams } from "react-router-dom";
 
-function FunctionComponent({ func, className = "" }) {
-	const [{ signals }, dispatch] = useStateValue();
+function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
+	//#region States
+	const [{ signals, sampling }, dispatch] = useStateValue();
+	const signal = useSignal();
 	const [isOpen, setIsOpen] = useState(true);
 	const [showParamsTooltip, setShowParamsTooltip] = useState(false);
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [functionTypeIndex, setFunctionTypeIndex] = useState(-1);
 	const [constValue, setConstValue] = useState(func.constValue);
-	const [searchParams] = useSearchParams();
+	const [offset, setOffset] = useState(func.offset);
+	const [frequency, setFrequency] = useState(func.frequency);
+	const [amplitude, setAmplitude] = useState(func.amplitude);
+	const [phase, setPhase] = useState(func.phase);
+	const [, setSearchParams] = useSearchParams();
+	//#endregion
 
 	//#region Refs
 	const timeoutRef = useRef();
@@ -46,7 +58,20 @@ function FunctionComponent({ func, className = "" }) {
 	const rampEndTimeRef = useRef();
 	//#endregion
 
+	//#region Variables
+	const { minValue, maxValue } = calculateMinMaxValue(signal, func);
+	//#endregion
+
 	//#region Functions
+	function calculateMinMaxValue(signal, func) {
+		if (signal == null || func == null) return { minValue: 0, maxValue: 0 };
+
+		return {
+			minValue: signal.offset + func.offset - func.amplitude,
+			maxValue: signal.offset + func.offset + func.amplitude,
+		};
+	}
+
 	function handleMouseEnter() {
 		// Remove overflow hidden from the upper accordion
 		const functionsBody = document.querySelector(
@@ -71,9 +96,6 @@ function FunctionComponent({ func, className = "" }) {
 
 	function deleteFunction(e) {
 		e.stopPropagation();
-
-		// Get the signal
-		const signal = getSignalById(signals, searchParams.get("signalId"));
 
 		// Remove the function
 		removeFunction(signals, dispatch, signal, func.id);
@@ -155,6 +177,14 @@ function FunctionComponent({ func, className = "" }) {
 		updateFunctionProperty("name", nameRef.current.value);
 	}
 
+	function showSineBuilderModal(e) {
+		e.stopPropagation();
+
+		setSearchParams({ signalId: signal.id, functionId: func.id });
+
+		setShowSineBuilder(true);
+	}
+
 	// Update function type
 	useEffect(() => {
 		if (functionTypeIndex === -1) return;
@@ -163,6 +193,7 @@ function FunctionComponent({ func, className = "" }) {
 	}, [functionTypes, functionTypeIndex]);
 	//#endregion
 
+	//#region Hooks
 	// Set the default index for function type select if the function is loaded
 	useEffect(() => {
 		if (func == null) return;
@@ -175,8 +206,6 @@ function FunctionComponent({ func, className = "" }) {
 	useEffect(() => {
 		if (!func.keepLastValue) return;
 
-		const signal = getSignalById(signals, searchParams.get("signalId"));
-
 		let minDiff = Number.POSITIVE_INFINITY;
 		let beforeIndex = 0;
 		signal.functions.forEach((f, i) => {
@@ -185,28 +214,37 @@ function FunctionComponent({ func, className = "" }) {
 				beforeIndex = i;
 			}
 		});
-		// console.log("before index: ", beforeIndex);
-		// console.log("Before func: ", signal.functions[beforeIndex]);
 
-		const beforeFunctionPoints = generatePoints(signal.functions[beforeIndex], 0.01);
-		// console.log("Points: ", beforeFunctionPoints);
+		const dt = Math.round((1 / sampling) * 10000) / 10000;
+		const beforeFunctionPoints = generatePoints(signal.functions[beforeIndex], dt);
 		const lastValue = beforeFunctionPoints.y[beforeFunctionPoints.y.length - 1];
-		console.log("Last value: ", lastValue);
 
 		setConstValue(lastValue);
 		func.setConstValue(lastValue);
 	}, [JSON.stringify(signals)]);
+
+	useEffect(() => {
+		if (func == null) return;
+
+		setFrequency(func.frequency);
+		setAmplitude(func.amplitude);
+		setPhase(func.phase);
+		setOffset(func.offset);
+	}, [JSON.stringify(func)]);
+	//#endregion
 
 	return (
 		<Accordion defaultOpen className={`function${className ? ` ${className}` : ""}`}>
 			<Accordion.Header
 				icon={faAngleRight}
 				className="function__header"
-				onClick={() => setIsOpen((open) => !open)}>
+				onClick={() => setIsOpen((open) => !open)}
+			>
 				<div
 					className="function__header__main"
 					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}>
+					onMouseLeave={handleMouseLeave}
+				>
 					<FunctionTag name={func.type} />
 					<h4 className="function__title">{func.name}</h4>
 
@@ -218,6 +256,12 @@ function FunctionComponent({ func, className = "" }) {
 						<FontAwesomeIcon icon={faEllipsisV} />
 					</Dropdown.Button>
 					<Dropdown.Items>
+						{func.type === "sine" && (
+							<Dropdown.Item className="function__option" onClick={showSineBuilderModal}>
+								<FontAwesomeIcon icon={faScrewdriverWrench} />
+								Sine builder
+							</Dropdown.Item>
+						)}
 						<Dropdown.Item className="function__option--danger" onClick={deleteFunction}>
 							<FontAwesomeIcon icon={faTrashCan} />
 							Delete
@@ -262,229 +306,257 @@ function FunctionComponent({ func, className = "" }) {
 					<H3 className="function__subtitle">Parameters</H3>
 
 					<div className="function__params__container">
-						{func.type === "const" && (
-							<div className="function__param function__param--const">
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Const:"
-									placeholder="Const"
-									width="10rem"
-									id={`${func.id}--const`}
-									className="function__params__input"
-									disabled={func.keepLastValue}
-									value={constValue}
-									onChange={(e) => {
-										const value = parseFloat(e.target.value);
-										setConstValue(value);
-										onInputChange("constValue", value);
-									}}
-									ref={constValueRef}
-								/>
-								<Checkbox
-									label="Keep last value"
-									id={`${func.id}--const-lastValue`}
-									checked={func.keepLastValue}
-									onChange={(e) => onInputChange("keepLastValue", e.target.checked)}
-								/>
+						<div className="function__inputs__container">
+							{func.type === "const" && (
+								<div className="function__param function__param--const">
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Const:"
+										placeholder="Const"
+										width="10rem"
+										id={`${func.id}--const`}
+										className="function__inputs__input"
+										disabled={func.keepLastValue}
+										value={isNaN(constValue) ? "" : constValue}
+										onChange={(e) => {
+											const value = parseFloat(e.target.value);
+											setConstValue(value);
+											onInputChange("constValue", value);
+										}}
+										ref={constValueRef}
+									/>
+									<Checkbox
+										label="Keep last value"
+										id={`${func.id}--const-lastValue`}
+										checked={func.keepLastValue}
+										onChange={(e) => onInputChange("keepLastValue", e.target.checked)}
+									/>
+								</div>
+							)}
+							{func.type === "linear" && (
+								<>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Slope:"
+										placeholder="Slope"
+										width="10rem"
+										id={`${func.id}--slope`}
+										className="function__inputs__input"
+										defaultValue={func.slope}
+										onChange={() =>
+											onInputChange("slope", parseFloat(slopeRef.current.value))
+										}
+										ref={slopeRef}
+									/>
+								</>
+							)}
+							{func.type === "sine" && (
+								<>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Frequency:"
+										placeholder="Frequency"
+										width="10rem"
+										id={`${func.id}--frequency`}
+										unit="Hz"
+										className="function__inputs__input"
+										value={isNaN(frequency) ? "" : frequency}
+										onChange={(e) => {
+											const value = parseFloat(e.target.value);
+											setFrequency(value);
+											onInputChange("frequency", value);
+										}}
+										ref={frequencyRef}
+									/>
+
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Amplitude:"
+										placeholder="Amplitude"
+										width="10rem"
+										id={`${func.id}--amplitude`}
+										className="function__inputs__input"
+										value={isNaN(amplitude) ? "" : amplitude}
+										onChange={(e) => {
+											const value = parseFloat(e.target.value);
+											setAmplitude(value);
+											onInputChange("amplitude", value);
+										}}
+										ref={amplitudeRef}
+									/>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Phase:"
+										placeholder="Phase"
+										width="10rem"
+										id={`${func.id}--phase`}
+										unit="deg"
+										className="function__inputs__input"
+										value={isNaN(phase) ? "" : phase}
+										onChange={(e) => {
+											const value = parseFloat(e.target.value);
+											setPhase(value);
+											onInputChange("phase", value);
+										}}
+										ref={phaseRef}
+									/>
+								</>
+							)}
+							{func.type === "step" && (
+								<>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Step value:"
+										placeholder="Step value"
+										width="10rem"
+										id={`${func.id}--stepValue`}
+										className="function__inputs__input"
+										defaultValue={func.stepValue}
+										onChange={() =>
+											onInputChange("stepValue", parseFloat(stepValueRef.current.value))
+										}
+										ref={stepValueRef}
+									/>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Step time:"
+										placeholder="Step time"
+										width="10rem"
+										id={`${func.id}--stepTime`}
+										unit="s"
+										className="function__inputs__input"
+										defaultValue={func.stepTime}
+										onChange={() =>
+											onInputChange("stepTime", parseFloat(stepTimeRef.current.value))
+										}
+										ref={stepTimeRef}
+									/>
+								</>
+							)}
+							{func.type === "ramp-up" && (
+								<>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Ramp start:"
+										placeholder="Ramp start"
+										width="10rem"
+										id={`${func.id}--rampStart`}
+										unit="s"
+										className="function__inputs__input"
+										defaultValue={func.rampStartTime}
+										onChange={() =>
+											onInputChange(
+												"rampStartTime",
+												parseFloat(rampStartTimeRef.current.value)
+											)
+										}
+										ref={rampStartTimeRef}
+									/>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Ramp end:"
+										placeholder="Ramp end"
+										width="10rem"
+										id={`${func.id}--rampEnd`}
+										unit="s"
+										className="function__inputs__input"
+										defaultValue={func.rampEndTime}
+										onChange={() =>
+											onInputChange(
+												"rampEndTime",
+												parseFloat(rampEndTimeRef.current.value)
+											)
+										}
+										ref={rampEndTimeRef}
+									/>
+									<Input
+										type="number"
+										direction="horizontal"
+										label="Slope:"
+										placeholder="Slope"
+										width="10rem"
+										id={`${func.id}--slope`}
+										className="function__inputs__input"
+										defaultValue={func.slope}
+										onChange={() =>
+											onInputChange("slope", parseFloat(slopeRef.current.value))
+										}
+										ref={slopeRef}
+									/>
+								</>
+							)}
+							{func.type !== "const" && (
+								<>
+									<Input
+										direction="horizontal"
+										label="Offset:"
+										placeholder="Offset"
+										width="10rem"
+										id={`${func.id}--offset`}
+										className="function__inputs__input"
+										value={isNaN(offset) ? "" : offset}
+										onChange={(e) => {
+											const value = parseFloat(e.target.value);
+											setOffset(value);
+											onInputChange("offset", value);
+										}}
+										ref={offsetRef}
+									/>
+								</>
+							)}
+							<Input
+								type="number"
+								direction="horizontal"
+								label="Start:"
+								placeholder="Start"
+								width="10rem"
+								unit="s"
+								id={`${func.id}--start`}
+								className="function__inputs__input"
+								defaultValue={func.startTime}
+								onChange={() =>
+									onInputChange("startTime", parseFloat(startTimeRef.current.value))
+								}
+								ref={startTimeRef}
+							/>
+							<Input
+								type="number"
+								direction="horizontal"
+								label="Length:"
+								placeholder="Length"
+								width="10rem"
+								unit="s"
+								id={`${func.id}--length`}
+								className="function__inputs__input"
+								defaultValue={func.length}
+								onChange={() =>
+									onInputChange("length", parseFloat(lengthRef.current.value))
+								}
+								ref={lengthRef}
+							/>
+						</div>
+
+						{func.type === "sine" && (
+							<div className="function__params__info">
+								<div className="function__params__info__row">
+									<span className="function__params__info__property">Min:</span>
+									<span className="function__params__info__value">{minValue}</span>
+								</div>
+								<div className="function__params__info__row">
+									<span className="function__params__info__property">Max:</span>
+									<span className="function__params__info__value">{maxValue}</span>
+								</div>
 							</div>
 						)}
-						{func.type === "linear" && (
-							<>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Slope:"
-									placeholder="Slope"
-									width="10rem"
-									id={`${func.id}--slope`}
-									className="function__params__input"
-									defaultValue={func.slope}
-									onChange={() =>
-										onInputChange("slope", parseFloat(slopeRef.current.value))
-									}
-									ref={slopeRef}
-								/>
-							</>
-						)}
-						{func.type === "sine" && (
-							<>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Frequency:"
-									placeholder="Frequency"
-									width="10rem"
-									id={`${func.id}--frequency`}
-									unit="Hz"
-									className="function__params__input"
-									defaultValue={func.frequency}
-									onChange={() =>
-										onInputChange("frequency", parseFloat(frequencyRef.current.value))
-									}
-									ref={frequencyRef}
-								/>
-
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Amplitude:"
-									placeholder="Amplitude"
-									width="10rem"
-									id={`${func.id}--amplitude`}
-									className="function__params__input"
-									defaultValue={func.amplitude}
-									onChange={() =>
-										onInputChange("amplitude", parseFloat(amplitudeRef.current.value))
-									}
-									ref={amplitudeRef}
-								/>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Phase:"
-									placeholder="Phase"
-									width="10rem"
-									id={`${func.id}--phase`}
-									unit="deg"
-									className="function__params__input"
-									defaultValue={func.phase}
-									onChange={() =>
-										onInputChange("phase", parseFloat(phaseRef.current.value))
-									}
-									ref={phaseRef}
-								/>
-							</>
-						)}
-						{func.type === "step" && (
-							<>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Step value:"
-									placeholder="Step value"
-									width="10rem"
-									id={`${func.id}--stepValue`}
-									className="function__params__input"
-									defaultValue={func.stepValue}
-									onChange={() =>
-										onInputChange("stepValue", parseFloat(stepValueRef.current.value))
-									}
-									ref={stepValueRef}
-								/>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Step time:"
-									placeholder="Step time"
-									width="10rem"
-									id={`${func.id}--stepTime`}
-									unit="s"
-									className="function__params__input"
-									defaultValue={func.stepTime}
-									onChange={() =>
-										onInputChange("stepTime", parseFloat(stepTimeRef.current.value))
-									}
-									ref={stepTimeRef}
-								/>
-							</>
-						)}
-						{func.type === "ramp-up" && (
-							<>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Ramp start:"
-									placeholder="Ramp start"
-									width="10rem"
-									id={`${func.id}--rampStart`}
-									unit="s"
-									className="function__params__input"
-									defaultValue={func.rampStartTime}
-									onChange={() =>
-										onInputChange(
-											"rampStartTime",
-											parseFloat(rampStartTimeRef.current.value)
-										)
-									}
-									ref={rampStartTimeRef}
-								/>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Ramp end:"
-									placeholder="Ramp end"
-									width="10rem"
-									id={`${func.id}--rampEnd`}
-									unit="s"
-									className="function__params__input"
-									defaultValue={func.rampEndTime}
-									onChange={() =>
-										onInputChange("rampEndTime", parseFloat(rampEndTimeRef.current.value))
-									}
-									ref={rampEndTimeRef}
-								/>
-								<Input
-									type="number"
-									direction="horizontal"
-									label="Slope:"
-									placeholder="Slope"
-									width="10rem"
-									id={`${func.id}--slope`}
-									className="function__params__input"
-									defaultValue={func.slope}
-									onChange={() =>
-										onInputChange("slope", parseFloat(slopeRef.current.value))
-									}
-									ref={slopeRef}
-								/>
-							</>
-						)}
-						{func.type !== "const" && (
-							<>
-								<Input
-									direction="horizontal"
-									label="Offset:"
-									placeholder="Offset"
-									width="10rem"
-									id={`${func.id}--offset`}
-									className="function__params__input"
-									defaultValue={func.offset}
-									onChange={() =>
-										onInputChange("offset", parseFloat(offsetRef.current.value))
-									}
-									ref={offsetRef}
-								/>
-							</>
-						)}
-						<Input
-							type="number"
-							direction="horizontal"
-							label="Start:"
-							placeholder="Start"
-							width="10rem"
-							unit="s"
-							id={`${func.id}--start`}
-							className="function__params__input"
-							defaultValue={func.startTime}
-							onChange={() =>
-								onInputChange("startTime", parseFloat(startTimeRef.current.value))
-							}
-							ref={startTimeRef}
-						/>
-						<Input
-							type="number"
-							direction="horizontal"
-							label="Length:"
-							placeholder="Length"
-							width="10rem"
-							unit="s"
-							id={`${func.id}--length`}
-							className="function__params__input"
-							defaultValue={func.length}
-							onChange={() => onInputChange("length", parseFloat(lengthRef.current.value))}
-							ref={lengthRef}
-						/>
 					</div>
 				</div>
 			</Accordion.Body>

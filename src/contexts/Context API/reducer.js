@@ -1,5 +1,6 @@
 export const initialState = {
 	signals: [],
+	sampling: 100,
 	feedback: {
 		show: false,
 		type: "info",
@@ -14,6 +15,12 @@ export default function reducer(state, action) {
 			return {
 				...state,
 				signals: action.signals,
+			};
+
+		case "SET_SAMPLING":
+			return {
+				...state,
+				sampling: action.sampling,
 			};
 
 		case "SET_FEEDBACK":

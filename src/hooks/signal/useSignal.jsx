@@ -10,10 +10,10 @@ function useSignal() {
 	const signalId = searchParams.get("signalId");
 
 	useEffect(() => {
-		const selectedSignal = signals.find((signal) => signal.id === signalId);
+		const result = signals.find((signal) => signal.id === signalId);
 
-		if (selectedSignal == undefined) setSignal(null);
-		else setSignal(selectedSignal);
+		if (result == undefined) setSignal(null);
+		else setSignal(result);
 	}, [signals, signalId]);
 
 	return signal;

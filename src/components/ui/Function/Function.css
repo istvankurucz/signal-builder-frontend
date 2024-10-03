@@ -1,5 +1,4 @@
 .function {
-	/* min-width: 500px; */
 	background-color: var(--info-color-light);
 	border-radius: var(--br-l);
 	padding: 0.5rem 1rem;
@@ -53,11 +52,17 @@
 
 .function__params__container {
 	display: flex;
+	gap: 5rem;
+	align-items: flex-start;
+}
+
+.function__inputs__container {
+	display: flex;
 	flex-direction: column;
 	gap: 1rem;
 }
 
-.function__params__input .input__label {
+.function__inputs__input .input__label {
 	width: 6rem;
 	font-size: var(--fs-s);
 }
@@ -66,4 +71,20 @@
 	display: flex;
 	gap: 2rem;
 	align-items: center;
+}
+
+.function__params__info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	font-size: var(--fs-xs);
+	background-color: var(--info-color);
+	border-radius: var(--br);
+	padding: 0.75rem;
+}
+
+.function__params__info__row {
+	display: flex;
+	gap: 1rem;
+	justify-content: space-between;
 }

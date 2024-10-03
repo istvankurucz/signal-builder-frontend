@@ -77,14 +77,14 @@ function Header() {
 								<span>Export</span>
 							</NavLink>
 						</li>
-						<li className="header__menu__item">
+						{/* <li className="header__menu__item">
 							<Dropdown>
 								<Dropdown.Button type="icon" className="header__menu__item__settings">
 									<FontAwesomeIcon icon={faGear} />
 								</Dropdown.Button>
 								<Dropdown.Items>Theme: light - dark</Dropdown.Items>
 							</Dropdown>
-						</li>
+						</li> */}
 					</ul>
 				</nav>
 

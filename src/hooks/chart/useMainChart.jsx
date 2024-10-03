@@ -6,9 +6,8 @@ import chartColors from "../../assets/chart/chartColors";
 
 function useMainChart() {
 	//#region States
-	const [{ signals }] = useStateValue();
+	const [{ signals, sampling }] = useStateValue();
 	const [data, setData] = useState({ labels: [], datasets: [] });
-	const [sampling, setSampling] = useState(100);
 	//#endregion
 
 	//#region Variables
@@ -115,38 +114,39 @@ function useMainChart() {
 				for (let i = 0; i < pointsLength; i++) {
 					const j = startIndex + i; // absolute index (from the beginning of xValues)
 					const dx = xValues[j] - func.startTime; // time from the function's startTime property
+					const offset = signal.offset + func.offset; // offset of the signal and function
 
 					// Update the yValues array based on function type
 					switch (func.type) {
 						case "const":
-							yValues[j] = func.constValue;
+							yValues[j] = func.constValue + signal.offset;
 							break;
 
 						case "linear":
-							yValues[j] = func.slope * dx + func.offset;
+							yValues[j] = func.slope * dx + offset;
 							break;
 
 						case "sine":
-							yValues[j] =
-								func.amplitude *
-									Math.sin(
-										2 * Math.PI * func.frequency * dx - (func.phase / 180) * Math.PI
-									) +
-								func.offset;
+							const amplitude = signal.scale.y * func.amplitude;
+							const phase =
+								signal.scale.x *
+								(2 * Math.PI * func.frequency * dx - (func.phase / 180) * Math.PI);
+
+							yValues[j] = amplitude * Math.sin(phase) + offset;
 							break;
 
 						case "step":
-							if (xValues[j] <= func.stepTime) yValues[j] = func.offset;
-							else yValues[j] = func.stepValue + func.offset;
+							if (xValues[j] <= func.stepTime) yValues[j] = offset;
+							else yValues[j] = func.stepValue + offset;
 							break;
 
 						case "ramp-up":
-							if (xValues[j] <= func.rampStartTime) yValues[j] = func.offset;
+							if (xValues[j] <= func.rampStartTime) yValues[j] = offset;
 							else if (xValues[j] > func.rampStartTime && xValues[j] <= func.rampEndTime) {
 								const dx = xValues[j] - func.rampStartTime;
-								yValues[j] = func.slope * dx + func.offset;
+								yValues[j] = func.slope * dx + offset;
 							} else {
-								if (j === 0) yValues[j] = func.offset;
+								if (j === 0) yValues[j] = offset;
 								else yValues[j] = yValues[j - 1];
 							}
 							break;
@@ -191,7 +191,7 @@ function useMainChart() {
 		});
 	}, [JSON.stringify(signals), sampling]);
 
-	return { chartData: data, chartOptions: options, sampling, setSampling };
+	return { chartData: data, chartOptions: options };
 }
 
 export default useMainChart;

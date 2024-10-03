@@ -36,16 +36,16 @@ import chartColors from "../../assets/chart/chartColors";
 
 function Generation() {
 	// States
-	const [{ signals }, dispatch] = useStateValue();
+	const [{ signals, sampling }, dispatch] = useStateValue();
 	const [showLoadSignalsModal, setShowLoadSignalsModal] = useState(false);
 	const [showSortSignalsModal, setShowSortSignalsModal] = useState(false);
 	useLoadSignals(setShowLoadSignalsModal);
 	const [zoomChart, setZoomChart] = useState(false);
 	const [index, setIndex] = useState(0);
-	const { chartData, chartOptions, sampling, setSampling } = useMainChart();
+	const { chartData, chartOptions } = useMainChart();
 	const [, setSearcParams] = useSearchParams();
 
-	console.log("Chart data: ", chartData);
+	// console.log("Chart data: ", chartData);
 	// console.log("Signals: ", signals);
 
 	// Refs
@@ -99,8 +99,8 @@ function Generation() {
 			const newSampling = parseFloat(e.target.value);
 
 			// Change the sampling
-			if (isNaN(newSampling)) setSampling(1);
-			else setSampling(newSampling);
+			if (isNaN(newSampling)) dispatch({ type: "SET_SAMPLING", sampling: 100 });
+			else dispatch({ type: "SET_SAMPLING", sampling: newSampling });
 		}, 1000);
 	}
 

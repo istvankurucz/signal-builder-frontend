@@ -29,8 +29,10 @@ import "./Signal.css";
 import addFunction from "../../../utils/function/addFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
 import useSignalInputs from "../../../hooks/signal/useSignalInputs";
+import SineBuilderModal from "../../../pages/Generation/SineBuilderModal/SineBuilderModal";
 
 function Signal({ className = "" }) {
+	//#region States
 	const [{ signals }, dispatch] = useStateValue();
 	const signal = useSignal();
 	const { name, setName, offset, setOffset, scale, setScale } = useSignalInputs();
@@ -39,6 +41,8 @@ function Signal({ className = "" }) {
 	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
 	const [showDuplicateSignalModal, setShowDuplicateSignalModal] = useState(false);
 	const [showDeleteSignalModal, setShowDeleteSignalModal] = useState(false);
+	const [showSineBuilderModal, setShowSineBuilderModal] = useState(false);
+	//#endregion
 
 	//#region Refs
 	const timeoutRef = useRef();
@@ -121,6 +125,7 @@ function Signal({ className = "" }) {
 				setShow={setShowDuplicateSignalModal}
 			/>
 			<DeleteSignalModal show={showDeleteSignalModal} setShow={setShowDeleteSignalModal} />
+			<SineBuilderModal show={showSineBuilderModal} setShow={setShowSineBuilderModal} />
 
 			<ShadowBox className={`signal${className !== "" ? ` ${className}` : ""}`}>
 				<header className="signal__header">
@@ -186,7 +191,7 @@ function Signal({ className = "" }) {
 								placeholder="Offset"
 								width="7rem"
 								id={`${signal?.id}-offset`}
-								value={offset}
+								value={isNaN(offset) ? "" : offset}
 								onChange={(e) => {
 									setOffset(parseFloat(e.target.value));
 									onInputChange("offset", parseFloat(e.target.value));
@@ -199,7 +204,7 @@ function Signal({ className = "" }) {
 								placeholder="Scale (x)"
 								width="7rem"
 								id={`${signal?.id}-scaleX`}
-								value={scale.x}
+								value={isNaN(scale.x) ? "" : scale.x}
 								onChange={(e) => {
 									setScale((prev) => ({ ...prev, x: parseFloat(e.target.value) }));
 									onInputChange("scale", {
@@ -215,7 +220,7 @@ function Signal({ className = "" }) {
 								placeholder="Scale (y)"
 								width="7rem"
 								id={`${signal?.id}-scaleY`}
-								value={scale.y}
+								value={isNaN(scale.y) ? "" : scale.y}
 								onChange={(e) => {
 									setScale((prev) => ({ ...prev, y: parseFloat(e.target.value) }));
 									onInputChange("scale", {
@@ -266,7 +271,13 @@ function Signal({ className = "" }) {
 								<P>There is no function.</P>
 							</div>
 						) : (
-							signal?.functions.map((f) => <FunctionComponent key={f.id} func={f} />)
+							signal?.functions.map((f) => (
+								<FunctionComponent
+									key={f.id}
+									func={f}
+									setShowSineBuilder={setShowSineBuilderModal}
+								/>
+							))
 						)}
 					</Accordion.Body>
 				</Accordion>

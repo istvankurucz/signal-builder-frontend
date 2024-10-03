@@ -65,6 +65,14 @@ class Signal {
 			console.log("The values (x, y) for scale must be numbers.");
 			return;
 		}
+		if (isNaN(scale.x)) {
+			this.scale.x = 1;
+			return;
+		}
+		if (isNaN(scale.y)) {
+			this.scale.y = 1;
+			return;
+		}
 
 		if (isNaN(scale.x) || isNaN(scale.y)) {
 			if (isNaN(scale.x)) this.scale = { ...this.scale, x: 1 };
