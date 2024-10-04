@@ -229,7 +229,7 @@ function SineBuilderModal({ show, setShow }) {
 		<Overlay show={show}>
 			<Modal>
 				<Modal.Header>
-					<Modal.Title>Sine builder</Modal.Title>
+					<Modal.Title>Sine builder - {func?.name}</Modal.Title>
 					<Modal.Close setShow={setShow} />
 				</Modal.Header>
 

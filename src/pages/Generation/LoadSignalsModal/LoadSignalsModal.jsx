@@ -39,7 +39,7 @@ function LoadSignalsModal({ show, setShow }) {
 		<Overlay show={show}>
 			<Modal>
 				<Modal.Header>
-					<Modal.Title>Load signals?</Modal.Title>
+					<Modal.Title>Load signals</Modal.Title>
 					<Modal.Close setShow={setShow} />
 				</Modal.Header>
 

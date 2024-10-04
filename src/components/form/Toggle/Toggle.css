@@ -1,0 +1,66 @@
+.toggle {
+	--default-color: var(--info-color-dark);
+	--default-color-opacity: hsl(0 0% 66% / 0.4);
+
+	position: relative;
+	cursor: pointer;
+	user-select: none;
+}
+
+/* #region Variants */
+.toggle--secondary {
+	--active-color: var(--secondary-color);
+	--active-color-opacity: hsl(205 100% 30% / 0.4);
+}
+.toggle--accent {
+	--active-color: var(--accent-color);
+	--active-color-opacity: hsl(125 56% 42% / 0.4);
+}
+/* #endregion */
+
+.toggle__label {
+	display: inline-flex;
+	gap: 1rem;
+	justify-content: flex-start;
+	align-items: center;
+	font-size: var(--fs-s);
+	cursor: pointer;
+}
+
+.toggle__input {
+	display: inline-block;
+	width: 1.5rem;
+	opacity: 0;
+	position: absolute;
+	top: 25%;
+	left: 0;
+}
+
+.toggle__marker {
+	width: 1.5rem;
+	height: 0.5rem;
+	background-color: var(--default-color-opacity);
+	border-radius: var(--br-pill);
+	position: relative;
+	transition: background-color 300ms ease;
+}
+.toggle__input:checked + .toggle__label .toggle__marker {
+	background-color: var(--active-color-opacity);
+}
+
+.toggle__marker::after {
+	content: "";
+	width: 1rem;
+	height: 1rem;
+	background-color: var(--default-color);
+	border-radius: var(--br-pill);
+	position: absolute;
+	top: 50%;
+	left: 0;
+	translate: -50% -50%;
+	transition: translate 300ms ease, background-color 300ms ease;
+}
+.toggle__input:checked + .toggle__label .toggle__marker::after {
+	background-color: var(--active-color);
+	translate: 100% -50%;
+}
