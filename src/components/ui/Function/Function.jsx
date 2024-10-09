@@ -121,49 +121,49 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 		// Set the property of the function
 		switch (property) {
 			case "name":
-				func.setName(value);
+				func.name = value;
 				break;
 			case "type":
-				func.setType(value);
+				func.type = value;
 				break;
 			case "startTime":
-				func.setStartTime(value);
+				func.startTime = value;
 				break;
 			case "length":
-				func.setLength(value);
+				func.length = value;
 				break;
 			case "offset":
-				func.setOffset(value);
+				func.offset = value;
 				break;
 			case "constValue":
-				func.setConstValue(value);
+				func.constValue = value;
 				break;
 			case "keepLastValue":
-				func.setKeepLastValue(value);
+				func.keepLastValue = value;
 				break;
 			case "slope":
-				func.setSlope(value);
+				func.slope = value;
 				break;
 			case "frequency":
-				func.setFrequency(value);
+				func.frequency = value;
 				break;
 			case "amplitude":
-				func.setAmplitude(value);
+				func.amplitude = value;
 				break;
 			case "phase":
-				func.setPhase(value);
+				func.phase = value;
 				break;
 			case "stepValue":
-				func.setStepValue(value);
+				func.stepValue = value;
 				break;
 			case "stepTime":
-				func.setStepTime(value);
+				func.stepTime = value;
 				break;
 			case "rampStartTime":
-				func.setRampStartTime(value);
+				func.rampStartTime = value;
 				break;
 			case "rampEndTime":
-				func.setRampEndTime(value);
+				func.rampEndTime = value;
 				break;
 		}
 
@@ -220,7 +220,7 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 		const lastValue = beforeFunctionPoints.y[beforeFunctionPoints.y.length - 1];
 
 		setConstValue(lastValue);
-		func.setConstValue(lastValue);
+		func.constValue = lastValue;
 	}, [JSON.stringify(signals)]);
 
 	useEffect(() => {
@@ -503,11 +503,10 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										width="10rem"
 										id={`${func.id}--offset`}
 										className="function__inputs__input"
-										value={isNaN(offset) ? "" : offset}
+										value={offset}
 										onChange={(e) => {
-											const value = parseFloat(e.target.value);
-											setOffset(value);
-											onInputChange("offset", value);
+											setOffset(e.target.value);
+											onInputChange("offset", parseFloat(e.target.value));
 										}}
 										ref={offsetRef}
 									/>

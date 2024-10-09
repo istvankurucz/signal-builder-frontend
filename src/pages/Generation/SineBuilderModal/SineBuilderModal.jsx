@@ -162,10 +162,10 @@ function SineBuilderModal({ show, setShow }) {
 
 	function saveFunction() {
 		// Update the function object
-		func.setFrequency(getMotorFrequency());
-		func.setAmplitude(calcResultantAmplitude());
-		func.setPhase(calcResultantPhase());
-		func.setOffset(calcResultantOffset());
+		func.frequency = getMotorFrequency();
+		func.amplitude = calcResultantAmplitude();
+		func.phase = calcResultantPhase();
+		func.offset = calcResultantOffset();
 
 		// Show feedback
 		dispatch({

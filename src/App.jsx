@@ -11,9 +11,9 @@ import {
 } from "chart.js";
 import Feedback from "./components/ui/Feedback/Feedback";
 import Generation from "./pages/Generation/Generation";
+import Toggle from "./components/form/Toggle/Toggle";
 import "./App.css";
 import useSaveSignals from "./hooks/storage/useSaveSignals";
-import Toggle from "./components/form/Toggle/Toggle";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 

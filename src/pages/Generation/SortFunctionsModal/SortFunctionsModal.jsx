@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
@@ -12,10 +12,13 @@ import FunctionTag from "../../../components/ui/Function/FunctionTag/FunctionTag
 import "./SortFunctionsModal.css";
 import useSignal from "../../../hooks/signal/useSignal";
 import updateSignals from "../../../utils/signal/updateSignals";
+import Checkbox from "../../../components/form/Checkbox/Checkbox";
 
 function SortFunctionsModal({ show, setShow }) {
+	//#region States
 	const [{ signals }, dispatch] = useStateValue();
 	const signal = useSignal();
+	const [autoSort, setAutoSort] = useState(false);
 	const {
 		tempElements,
 		setTempElements,
@@ -25,10 +28,13 @@ function SortFunctionsModal({ show, setShow }) {
 		handleDragEnd,
 		handleDragOver,
 	} = useDragAndDropSort();
+	//#endregion
 
+	//#region Refs
 	const elementsRef = useRef();
+	//#endregion
 
-	// Update the initial temp elements when the local states loaded
+	// Update the states when the local states loaded
 	useEffect(() => {
 		if (signal == null) return;
 
@@ -39,17 +45,25 @@ function SortFunctionsModal({ show, setShow }) {
 			dragging: false,
 		}));
 		setTempElements(newTempFunctions);
+
+		setAutoSort(signal.autoSort);
 	}, [signal]);
 
 	//#region Functions
 	function sortFunctions() {
-		// Sort the functions
-		const sortedFunctions = tempElements.map((element) =>
-			signal.functions.find((func) => func.id === element.id)
-		);
+		// Set the signal's autoSort property to true
+		signal.autoSort = autoSort;
 
-		// Update the functions of the signal
-		signal.setFunctions(sortedFunctions);
+		// If the auto sort is not enabled
+		if (!autoSort) {
+			// Sort the functions
+			const sortedFunctions = tempElements.map((element) =>
+				signal.functions.find((func) => func.id === element.id)
+			);
+
+			// Update the functions of the signal
+			signal.functions = sortedFunctions;
+		}
 
 		// Update signals array
 		updateSignals(signals, dispatch);
@@ -71,38 +85,51 @@ function SortFunctionsModal({ show, setShow }) {
 				</Modal.Header>
 
 				<Modal.Body>
-					<ElementSort
-						tempElements={tempElements}
-						setTempElements={setTempElements}
-						activeIndex={activeIndex}
-						setActiveIndex={setActiveIndex}
-						onDragOver={(e) => handleDragOver(e, elementsRef.current)}
-						ref={elementsRef}
-					>
-						{tempElements.map((element, i) => (
-							<ElementSort.Element
-								key={i}
-								isActive={activeIndex === i}
-								isDragging={element.dragging}
-								onDragStart={() => handleDragStart(i)}
-								onDragEnd={handleDragEnd}
-								onClick={() => setActiveIndex(i)}
-							>
-								<ShadowBox className="sortFunctions__element">
-									<FontAwesomeIcon
-										icon={faGripVertical}
-										title="Draggable"
-										className="sortFunctions__element__icon"
-									/>
-									<FunctionTag
-										name={element.type}
-										className="sortFunctions__element__tag"
-									/>
-									<span className="sortFunctions__element__text">{element.text}</span>
-								</ShadowBox>
-							</ElementSort.Element>
-						))}
-					</ElementSort>
+					<div className="sortFunctions__autoSort">
+						<Checkbox
+							label="Automatically sort functions based on start time property."
+							id="sortFunctionAutoSort"
+							checked={autoSort}
+							onChange={(e) => setAutoSort(e.target.checked)}
+							className="sortFunctions__autoSort__checkbox"
+						/>
+					</div>
+
+					{!autoSort && (
+						<ElementSort
+							tempElements={tempElements}
+							setTempElements={setTempElements}
+							activeIndex={activeIndex}
+							setActiveIndex={setActiveIndex}
+							onDragOver={(e) => handleDragOver(e, elementsRef.current)}
+							className="sortFunctions__sort"
+							ref={elementsRef}
+						>
+							{tempElements.map((element, i) => (
+								<ElementSort.Element
+									key={i}
+									isActive={activeIndex === i}
+									isDragging={element.dragging}
+									onDragStart={() => handleDragStart(i)}
+									onDragEnd={handleDragEnd}
+									onClick={() => setActiveIndex(i)}
+								>
+									<ShadowBox className="sortFunctions__element">
+										<FontAwesomeIcon
+											icon={faGripVertical}
+											title="Draggable"
+											className="sortFunctions__element__icon"
+										/>
+										<FunctionTag
+											name={element.type}
+											className="sortFunctions__element__tag"
+										/>
+										<span className="sortFunctions__element__text">{element.text}</span>
+									</ShadowBox>
+								</ElementSort.Element>
+							))}
+						</ElementSort>
+					)}
 				</Modal.Body>
 
 				<Modal.Footer>

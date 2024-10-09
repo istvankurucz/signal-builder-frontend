@@ -1,3 +1,11 @@
+.sortFunctions__autoSort {
+	padding-left: 0.5rem;
+}
+
+.sortFunctions__sort {
+	margin-top: 3rem;
+}
+
 .sortFunctions__element {
 	display: flex;
 	gap: 1rem;

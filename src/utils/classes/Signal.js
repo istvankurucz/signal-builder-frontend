@@ -10,22 +10,33 @@ class Signal {
 		offset = 0,
 		scale = { x: 1, y: 1 },
 		functions = [],
+		autoSort = false,
 		visible = true
 	) {
 		// Set the properties
-		this.id = id;
-		if (name === "") this.name = `Signal-${this.id}`;
-		else this.name = name;
-		this.offset = offset;
-		this.scale = scale;
-		this.functions = functions;
-		this.visible = visible;
+		this._id = id;
+		if (name === "") this._name = `Signal-${this._id}`;
+		else this._name = name;
+		this._offset = offset;
+		this._scale = scale;
+		this._functions = functions;
+		this._autoSort = autoSort;
+		this._visible = visible;
 
 		// Increment count
 		Signal.count++;
 	}
 
-	setName(name) {
+	// Id
+	get id() {
+		return this._id;
+	}
+
+	// Name
+	get name() {
+		return this._name;
+	}
+	set name(name) {
 		if (typeof name !== "string") {
 			console.log("Name parameter must be a string.");
 			return;
@@ -35,10 +46,14 @@ class Signal {
 			return;
 		}
 
-		this.name = name;
+		this._name = name;
 	}
 
-	setOffset(offset) {
+	// Offset
+	get offset() {
+		return this._offset;
+	}
+	set offset(offset) {
 		if (typeof offset !== "number") {
 			console.log("Offset parameter must be a number");
 			return;
@@ -49,10 +64,14 @@ class Signal {
 			return;
 		}
 
-		this.offset = offset;
+		this._offset = offset;
 	}
 
-	setScale(scale) {
+	// Scale
+	get scale() {
+		return this._scale;
+	}
+	set scale(scale) {
 		if (typeof scale !== "object") {
 			console.log("Scale parameter must be an object.");
 			return;
@@ -66,25 +85,29 @@ class Signal {
 			return;
 		}
 		if (isNaN(scale.x)) {
-			this.scale.x = 1;
+			this._scale.x = 1;
 			return;
 		}
 		if (isNaN(scale.y)) {
-			this.scale.y = 1;
+			this._scale.y = 1;
 			return;
 		}
 
 		if (isNaN(scale.x) || isNaN(scale.y)) {
-			if (isNaN(scale.x)) this.scale = { ...this.scale, x: 1 };
-			if (isNaN(scale.y)) this.scale = { ...this.scale, y: 1 };
+			if (isNaN(scale.x)) this._scale = { ...this._scale, x: 1 };
+			if (isNaN(scale.y)) this._scale = { ...this._scale, y: 1 };
 
 			return;
 		}
 
-		this.scale = scale;
+		this._scale = scale;
 	}
 
-	setFunctions(functions) {
+	// Functions
+	get functions() {
+		return this._functions;
+	}
+	set functions(functions) {
 		if (functions.constructor !== Array) {
 			console.log("The given parameter in not an array.");
 			return;
@@ -94,16 +117,33 @@ class Signal {
 			return;
 		}
 
-		this.functions = functions;
+		this._functions = functions;
 	}
 
-	setVisible(visible) {
+	// Auto sort
+	get autoSort() {
+		return this._autoSort;
+	}
+	set autoSort(autoSort) {
+		if (typeof autoSort !== "boolean") {
+			console.log("AutoSort parameter must be a boolean.");
+			return;
+		}
+
+		this._autoSort = autoSort;
+	}
+
+	// Visible
+	get visible() {
+		return this._visible;
+	}
+	set visible(visible) {
 		if (typeof visible !== "boolean") {
 			console.log("Visible parameter must be a boolean.");
 			return;
 		}
 
-		this.visible = visible;
+		this._visible = visible;
 	}
 }
 

@@ -15,7 +15,7 @@ export default function removeFunction(signals = [], dispatch, signal, functionI
 	const newFunctions = signal.functions.filter((f) => f.id !== functionId);
 
 	// Update the signal
-	signal.setFunctions(newFunctions);
+	signal.functions = newFunctions;
 
 	// Create the new signals array with the updated signal
 	updateSignals(signals, dispatch);

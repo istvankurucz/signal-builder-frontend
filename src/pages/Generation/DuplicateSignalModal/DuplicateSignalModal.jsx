@@ -26,10 +26,10 @@ function DuplicateSignalModal({ show, setShow }) {
 		const signal = getSignalById(signals, searchParams.get("signalId"));
 
 		// Copy the properties
-		newSignal.setName(name);
-		newSignal.setOffset(signal.offset);
-		newSignal.setScale(signal.scale);
-		newSignal.setFunctions(signal.functions);
+		newSignal.name = name;
+		newSignal.offset = signal.offset;
+		newSignal.scale = signal.scale;
+		newSignal.functions = signal.functions;
 
 		// Add the new signal to signals
 		addSignalToSignals(signals, dispatch, newSignal);

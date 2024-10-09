@@ -118,7 +118,7 @@ function Generation() {
 		if (signal == null) return;
 
 		// Update the visible property
-		signal.setVisible(e.target.checked);
+		signal.visible = e.target.checked;
 
 		// Update signals array
 		updateSignals(signals, dispatch);

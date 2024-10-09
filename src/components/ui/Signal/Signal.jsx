@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -71,13 +71,13 @@ function Signal({ className = "" }) {
 		// Set the property of the signal
 		switch (property) {
 			case "name":
-				signal.setName(value);
+				signal.name = value;
 				break;
 			case "offset":
-				signal.setOffset(value);
+				signal.offset = value;
 				break;
 			case "scale":
-				signal.setScale(value);
+				signal.scale = value;
 				break;
 		}
 
@@ -115,6 +115,20 @@ function Signal({ className = "" }) {
 		// After 3 seconds hide the jump button
 		setTimeout(() => setShowJumpButton(false), 3 * 1000);
 	}
+	//#endregion
+
+	//#region Hooks
+	// Sort the functions based on start time
+	const functionStartTimes = signal?.functions.map((f) => f.startTime);
+	useEffect(() => {
+		if (signal == null || signal.autoSort === false) return;
+
+		// Sort the function based on start time ascending
+		const sortedFunctions = signal.functions.toSorted((a, b) => a.startTime - b.startTime);
+
+		// Update the functions of the signal
+		signal.functions = sortedFunctions;
+	}, [signal, signal?.autoSort, functionStartTimes]);
 	//#endregion
 
 	return (

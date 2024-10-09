@@ -37,26 +37,35 @@ class Function {
 		rampStartTime = defaultValues.rampStartTime,
 		rampEndTime = defaultValues.rampEndTime
 	) {
-		this.id = id;
-		if (name === "") this.name = `Function-${id}`;
-		else this.name = name;
-		this.type = type;
-		this.startTime = startTime;
-		this.length = length;
-		this.offset = offset;
-		this.constValue = constValue;
-		this.keepLastValue = keepLastValue;
-		this.slope = slope;
-		this.frequency = frequency;
-		this.amplitude = amplitude;
-		this.phase = phase;
-		this.stepValue = stepValue;
-		this.stepTime = stepTime;
-		this.rampStartTime = rampStartTime;
-		this.rampEndTime = rampEndTime;
+		this._id = id;
+		if (name === "") this._name = `Function-${id}`;
+		else this._name = name;
+		this._type = type;
+		this._startTime = startTime;
+		this._length = length;
+		this._offset = offset;
+		this._constValue = constValue;
+		this._keepLastValue = keepLastValue;
+		this._slope = slope;
+		this._frequency = frequency;
+		this._amplitude = amplitude;
+		this._phase = phase;
+		this._stepValue = stepValue;
+		this._stepTime = stepTime;
+		this._rampStartTime = rampStartTime;
+		this._rampEndTime = rampEndTime;
 	}
 
-	setName(name) {
+	// Id
+	get id() {
+		return this._id;
+	}
+
+	// Name
+	get name() {
+		return this._name;
+	}
+	set name(name) {
 		if (typeof name !== "string") {
 			console.log("Name parameter must be a string.");
 			return;
@@ -66,10 +75,14 @@ class Function {
 			return;
 		}
 
-		this.name = name;
+		this._name = name;
 	}
 
-	setType(type) {
+	// Type
+	get type() {
+		return this._type;
+	}
+	set type(type) {
 		if (typeof type !== "string") {
 			console.log("Name parameter must be a string.");
 			return;
@@ -79,180 +92,232 @@ class Function {
 			return;
 		}
 
-		this.type = type;
+		this._type = type;
 	}
 
-	setStartTime(startTime) {
+	// Start time
+	get startTime() {
+		return this._startTime;
+	}
+	set startTime(startTime) {
 		if (typeof startTime !== "number") {
 			console.log("Start time parameter must be a number.");
 			return;
 		}
 		if (isNaN(startTime)) {
-			this.startTime = defaultValues.startTime;
+			this._startTime = defaultValues.startTime;
 			return;
 		}
 
-		this.startTime = startTime;
+		this._startTime = startTime;
 	}
 
-	setLength(length) {
+	// Length
+	get length() {
+		return this._length;
+	}
+	set length(length) {
 		if (typeof length !== "number") {
 			console.log("Length parameter must be a number.");
 			return;
 		}
 		if (isNaN(length)) {
-			this.length = defaultValues.length;
+			this._length = defaultValues.length;
 			return;
 		}
 
-		this.length = length;
+		this._length = length;
 	}
 
-	setOffset(offset) {
+	// Offset
+	get offset() {
+		return this._offset;
+	}
+	set offset(offset) {
 		if (typeof offset !== "number") {
 			console.log("Offset parameter must be a number.");
 			return;
 		}
 		if (isNaN(offset)) {
-			this.offset = defaultValues.offset;
+			this._offset = defaultValues.offset;
 			return;
 		}
 
-		this.offset = offset;
+		this._offset = offset;
 	}
 
-	setConstValue(constValue) {
+	// Const value
+	get constValue() {
+		return this._constValue;
+	}
+	set constValue(constValue) {
 		if (typeof constValue !== "number") {
 			console.log("Const value parameter must be a number.");
 			return;
 		}
 		if (isNaN(constValue)) {
-			this.constValue = defaultValues.constValue;
+			this._constValue = defaultValues.constValue;
 			return;
 		}
 
-		this.constValue = constValue;
+		this._constValue = constValue;
 	}
 
-	setKeepLastValue(keepLastValue) {
+	// Keep last value
+	get keepLastValue() {
+		return this._keepLastValue;
+	}
+	set keepLastValue(keepLastValue) {
 		if (typeof keepLastValue !== "boolean") {
 			console.log("KeepLastValue parameter must be a boolean.");
 			return;
 		}
 
-		this.keepLastValue = keepLastValue;
+		this._keepLastValue = keepLastValue;
 	}
 
-	setSlope(slope) {
+	// Slope
+	get slope() {
+		return this._slope;
+	}
+	set slope(slope) {
 		if (typeof slope !== "number") {
 			console.log("Slope parameter must be a number.");
 			return;
 		}
 		if (isNaN(slope)) {
-			this.slope = defaultValues.slope;
+			this._slope = defaultValues.slope;
 			return;
 		}
 
-		this.slope = slope;
+		this._slope = slope;
 	}
 
-	setFrequency(frequency) {
+	// Frequency
+	get frequency() {
+		return this._frequency;
+	}
+	set frequency(frequency) {
 		if (typeof frequency !== "number") {
 			console.log("Frequency parameter must be a number.");
 			return;
 		}
 		if (isNaN(frequency)) {
-			this.frequency = defaultValues.frequency;
+			this._frequency = defaultValues.frequency;
 			return;
 		}
 		if (frequency <= 0) {
-			this.frequency = defaultValues.frequency;
+			this._frequency = defaultValues.frequency;
 			return;
 		}
 
-		this.frequency = frequency;
+		this._frequency = frequency;
 	}
 
-	setAmplitude(amplitude) {
+	// Amplitude
+	get amplitude() {
+		return this._amplitude;
+	}
+	set amplitude(amplitude) {
 		if (typeof amplitude !== "number") {
 			console.log("Amplitude parameter must be a number.");
 			return;
 		}
 		if (isNaN(amplitude)) {
-			this.amplitude = defaultValues.amplitude;
+			this._amplitude = defaultValues.amplitude;
 			return;
 		}
 		if (amplitude <= 0) {
-			this.amplitude = defaultValues.amplitude;
+			this._amplitude = defaultValues.amplitude;
 			return;
 		}
 
-		this.amplitude = amplitude;
+		this._amplitude = amplitude;
 	}
 
-	setPhase(phase) {
+	// Phase
+	get phase() {
+		return this._phase;
+	}
+	set phase(phase) {
 		if (typeof phase !== "number") {
 			console.log("Phase parameter must be a number.");
 			return;
 		}
 		if (isNaN(phase)) {
-			this.phase = defaultValues.phase;
+			this._phase = defaultValues.phase;
 			return;
 		}
 
-		this.phase = phase;
+		this._phase = phase;
 	}
 
-	setStepValue(stepValue) {
+	// Step value
+	get stepValue() {
+		return this._stepValue;
+	}
+	set stepValue(stepValue) {
 		if (typeof stepValue !== "number") {
 			console.log("Step value parameter must be a number.");
 			return;
 		}
 		if (isNaN(stepValue)) {
-			this.stepValue = defaultValues.stepValue;
+			this._stepValue = defaultValues.stepValue;
 			return;
 		}
 
-		this.stepValue = stepValue;
+		this._stepValue = stepValue;
 	}
 
-	setStepTime(stepTime) {
+	// Step time
+	get stepTime() {
+		return this._stepTime;
+	}
+	set stepTime(stepTime) {
 		if (typeof stepTime !== "number") {
 			console.log("Step time parameter must be a number.");
 			return;
 		}
 		if (isNaN(stepTime)) {
-			this.stepTime = defaultValues.stepTime;
+			this._stepTime = defaultValues.stepTime;
 			return;
 		}
 
-		this.stepTime = stepTime;
+		this._stepTime = stepTime;
 	}
 
-	setRampStartTime(rampStartTime) {
+	// Ramp start time
+	get rampStartTime() {
+		return this._rampStartTime;
+	}
+	set rampStartTime(rampStartTime) {
 		if (typeof rampStartTime !== "number") {
 			console.log("Ramp start time parameter must be a number.");
 			return;
 		}
 		if (isNaN(rampStartTime)) {
-			this.rampStartTime = defaultValues.rampStartTime;
+			this._rampStartTime = defaultValues.rampStartTime;
 			return;
 		}
 
-		this.rampStartTime = rampStartTime;
+		this._rampStartTime = rampStartTime;
 	}
 
-	setRampEndTime(rampEndTime) {
+	// Ramp end time
+	get rampEndTime() {
+		return this._rampEndTime;
+	}
+	set rampEndTime(rampEndTime) {
 		if (typeof rampEndTime !== "number") {
 			console.log("Ramp end time parameter must be a number.");
 			return;
 		}
 		if (isNaN(rampEndTime)) {
-			this.rampEndTime = defaultValues.rampEndTime;
+			this._rampEndTime = defaultValues.rampEndTime;
 			return;
 		}
 
-		this.rampEndTime = rampEndTime;
+		this._rampEndTime = rampEndTime;
 	}
 }
 

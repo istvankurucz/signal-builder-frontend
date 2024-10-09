@@ -9,34 +9,35 @@ export default function getSignals() {
 
 	// Create Signal objects from the strings
 	return JSON.parse(signalsString).map((signal) => {
-		const functions = signal.functions.map((f) => {
+		const functions = signal._functions.map((f) => {
 			return new Function(
-				f.id,
-				f.name,
-				f.type,
-				f.startTime,
-				f.length,
-				f.offset,
-				f.constValue,
-				f.keepLastValue,
-				f.slope,
-				f.frequency,
-				f.amplitude,
-				f.phase,
-				f.stepValue,
-				f.stepTime,
-				f.rampStartTime,
-				f.rampEndTime
+				f._id,
+				f._name,
+				f._type,
+				f._startTime,
+				f._length,
+				f._offset,
+				f._constValue,
+				f._keepLastValue,
+				f._slope,
+				f._frequency,
+				f._amplitude,
+				f._phase,
+				f._stepValue,
+				f._stepTime,
+				f._rampStartTime,
+				f._rampEndTime
 			);
 		});
 
 		return new Signal(
-			signal.id,
-			signal.name,
-			signal.offset,
-			signal.scale,
+			signal._id,
+			signal._name,
+			signal._offset,
+			signal._scale,
 			functions,
-			signal.visible
+			signal._autoSort,
+			signal._visible
 		);
 	});
 }

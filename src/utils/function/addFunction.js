@@ -12,7 +12,7 @@ export default function addFunction(signal, newFunction) {
 	const newFunctions = [...signal.functions, newFunction];
 
 	// Set the functions property of the signal
-	signal.setFunctions(newFunctions);
+	signal.functions = newFunctions;
 
 	// Return the created array
 	return signal;
