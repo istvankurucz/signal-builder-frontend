@@ -200,8 +200,12 @@ function SineBuilderModal({ show, setShow }) {
 
 	// Update the chart
 	useEffect(() => {
+		if (!show) return;
+
+		// Clear the current timeout
 		clearTimeout(timeoutRef.current);
 
+		// Set up a new timer
 		timeoutRef.current = setTimeout(() => {
 			// Get motor frequency
 			const motorFrequency = getMotorFrequency();
@@ -222,7 +226,17 @@ function SineBuilderModal({ show, setShow }) {
 			// Set the state
 			setYValues(values);
 		}, 500);
-	}, [timeoutRef, motorFrequency, motorAmplitude, motorOffset, amplitudes, phases, offsests]);
+	}, [
+		show,
+		xValues,
+		timeoutRef,
+		motorFrequency,
+		motorAmplitude,
+		motorOffset,
+		amplitudes,
+		phases,
+		offsests,
+	]);
 	//#endregion
 
 	return (
