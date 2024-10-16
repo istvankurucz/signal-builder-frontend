@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
 	Chart as ChartJS,
@@ -12,17 +13,24 @@ import {
 import Feedback from "./components/ui/Feedback/Feedback";
 import Generation from "./pages/Generation/Generation";
 import Toggle from "./components/form/Toggle/Toggle";
-import "./App.css";
+import Export from "./pages/Export/Export";
 import useSaveSignals from "./hooks/storage/useSaveSignals";
+import LoadSignalsModal from "./pages/Generation/LoadSignalsModal/LoadSignalsModal";
+import useLoadSignals from "./hooks/storage/useLoadSignals";
+import "./App.css";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function App() {
 	useSaveSignals();
+	const [showLoadSignalsModal, setShowLoadSignalsModal] = useState(false);
+	useLoadSignals(setShowLoadSignalsModal);
 
 	return (
 		<>
 			<Feedback />
+
+			<LoadSignalsModal show={showLoadSignalsModal} setShow={setShowLoadSignalsModal} />
 
 			<Routes>
 				<Route path="/generation" element={<Generation />} />
@@ -35,7 +43,7 @@ function App() {
 						</>
 					}
 				/>
-				<Route path="/export" element={<h1>export page</h1>} />
+				<Route path="/export" element={<Export />} />
 
 				<Route path="/" element={<Navigate to="/generation" replace />} />
 				<Route path="*" element={<h1>Page not found.</h1>} />

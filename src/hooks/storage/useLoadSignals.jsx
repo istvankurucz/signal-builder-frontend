@@ -5,26 +5,35 @@ import getSignalsUpdatedAt from "../../utils/storage/getSignalsUpdatedAt";
 import { useSearchParams } from "react-router-dom";
 
 function useLoadSignals(setShow) {
-	const [, dispatch] = useStateValue();
-	const [, setSearcParams] = useSearchParams();
+	const [{ signals }, dispatch] = useStateValue();
+	const [, setSearchParams] = useSearchParams();
 
 	useEffect(() => {
-		const signals = getSignals();
+		// Check if there are local signals
+		if (signals.length > 0) {
+			// Set the signalId query in the URL
+			setSearchParams({ signalId: signals[0].id });
+
+			return;
+		}
+
+		// Load the signals from storage
+		const signalsFromStorage = getSignals();
 		const updatedAt = getSignalsUpdatedAt();
 		const difference = new Date() - updatedAt;
 
 		if (difference > 1000 * 60 * 60) {
 			// if (difference > 100) {
-			if (signals.length > 0) setShow(true);
+			if (signalsFromStorage.length > 0) setShow(true);
 		} else {
-			if (signals.length === 0) return;
+			if (signalsFromStorage.length === 0) return;
 
 			dispatch({
 				type: "SET_SIGNALS",
-				signals: signals,
+				signals: signalsFromStorage,
 			});
 
-			setSearcParams({ signalId: signals[0].id });
+			setSearchParams({ signalId: signalsFromStorage[0].id });
 		}
 	}, []);
 }

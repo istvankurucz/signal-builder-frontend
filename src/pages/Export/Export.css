@@ -1,0 +1,43 @@
+.export__container {
+	display: flex;
+	gap: 5rem;
+}
+
+.export__left {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.export__settings__inputs {
+	display: flex;
+	gap: 3rem;
+}
+
+.export__file__inputs {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.export__file__full {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-end;
+}
+
+.export__alert .p:last-child {
+	margin-bottom: 0;
+}
+
+.export__button {
+	width: fit-content;
+}
+
+.export__result .p {
+	color: inherit;
+}
+.export__result .p:last-child {
+	margin-bottom: 0;
+}

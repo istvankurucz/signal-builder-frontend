@@ -29,7 +29,7 @@
 	--info-color-dark: darkgray;
 	--success-color: green;
 	--danger-color: darkred;
-	--warning-color: orange;
+	--warning-color: hsl(39, 100%, 45%);
 	--text-color: #000f1a;
 
 	/* Border-radius */

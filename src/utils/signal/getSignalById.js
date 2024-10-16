@@ -10,7 +10,7 @@ export default function getSignalById(signals = [], signalId = "") {
 
 	// Check if there is a signal ins signals array with the given ID
 	if (signal == undefined) {
-		console.log("Signal wit the given ID is not found.");
+		console.log("Signal with the given ID is not found.");
 		return null;
 	}
 

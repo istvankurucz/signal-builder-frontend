@@ -1,0 +1,66 @@
+.mainChart__container {
+	--chart-width: 600px;
+
+	min-width: var(--chart-width);
+	flex-shrink: 0;
+	align-self: flex-start;
+	position: sticky;
+	top: 5rem;
+}
+
+.mainChart {
+	width: var(--chart-width);
+	height: calc(var(--chart-width) / 1.9);
+	text-align: center;
+	background-color: var(--theme-bg-color);
+	position: relative;
+}
+.mainChart--zoom {
+	width: 95%;
+	max-width: var(--max-width);
+	height: 80%;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	z-index: 1;
+	translate: -50% -50%;
+}
+
+.mainChart__zoom {
+	gap: 0.5rem;
+	font-size: var(--fs-xl);
+	color: var(--info-color);
+	box-shadow: 0 -0.125rem 0.25rem var(--info-color);
+	padding: 0.25rem 0.5rem;
+	position: absolute;
+	top: -1rem;
+	right: 0;
+}
+
+.mainChart__zoom__text {
+	font-size: var(--fs-xs);
+}
+
+.mainChart__sampling {
+	margin-top: 2rem;
+}
+
+.mainChart__legend {
+	margin-top: 2rem;
+}
+
+.mainChart__legend__title {
+	margin-bottom: 0;
+}
+
+.mainChart__legend__container {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-left: 2rem;
+	margin-top: 0.5rem;
+}
+
+.mainChart__legend__checkbox {
+	color: var(--color);
+}

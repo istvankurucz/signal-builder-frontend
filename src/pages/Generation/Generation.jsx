@@ -1,18 +1,8 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
-import useLoadSignals from "../../hooks/storage/useLoadSignals";
-import LoadSignalsModal from "./LoadSignalsModal/LoadSignalsModal";
 import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Line } from "react-chartjs-2";
-import {
-	faAdd,
-	faBan,
-	faCaretRight,
-	faMagnifyingGlassMinus,
-	faMagnifyingGlassPlus,
-	faSort,
-} from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faBan, faSort } from "@fortawesome/free-solid-svg-icons";
 import Container from "../../components/layout/Container/Container";
 import Page from "../../components/layout/Page/Page";
 import Button from "../../components/ui/Button/Button";
@@ -22,51 +12,24 @@ import P from "../../components/ui/P/P";
 import SignalTabSelect from "../../components/ui/SignalTabSelect/SignalTabSelect";
 import SignalComponent from "../../components/ui/Signal/Signal";
 import SortSignalsModal from "./SortSignalsModal/SortSignalsModal";
-import "./Generation.css";
 import Signal from "../../utils/classes/Signal";
 import addSignalToSignals from "../../utils/signal/addSignalToSignals";
-import H3 from "../../components/ui/H3/H3";
-import Accordion from "../../components/ui/Accordion/Accordion";
-import Checkbox from "../../components/form/Checkbox/Checkbox";
-import getSignalById from "../../utils/signal/getSignalById";
-import updateSignals from "../../utils/signal/updateSignals";
-import useMainChart from "../../hooks/chart/useMainChart";
-import Input from "../../components/form/Input/Input";
-import chartColors from "../../assets/chart/chartColors";
+import MainChart from "../../components/ui/MainChart/MainChart";
+import "./Generation.css";
 
 function Generation() {
-	// States
-	const [{ signals, sampling }, dispatch] = useStateValue();
-	const [showLoadSignalsModal, setShowLoadSignalsModal] = useState(false);
+	//#region States
+	const [{ signals }, dispatch] = useStateValue();
 	const [showSortSignalsModal, setShowSortSignalsModal] = useState(false);
-	useLoadSignals(setShowLoadSignalsModal);
-	const [zoomChart, setZoomChart] = useState(false);
 	const [index, setIndex] = useState(0);
-	const { chartData, chartOptions } = useMainChart();
 	const [, setSearcParams] = useSearchParams();
+	//#endregion
 
-	// console.log("Chart data: ", chartData);
-	// console.log("Signals: ", signals);
-
-	// Refs
+	//#region Refs
 	const timeoutRef = useRef();
+	//#endregion
 
-	// Hooks
-	// Zoom out from chart if clicked outside
-	useLayoutEffect(() => {
-		function handleClick(e) {
-			if (zoomChart) {
-				const chart = e.target.closest(".generation__chart");
-				if (chart == undefined) setZoomChart(false);
-			}
-		}
-
-		window.addEventListener("click", handleClick);
-
-		return () => window.removeEventListener("click", handleClick);
-	}, [zoomChart]);
-
-	// Functions
+	//#region Functions
 	function createSignal() {
 		// Create the new signal
 		const newSignal = new Signal();
@@ -88,46 +51,11 @@ function Generation() {
 			},
 		});
 	}
-
-	function handleSamplingChange(e) {
-		// Clear the timeout
-		clearTimeout(timeoutRef.current);
-
-		// Set a new timer
-		timeoutRef.current = setTimeout(() => {
-			// Get the input value
-			const newSampling = parseFloat(e.target.value);
-
-			// Change the sampling
-			if (isNaN(newSampling)) dispatch({ type: "SET_SAMPLING", sampling: 100 });
-			else dispatch({ type: "SET_SAMPLING", sampling: newSampling });
-		}, 1000);
-	}
-
-	function changeSignalVisibility(e, signalId = "") {
-		// Check if there is a signal ID
-		if (signalId === "") {
-			console.log("No signal ID was provided.");
-			return;
-		}
-
-		// Get the signal from state
-		const signal = getSignalById(signals, signalId);
-
-		// Check if the signal exists
-		if (signal == null) return;
-
-		// Update the visible property
-		signal.visible = e.target.checked;
-
-		// Update signals array
-		updateSignals(signals, dispatch);
-	}
+	//#endregion
 
 	return (
 		<Page className="generation">
 			<SortSignalsModal show={showSortSignalsModal} setShow={setShowSortSignalsModal} />
-			<LoadSignalsModal show={showLoadSignalsModal} setShow={setShowLoadSignalsModal} />
 
 			<Container centered className="generation__container">
 				<section className="generation__section generation__section--signals">
@@ -179,59 +107,7 @@ function Generation() {
 					)}
 				</section>
 
-				<section className="generation__section generation__section--chart">
-					<ShadowBox
-						p="0.5rem"
-						className={`generation__chart${zoomChart ? " generation__chart--zoom" : ""}`}
-					>
-						<Button
-							variant="primary"
-							title={zoomChart ? "Zoom out" : "Zoom in"}
-							className="generation__chart__zoom"
-							onClick={() => setZoomChart((zoom) => !zoom)}
-						>
-							<span className="generation__chart__zoom__text">
-								{zoomChart ? "Zoom out" : "Zoom in"}
-							</span>
-							<FontAwesomeIcon
-								icon={zoomChart ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
-							/>
-						</Button>
-
-						<Line data={chartData} options={chartOptions} />
-					</ShadowBox>
-
-					<Input
-						type="number"
-						direction="horizontal"
-						label="Sampling:"
-						id="generationSampling"
-						defaultValue={sampling}
-						unit="Hz"
-						className="generation__sampling"
-						onChange={handleSamplingChange}
-					/>
-
-					<Accordion defaultOpen className="generation__legend">
-						<Accordion.Header icon={faCaretRight}>
-							<H3 className="generation__legend__title">Signals</H3>
-						</Accordion.Header>
-
-						<Accordion.Body className="generation__legend__container">
-							{signals.map((signal, i) => (
-								<div key={signal.id} style={{ "--color": chartColors[i] }}>
-									<Checkbox
-										label={signal.name}
-										id={signal.id}
-										defaultChecked={signal.visible}
-										onChange={(e) => changeSignalVisibility(e, signal.id)}
-										className="generation__legend__checkbox"
-									/>
-								</div>
-							))}
-						</Accordion.Body>
-					</Accordion>
-				</section>
+				<MainChart />
 			</Container>
 		</Page>
 	);

@@ -85,6 +85,17 @@ function useMainChart() {
 		return { minX, maxX };
 	}
 
+	function checkSignalsMinMax(minX, maxX) {
+		if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
+			// Update the data state
+			setData((data) => ({ ...data, datasets: [] }));
+
+			return false;
+		}
+
+		return true;
+	}
+
 	function getStartIndex(xValues = [], startTime) {
 		// Init index
 		let index = 0;
@@ -101,7 +112,7 @@ function useMainChart() {
 	function createYValues(signals = [], xValues = []) {
 		return signals.map((signal) => {
 			// Skip the signal if it is hidden
-			if (!signal.visible) return { properties: signal, yValues: [] };
+			if (!signal.visible) return { properties: signal, points: [] };
 
 			// Init an array for y values of signal
 			const yValues = new Array(xValues.length).fill(null);
@@ -170,11 +181,14 @@ function useMainChart() {
 
 	// Update the points if something changes inside signals
 	useEffect(() => {
-		// If there is no signals then return
+		// If there is no signals return
 		if (signals.length === 0) return;
 
 		// Get the min and max value along x-axis
 		const { minX, maxX } = getSignalsMinMax(signals);
+
+		// Check if there is a valid minX and maxX
+		if (!checkSignalsMinMax(minX, maxX)) return;
 
 		// Generate the x and y values
 		const numberOfPoints = getNumberOfPoints(maxX - minX, dt);

@@ -22,6 +22,7 @@
 	cursor: not-allowed;
 }
 
+/* #region Variants */
 .button--primary {
 	--color: var(--text-color);
 	--bg-color: var(--primary-color);
@@ -50,6 +51,7 @@
 	--color: var(--primary-color);
 	--bg-color: var(--warning-color);
 }
+/* #endregion */
 
 .button--outlined {
 	color: var(--bg-color);

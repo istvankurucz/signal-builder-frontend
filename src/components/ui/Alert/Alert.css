@@ -1,0 +1,57 @@
+.alert {
+	display: none;
+	color: var(--alert-color);
+	background-color: var(--alert-bg-color);
+	border-radius: var(--br);
+	padding: 1rem 2rem;
+}
+.alert--show {
+	display: flex;
+}
+
+/* #region Variants */
+.alert--info {
+	--alert-color: var(--text-color);
+	--alert-bg-color: var(--info-color);
+}
+.alert--primary {
+	--alert-color: var(--text-color);
+	--alert-bg-color: var(--primary-color);
+}
+.alert--secondary {
+	--alert-color: var(--primary-color);
+	--alert-bg-color: var(--secondary-color);
+}
+.alert--danger {
+	--alert-color: var(--primary-color);
+	--alert-bg-color: var(--danger-color);
+}
+.alert--success {
+	--alert-color: var(--primary-color);
+	--alert-bg-color: var(--success-color);
+}
+.alert--warning {
+	--alert-color: var(--primary-color);
+	--alert-bg-color: var(--warning-color);
+}
+/* #endregion */
+
+.alert__icon {
+	font-size: 3rem;
+	opacity: 0.75;
+}
+
+.alert__divider {
+	opacity: 0.5;
+}
+
+.alert__content {
+	align-self: center;
+}
+
+.alert__close {
+	flex-shrink: 0;
+	color: var(--alert-color);
+	background-color: var(--alert-bg-color);
+	border-color: var(--alert-bg-color);
+}
