@@ -37,6 +37,7 @@ export default function getSignals() {
 			signal._scale,
 			functions,
 			signal._autoSort,
+			signal._reverseTime,
 			signal._visible
 		);
 	});

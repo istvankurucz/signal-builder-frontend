@@ -2,11 +2,12 @@ import { useEffect } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import getSignals from "../../utils/storage/getSignals";
 import getSignalsUpdatedAt from "../../utils/storage/getSignalsUpdatedAt";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 function useLoadSignals(setShow) {
 	const [{ signals }, dispatch] = useStateValue();
 	const [, setSearchParams] = useSearchParams();
+	const location = useLocation();
 
 	useEffect(() => {
 		// Check if there are local signals
@@ -35,7 +36,7 @@ function useLoadSignals(setShow) {
 
 			setSearchParams({ signalId: signalsFromStorage[0].id });
 		}
-	}, []);
+	}, [location.pathname]);
 }
 
 export default useLoadSignals;

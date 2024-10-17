@@ -12,6 +12,10 @@
 .tooltip--right {
 	right: 0;
 }
+.tooltip--center {
+	left: 50%;
+	translate: -50% 0;
+}
 
 .tooltip--show {
 	display: block;

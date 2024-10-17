@@ -11,6 +11,7 @@ class Signal {
 		scale = { x: 1, y: 1 },
 		functions = [],
 		autoSort = false,
+		reverseTime = null,
 		visible = true
 	) {
 		// Set the properties
@@ -21,6 +22,7 @@ class Signal {
 		this._scale = scale;
 		this._functions = functions;
 		this._autoSort = autoSort;
+		this._reverseTime = reverseTime;
 		this._visible = visible;
 
 		// Increment count
@@ -131,6 +133,22 @@ class Signal {
 		}
 
 		this._autoSort = autoSort;
+	}
+
+	get reverseTime() {
+		return this._reverseTime;
+	}
+	set reverseTime(reverseTime) {
+		if (reverseTime != null && typeof reverseTime !== "number") {
+			console.log("Reverse time parameter must be a number or null");
+			return;
+		}
+
+		if (isNaN(reverseTime)) {
+			this._reverseTime = null;
+		}
+
+		this._reverseTime = reverseTime;
 	}
 
 	// Visible

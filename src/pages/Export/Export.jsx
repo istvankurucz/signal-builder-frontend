@@ -14,21 +14,26 @@ import MainChart from "../../components/ui/MainChart/MainChart";
 import useSampling from "../../hooks/chart/useSampling";
 import generateExportFileName from "../../utils/general/generateExportFileName";
 import P from "../../components/ui/P/P";
+import Checkbox from "../../components/form/Checkbox/Checkbox";
 import useMainChart from "../../hooks/chart/useMainChart";
+import Tooltip from "../../components/ui/Tooltip/Tooltip";
 import "./Export.css";
 
 function Export() {
 	//#region States
 	const [{ signals }, dispatch] = useStateValue();
 	const [sampling, setSampling] = useSampling();
+	const [useDifferentPath, setUseDifferentPath] = useState(false);
 	const [filename, setFileName] = useState(generateExportFileName());
 	const [showExportResult, setShowExportResult] = useState(false);
 	const [outputFilePath, setOutputFilePath] = useState("");
+	const [showCopyTooltip, setShowCopyTooltip] = useState(false);
 	const { chartData } = useMainChart();
 	//#endregion
 
 	//#region Refs
 	const delimiterRef = useRef();
+	const directoryPathRef = useRef();
 	//#endregion
 
 	//#region Functions
@@ -39,12 +44,31 @@ function Export() {
 				type: "SET_FEEDBACK",
 				feedback: {
 					show: true,
-					type: "error",
+					type: "danger",
 					message: "You have no signal.",
 					details: "Create one before export.",
 				},
 			});
 			return;
+		}
+
+		// Check directory path
+		let directory = null;
+		if (useDifferentPath) {
+			if (directoryPathRef.current.value === "") {
+				dispatch({
+					type: "SET_FEEDBACK",
+					feedback: {
+						show: true,
+						type: "danger",
+						message: "Directory is not specified.",
+						details: "Enter a directory or use the default one.",
+					},
+				});
+				return;
+			}
+
+			directory = directoryPathRef.current.value;
 		}
 
 		// Check filename
@@ -53,7 +77,7 @@ function Export() {
 				type: "SET_FEEDBACK",
 				feedback: {
 					show: true,
-					type: "error",
+					type: "danger",
 					message: "Filename is not specified.",
 					details: "",
 				},
@@ -68,7 +92,7 @@ function Export() {
 				type: "SET_FEEDBACK",
 				feedback: {
 					show: true,
-					type: "error",
+					type: "danger",
 					message: "Delimiter is not specified.",
 					details: "",
 				},
@@ -90,6 +114,7 @@ function Export() {
 		try {
 			// Send the request
 			const res = await axios.post("/write", {
+				directory,
 				filename,
 				delimiter,
 				data,
@@ -110,20 +135,35 @@ function Export() {
 					},
 				});
 			} else {
-				setOutputFilePath(path.replaceAll("\\", "\\"));
+				setOutputFilePath(path);
 				setFileName(generateExportFileName());
 			}
 
 			setShowExportResult(true);
+			window.scrollTo(0, document.body.scrollHeight);
 		} catch (e) {
 			console.log("Error exporting the signals.\n", e);
 		}
+	}
+
+	function copyPath() {
+		window.navigator.clipboard.writeText(outputFilePath);
+
+		dispatch({
+			type: "SET_FEEDBACK",
+			feedback: {
+				show: true,
+				type: "info",
+				message: "Path copied.",
+				details: "",
+			},
+		});
 	}
 	//#endregion
 
 	return (
 		<Page className="export">
-			<Container centered className="export__container">
+			<Page.Container centered className="export__container">
 				<section className="export__left">
 					<ShadowBox className="export__settings">
 						<H2>Settings</H2>
@@ -156,15 +196,29 @@ function Export() {
 						<H2>File</H2>
 
 						<div className="export__file__inputs">
-							{/* <Input
-								type="text"
-								label="Folder"
-								id="exportFolder"
-								placeholder="Folder"
-								fullW
-								defaultValue="<FOLDER>"
-								readOnly
-							/> */}
+							<div className="export__differentDirectory">
+								<P variant="info">
+									By default the output directory is:{" "}
+									<strong>Documents/AVL Signal Builder data</strong>
+								</P>
+								<Checkbox
+									label="Use different path"
+									id="exportUseDifferentPath"
+									checked={useDifferentPath}
+									onChange={(e) => setUseDifferentPath(e.target.checked)}
+								/>
+								{useDifferentPath && (
+									<Input
+										type="text"
+										label="Directory path"
+										id="exportFolder"
+										placeholder="Directory path (e.g. C:\Users\...)"
+										fullW
+										className="export__directory"
+										ref={directoryPathRef}
+									/>
+								)}
+							</div>
 
 							<div className="export__file__full">
 								<Input
@@ -206,13 +260,23 @@ function Export() {
 						) : (
 							<Alert variant="success" icon={faCheck} className="export__result">
 								<P>File was written successfully. Path:</P>
-								<P>{outputFilePath}</P>
+								<div
+									className="export__result__file"
+									onMouseEnter={() => setShowCopyTooltip(true)}
+									onMouseLeave={() => setShowCopyTooltip(false)}
+									onClick={copyPath}
+								>
+									<P>{outputFilePath}</P>
+									<Tooltip align="center" show={showCopyTooltip}>
+										Click to copy path
+									</Tooltip>
+								</div>
 							</Alert>
 						))}
 				</section>
 
 				<MainChart />
-			</Container>
+			</Page.Container>
 		</Page>
 	);
 }

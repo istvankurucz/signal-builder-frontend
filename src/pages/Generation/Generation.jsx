@@ -1,9 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd, faBan, faSort } from "@fortawesome/free-solid-svg-icons";
-import Container from "../../components/layout/Container/Container";
 import Page from "../../components/layout/Page/Page";
 import Button from "../../components/ui/Button/Button";
 import H2 from "../../components/ui/H2/H2";
@@ -23,10 +22,6 @@ function Generation() {
 	const [showSortSignalsModal, setShowSortSignalsModal] = useState(false);
 	const [index, setIndex] = useState(0);
 	const [, setSearcParams] = useSearchParams();
-	//#endregion
-
-	//#region Refs
-	const timeoutRef = useRef();
 	//#endregion
 
 	//#region Functions
@@ -57,7 +52,7 @@ function Generation() {
 		<Page className="generation">
 			<SortSignalsModal show={showSortSignalsModal} setShow={setShowSortSignalsModal} />
 
-			<Container centered className="generation__container">
+			<Page.Container centered className="generation__container">
 				<section className="generation__section generation__section--signals">
 					<ShadowBox className="generation__signals__general">
 						<H2>General settings</H2>
@@ -108,7 +103,7 @@ function Generation() {
 				</section>
 
 				<MainChart />
-			</Container>
+			</Page.Container>
 		</Page>
 	);
 }

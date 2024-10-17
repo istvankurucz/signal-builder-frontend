@@ -30,12 +30,24 @@ import addFunction from "../../../utils/function/addFunction";
 import updateSignals from "../../../utils/signal/updateSignals";
 import useSignalInputs from "../../../hooks/signal/useSignalInputs";
 import SineBuilderModal from "../../../pages/Generation/SineBuilderModal/SineBuilderModal";
+import Checkbox from "../../form/Checkbox/Checkbox";
 
 function Signal({ className = "" }) {
 	//#region States
 	const [{ signals }, dispatch] = useStateValue();
 	const signal = useSignal();
-	const { name, setName, offset, setOffset, scale, setScale } = useSignalInputs();
+	const {
+		name,
+		setName,
+		offset,
+		setOffset,
+		scale,
+		setScale,
+		reverseTime,
+		setReverseTime,
+		isReversed,
+		setIsReversed,
+	} = useSignalInputs();
 	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
 	const [showJumpButton, setShowJumpButton] = useState(false);
 	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
@@ -79,6 +91,9 @@ function Signal({ className = "" }) {
 			case "scale":
 				signal.scale = value;
 				break;
+			case "reverseTime":
+				signal.reverseTime = value;
+				break;
 		}
 
 		// Update signals array
@@ -89,6 +104,12 @@ function Signal({ className = "" }) {
 		e.preventDefault();
 
 		updateSignalProperty("name", name);
+	}
+
+	function handleReversedChange(e) {
+		setIsReversed(e.target.checked);
+		setReverseTime(null);
+		updateSignalProperty("reverseTime", null);
 	}
 
 	function jumpToBottom(e) {
@@ -243,6 +264,32 @@ function Signal({ className = "" }) {
 									});
 								}}
 							/>
+						</div>
+
+						<div className="signal__reverse">
+							<Checkbox
+								label="Reverse signal"
+								id="signalReverse"
+								checked={isReversed}
+								onChange={handleReversedChange}
+							/>
+
+							{isReversed && (
+								<Input
+									type="number"
+									direction="horizontal"
+									label="Reverse time"
+									id="signalReverseTime"
+									placeholder="Reverse time"
+									unit="s"
+									value={reverseTime == null || isNaN(reverseTime) ? "" : reverseTime}
+									onChange={(e) => {
+										const value = parseFloat(e.target.value);
+										setReverseTime(value);
+										onInputChange("reverseTime", value);
+									}}
+								/>
+							)}
 						</div>
 					</Accordion.Body>
 				</Accordion>

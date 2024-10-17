@@ -29,7 +29,6 @@ function App() {
 	return (
 		<>
 			<Feedback />
-
 			<LoadSignalsModal show={showLoadSignalsModal} setShow={setShowLoadSignalsModal} />
 
 			<Routes>

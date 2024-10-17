@@ -4,7 +4,10 @@ import "./Checkbox.css";
 const Checkbox = forwardRef(
 	({ variant = "secondary", label, id, className = "", ...rest }, ref) => {
 		return (
-			<div className={`checkbox checkbox--${variant}${className !== "" ? ` ${className}` : ""}`}>
+			<label
+				htmlFor={id}
+				className={`checkbox checkbox--${variant}${className !== "" ? ` ${className}` : ""}`}
+			>
 				<input
 					type="checkbox"
 					name={id}
@@ -14,10 +17,8 @@ const Checkbox = forwardRef(
 					{...rest}
 				/>
 				<span className="checkbox__marker"></span>
-				<label htmlFor={id} className="checkbox__label">
-					{label}
-				</label>
-			</div>
+				<span className="checkbox__label">{label}</span>
+			</label>
 		);
 	}
 );

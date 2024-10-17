@@ -57,7 +57,7 @@ function Header() {
 								<span>Generation</span>
 							</NavLink>
 						</li>
-						<li className="header__menu__item">
+						{/* <li className="header__menu__item">
 							<NavLink
 								to="/import"
 								title="Import"
@@ -66,7 +66,7 @@ function Header() {
 								<FontAwesomeIcon icon={faFileImport} />
 								<span>Import</span>
 							</NavLink>
-						</li>
+						</li> */}
 						<li className="header__menu__item">
 							<NavLink
 								to="/export"

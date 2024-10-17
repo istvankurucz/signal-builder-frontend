@@ -186,8 +186,10 @@ function SineBuilderModal({ show, setShow }) {
 	//#region Hooks
 	// Remove function query from URL
 	useEffect(() => {
-		if (!show) setSearchParams({ signalId: searchParams.get("signalId") });
-	}, [show]);
+		if (show || searchParams.get("signalId") == null) return;
+
+		setSearchParams({ signalId: searchParams.get("signalId") });
+	}, [show, searchParams]);
 
 	// Update the initial values for params
 	useEffect(() => {

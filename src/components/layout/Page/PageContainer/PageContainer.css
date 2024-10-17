@@ -1,0 +1,8 @@
+.pageContainer {
+	display: flex;
+	gap: 5rem;
+}
+
+.pageContainer > *:first-child {
+	flex: 1;
+}

@@ -51,6 +51,13 @@
 .signal__settings__params {
 	display: flex;
 	gap: 2rem;
+	margin-bottom: 1.5rem;
+}
+
+.signal__reverse {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 .signal__functions__header {

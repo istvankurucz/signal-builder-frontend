@@ -1,14 +1,18 @@
 import Header from "../Header/Header";
+import PageContainer from "./PageContainer/PageContainer";
+import MainChart from "../../ui/MainChart/MainChart";
 import "./Page.css";
 
-function Page({ includeHeader = true, includeFooter = true, className = "", children }) {
+function Page({ hasHeader = true, hasFooter = true, className = "", children }) {
 	return (
 		<>
-			{includeHeader && <Header />}
+			{hasHeader && <Header />}
 			<main className={`page${className !== "" ? ` ${className}` : ""}`}>{children}</main>
-			{/* {includeFooter && <Footer />} */}
+			{/* {hasFooter && <Footer />} */}
 		</>
 	);
 }
+
+Page.Container = PageContainer;
 
 export default Page;

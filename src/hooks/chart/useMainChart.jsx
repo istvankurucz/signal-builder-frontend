@@ -96,6 +96,16 @@ function useMainChart() {
 		return true;
 	}
 
+	function getMaxReverseTime(signals = []) {
+		const reverseTimes = signals
+			.filter((signal) => signal.reverseTime != null)
+			.map((signal) => signal.reverseTime);
+
+		if (reverseTimes.length === 0) return null;
+
+		return Math.max(...reverseTimes);
+	}
+
 	function getStartIndex(xValues = [], startTime) {
 		// Init index
 		let index = 0;
@@ -189,6 +199,16 @@ function useMainChart() {
 
 		// Check if there is a valid minX and maxX
 		if (!checkSignalsMinMax(minX, maxX)) return;
+
+		// Get the biggest reverse time
+		// const maxReverseTime = getMaxReverseTime(signals);
+		// const length = maxX - minX;
+
+		// if (maxReverseTime != null) {
+		// 	if (maxReverseTime > length / 2) {
+		// 		maxX = minX + 2 * maxReverseTime;
+		// 	}
+		// }
 
 		// Generate the x and y values
 		const numberOfPoints = getNumberOfPoints(maxX - minX, dt);
