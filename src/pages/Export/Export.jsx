@@ -163,7 +163,7 @@ function Export() {
 
 	return (
 		<Page className="export">
-			<Page.Container centered className="export__container">
+			<Page.Container className="export__container">
 				<section className="export__left">
 					<ShadowBox className="export__settings">
 						<H2>Settings</H2>

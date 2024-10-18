@@ -52,7 +52,7 @@ function Generation() {
 		<Page className="generation">
 			<SortSignalsModal show={showSortSignalsModal} setShow={setShowSortSignalsModal} />
 
-			<Page.Container centered className="generation__container">
+			<Page.Container className="generation__container">
 				<section className="generation__section generation__section--signals">
 					<ShadowBox className="generation__signals__general">
 						<H2>General settings</H2>
