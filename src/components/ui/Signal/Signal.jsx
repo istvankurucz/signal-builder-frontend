@@ -25,12 +25,12 @@ import DeleteSignalModal from "../../../pages/Generation/DeleteSignalModal/Delet
 import useSignal from "../../../hooks/signal/useSignal";
 import P from "../P/P";
 import Function from "../../../utils/classes/Function";
-import "./Signal.css";
-import addFunction from "../../../utils/function/addFunction";
-import updateSignals from "../../../utils/signal/updateSignals";
-import useSignalInputs from "../../../hooks/signal/useSignalInputs";
 import SineBuilderModal from "../../../pages/Generation/SineBuilderModal/SineBuilderModal";
 import Checkbox from "../../form/Checkbox/Checkbox";
+import addFunction from "../../../utils/function/addFunction";
+import updateSignals from "../../../utils/signal/updateSignals";
+import useSignalProperties from "../../../hooks/signal/useSignalProperties";
+import "./Signal.css";
 
 function Signal({ className = "" }) {
 	//#region States
@@ -38,17 +38,14 @@ function Signal({ className = "" }) {
 	const signal = useSignal();
 	const {
 		name,
-		setName,
 		offset,
-		setOffset,
 		scale,
-		setScale,
+		hasReverseTime,
 		reverseTime,
-		setReverseTime,
-		isReversed,
-		setIsReversed,
-	} = useSignalInputs();
-	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
+		changeValue,
+		updateInputValue,
+		updateSignalProperty,
+	} = useSignalProperties();
 	const [showJumpButton, setShowJumpButton] = useState(false);
 	const [showSortFunctionsModal, setShowSortFunctionsModal] = useState(false);
 	const [showDuplicateSignalModal, setShowDuplicateSignalModal] = useState(false);
@@ -61,57 +58,6 @@ function Signal({ className = "" }) {
 	//#endregion
 
 	//#region Functions
-	function onInputChange(property, value) {
-		if (property === "name") {
-			updateSignalProperty(property, value);
-			return;
-		}
-
-		// Clear the current timeout
-		if (property === lastUpdatedProperty) clearTimeout(timeoutRef.current);
-
-		// Update the last updated property name
-		setLastUpdatedProperty(property);
-
-		// Set a new timeout for update
-		timeoutRef.current = setTimeout(() => {
-			updateSignalProperty(property, value);
-		}, 1000);
-	}
-
-	function updateSignalProperty(property, value) {
-		// Set the property of the signal
-		switch (property) {
-			case "name":
-				signal.name = value;
-				break;
-			case "offset":
-				signal.offset = value;
-				break;
-			case "scale":
-				signal.scale = value;
-				break;
-			case "reverseTime":
-				signal.reverseTime = value;
-				break;
-		}
-
-		// Update signals array
-		updateSignals(signals, dispatch);
-	}
-
-	function updateSignalName(e) {
-		e.preventDefault();
-
-		updateSignalProperty("name", name);
-	}
-
-	function handleReversedChange(e) {
-		setIsReversed(e.target.checked);
-		setReverseTime(null);
-		updateSignalProperty("reverseTime", null);
-	}
-
 	function jumpToBottom(e) {
 		e.stopPropagation();
 
@@ -205,7 +151,13 @@ function Signal({ className = "" }) {
 					</Accordion.Header>
 
 					<Accordion.Body>
-						<form onSubmit={updateSignalName} className="signal__settings__name">
+						<form
+							onSubmit={(e) => {
+								e.preventDefault();
+								updateSignalProperty("name", name);
+							}}
+							className="signal__settings__name"
+						>
 							<Input
 								direction="horizontal"
 								label="Name:"
@@ -213,7 +165,7 @@ function Signal({ className = "" }) {
 								fullW
 								id={`${signal?.id}-name`}
 								value={name}
-								onChange={(e) => setName(e.target.value)}
+								onChange={(e) => changeValue("name", e.target.value)}
 							/>
 							<Button type="submit">Save</Button>
 						</form>
@@ -226,11 +178,8 @@ function Signal({ className = "" }) {
 								placeholder="Offset"
 								width="7rem"
 								id={`${signal?.id}-offset`}
-								value={isNaN(offset) ? "" : offset}
-								onChange={(e) => {
-									setOffset(parseFloat(e.target.value));
-									onInputChange("offset", parseFloat(e.target.value));
-								}}
+								value={offset}
+								onChange={(e) => changeValue("offset", e.target.value)}
 							/>
 							<Input
 								type="number"
@@ -239,14 +188,8 @@ function Signal({ className = "" }) {
 								placeholder="Scale (x)"
 								width="7rem"
 								id={`${signal?.id}-scaleX`}
-								value={isNaN(scale.x) ? "" : scale.x}
-								onChange={(e) => {
-									setScale((prev) => ({ ...prev, x: parseFloat(e.target.value) }));
-									onInputChange("scale", {
-										...scale,
-										x: parseFloat(e.target.value),
-									});
-								}}
+								value={scale.x}
+								onChange={(e) => changeValue("scale", { ...scale, x: e.target.value })}
 							/>
 							<Input
 								type="number"
@@ -255,14 +198,8 @@ function Signal({ className = "" }) {
 								placeholder="Scale (y)"
 								width="7rem"
 								id={`${signal?.id}-scaleY`}
-								value={isNaN(scale.y) ? "" : scale.y}
-								onChange={(e) => {
-									setScale((prev) => ({ ...prev, y: parseFloat(e.target.value) }));
-									onInputChange("scale", {
-										...scale,
-										y: parseFloat(e.target.value),
-									});
-								}}
+								value={scale.y}
+								onChange={(e) => changeValue("scale", { ...scale, y: e.target.value })}
 							/>
 						</div>
 
@@ -270,11 +207,11 @@ function Signal({ className = "" }) {
 							<Checkbox
 								label="Reverse signal"
 								id="signalReverse"
-								checked={isReversed}
-								onChange={handleReversedChange}
+								checked={hasReverseTime}
+								onChange={(e) => changeValue("hasReverseTime", e.target.checked)}
 							/>
 
-							{isReversed && (
+							{hasReverseTime && (
 								<Input
 									type="number"
 									direction="horizontal"
@@ -282,12 +219,8 @@ function Signal({ className = "" }) {
 									id="signalReverseTime"
 									placeholder="Reverse time"
 									unit="s"
-									value={reverseTime == null || isNaN(reverseTime) ? "" : reverseTime}
-									onChange={(e) => {
-										const value = parseFloat(e.target.value);
-										setReverseTime(value);
-										onInputChange("reverseTime", value);
-									}}
+									value={reverseTime}
+									onChange={(e) => changeValue("reverseTime", e.target.value)}
 								/>
 							)}
 						</div>

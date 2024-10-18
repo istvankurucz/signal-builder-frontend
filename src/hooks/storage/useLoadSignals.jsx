@@ -1,8 +1,8 @@
 import { useEffect } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import getSignals from "../../utils/storage/getSignals";
 import getSignalsUpdatedAt from "../../utils/storage/getSignalsUpdatedAt";
-import { useLocation, useSearchParams } from "react-router-dom";
 
 function useLoadSignals(setShow) {
 	const [{ signals }, dispatch] = useStateValue();
@@ -12,8 +12,8 @@ function useLoadSignals(setShow) {
 	useEffect(() => {
 		// Check if there are local signals
 		if (signals.length > 0) {
-			// Set the signalId query in the URL
-			setSearchParams({ signalId: signals[0].id });
+			// On Generartion page set the signalId query in the URL
+			if (location.pathname === "/generation") setSearchParams({ signalId: signals[0].id });
 
 			return;
 		}

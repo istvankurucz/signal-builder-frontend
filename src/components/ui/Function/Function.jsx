@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -17,27 +18,39 @@ import Dropdown from "../Dropdown/Dropdown";
 import FunctionTag from "./FunctionTag/FunctionTag";
 import Checkbox from "../../form/Checkbox/Checkbox";
 import FunctionParamsTooltip from "./FunctionParamsTooltip/FunctionParamsTooltip";
-import "./Function.css";
 import removeFunction from "../../../utils/function/removeFunction";
-import updateSignals from "../../../utils/signal/updateSignals";
 import functionTypes from "../../../assets/function/functionTypes";
 import generatePoints from "../../../utils/generation/generatePoints";
 import useSignal from "../../../hooks/signal/useSignal";
-import { useSearchParams } from "react-router-dom";
+import useFunctionProperties from "../../../hooks/function/useFunctionProperties";
+import "./Function.css";
 
 function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 	//#region States
 	const [{ signals, sampling }, dispatch] = useStateValue();
 	const signal = useSignal();
+	const {
+		name,
+		typeIndex,
+		setTypeIndex,
+		startTime,
+		length,
+		offset,
+		constValue,
+		keepLastValue,
+		slope,
+		frequency,
+		amplitude,
+		phase,
+		stepValue,
+		stepTime,
+		rampStartTime,
+		rampEndTime,
+		changeValue,
+		updateFunctionProperty,
+	} = useFunctionProperties(func);
 	const [isOpen, setIsOpen] = useState(true);
 	const [showParamsTooltip, setShowParamsTooltip] = useState(false);
-	const [lastUpdatedProperty, setLastUpdatedProperty] = useState("");
-	const [functionTypeIndex, setFunctionTypeIndex] = useState(-1);
-	const [constValue, setConstValue] = useState(func.constValue);
-	const [offset, setOffset] = useState(func.offset);
-	const [frequency, setFrequency] = useState(func.frequency);
-	const [amplitude, setAmplitude] = useState(func.amplitude);
-	const [phase, setPhase] = useState(func.phase);
 	const [, setSearchParams] = useSearchParams();
 	//#endregion
 
@@ -101,82 +114,6 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 		removeFunction(signals, dispatch, signal, func.id);
 	}
 
-	function onInputChange(property, value) {
-		if (property === "name" || property === "type" || property === "keepLastValue") {
-			updateFunctionProperty(property, value);
-			return;
-		}
-
-		// Clear the current timeout
-		if (property === lastUpdatedProperty) clearTimeout(timeoutRef.current);
-
-		// Update the last updated property name
-		setLastUpdatedProperty(property);
-
-		// Set up a new timeout for updating
-		timeoutRef.current = setTimeout(() => updateFunctionProperty(property, value), 1000);
-	}
-
-	function updateFunctionProperty(property, value) {
-		// Set the property of the function
-		switch (property) {
-			case "name":
-				func.name = value;
-				break;
-			case "type":
-				func.type = value;
-				break;
-			case "startTime":
-				func.startTime = value;
-				break;
-			case "length":
-				func.length = value;
-				break;
-			case "offset":
-				func.offset = value;
-				break;
-			case "constValue":
-				func.constValue = value;
-				break;
-			case "keepLastValue":
-				func.keepLastValue = value;
-				break;
-			case "slope":
-				func.slope = value;
-				break;
-			case "frequency":
-				func.frequency = value;
-				break;
-			case "amplitude":
-				func.amplitude = value;
-				break;
-			case "phase":
-				func.phase = value;
-				break;
-			case "stepValue":
-				func.stepValue = value;
-				break;
-			case "stepTime":
-				func.stepTime = value;
-				break;
-			case "rampStartTime":
-				func.rampStartTime = value;
-				break;
-			case "rampEndTime":
-				func.rampEndTime = value;
-				break;
-		}
-
-		// Update the local signals array
-		updateSignals(signals, dispatch);
-	}
-
-	function updateFunctionName(e) {
-		e.preventDefault();
-
-		updateFunctionProperty("name", nameRef.current.value);
-	}
-
 	function showSineBuilderModal(e) {
 		e.stopPropagation();
 
@@ -184,24 +121,9 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 
 		setShowSineBuilder(true);
 	}
-
-	// Update function type
-	useEffect(() => {
-		if (functionTypeIndex === -1) return;
-
-		updateFunctionProperty("type", functionTypes[functionTypeIndex]);
-	}, [functionTypes, functionTypeIndex]);
 	//#endregion
 
 	//#region Hooks
-	// Set the default index for function type select if the function is loaded
-	useEffect(() => {
-		if (func == null) return;
-
-		const defaultIndex = functionTypes.indexOf(func.type);
-		setFunctionTypeIndex(defaultIndex);
-	}, [signals, functionTypes]);
-
 	// Const keep last value logic
 	useEffect(() => {
 		if (!func.keepLastValue) return;
@@ -219,18 +141,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 		const beforeFunctionPoints = generatePoints(signal.functions[beforeIndex], dt);
 		const lastValue = beforeFunctionPoints.y[beforeFunctionPoints.y.length - 1];
 
-		setConstValue(lastValue);
-		func.constValue = lastValue;
+		changeValue("constValue", lastValue);
 	}, [JSON.stringify(signals)]);
-
-	useEffect(() => {
-		if (func == null) return;
-
-		setFrequency(func.frequency);
-		setAmplitude(func.amplitude);
-		setPhase(func.phase);
-		setOffset(func.offset);
-	}, [JSON.stringify(func)]);
 	//#endregion
 
 	return (
@@ -274,29 +186,36 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 				<div className="function__settings">
 					<H3 className="function__subtitle">Settings</H3>
 
-					<form onSubmit={updateFunctionName} className="function__settings__name">
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							updateFunctionProperty("name", name);
+						}}
+						className="function__settings__name"
+					>
 						<Input
 							direction="horizontal"
 							label="Name:"
 							placeholder="Name"
 							fullW
 							id={`${func.id}--name`}
+							value={name}
+							onChange={(e) => changeValue("name", e.target.value)}
 							required
-							defaultValue={func.name}
-							ref={nameRef}
 						/>
 						<Button type="submit">Save</Button>
 					</form>
 
 					<Select
-						index={functionTypeIndex === -1 ? 0 : functionTypeIndex}
-						setIndex={setFunctionTypeIndex}
+						index={typeIndex === -1 ? 0 : typeIndex}
+						setIndex={setTypeIndex}
 						options={functionTypes}
 						direction="horizontal"
 						label="Function type:"
 						id={`${func.id}--type`}
 						fullW
 						className="function__settings__type"
+						onChange={() => console.log("changed")}
 					/>
 				</div>
 
@@ -318,19 +237,15 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										id={`${func.id}--const`}
 										className="function__inputs__input"
 										disabled={func.keepLastValue}
-										value={isNaN(constValue) ? "" : constValue}
-										onChange={(e) => {
-											const value = parseFloat(e.target.value);
-											setConstValue(value);
-											onInputChange("constValue", value);
-										}}
+										value={constValue}
+										onChange={(e) => changeValue("constValue", e.target.value)}
 										ref={constValueRef}
 									/>
 									<Checkbox
 										label="Keep last value"
 										id={`${func.id}--const-lastValue`}
-										checked={func.keepLastValue}
-										onChange={(e) => onInputChange("keepLastValue", e.target.checked)}
+										checked={keepLastValue}
+										onChange={(e) => changeValue("keepLastValue", e.target.checked)}
 									/>
 								</div>
 							)}
@@ -344,11 +259,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										width="10rem"
 										id={`${func.id}--slope`}
 										className="function__inputs__input"
-										defaultValue={func.slope}
-										onChange={() =>
-											onInputChange("slope", parseFloat(slopeRef.current.value))
-										}
-										ref={slopeRef}
+										value={slope}
+										onChange={(e) => changeValue("slope", e.target.value)}
 									/>
 								</>
 							)}
@@ -363,13 +275,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										id={`${func.id}--frequency`}
 										unit="Hz"
 										className="function__inputs__input"
-										value={isNaN(frequency) ? "" : frequency}
-										onChange={(e) => {
-											const value = parseFloat(e.target.value);
-											setFrequency(value);
-											onInputChange("frequency", value);
-										}}
-										ref={frequencyRef}
+										value={frequency}
+										onChange={(e) => changeValue("frequency", e.target.value)}
 									/>
 
 									<Input
@@ -380,13 +287,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										width="10rem"
 										id={`${func.id}--amplitude`}
 										className="function__inputs__input"
-										value={isNaN(amplitude) ? "" : amplitude}
-										onChange={(e) => {
-											const value = parseFloat(e.target.value);
-											setAmplitude(value);
-											onInputChange("amplitude", value);
-										}}
-										ref={amplitudeRef}
+										value={amplitude}
+										onChange={(e) => changeValue("amplitude", e.target.value)}
 									/>
 									<Input
 										type="number"
@@ -397,13 +299,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										id={`${func.id}--phase`}
 										unit="deg"
 										className="function__inputs__input"
-										value={isNaN(phase) ? "" : phase}
-										onChange={(e) => {
-											const value = parseFloat(e.target.value);
-											setPhase(value);
-											onInputChange("phase", value);
-										}}
-										ref={phaseRef}
+										value={phase}
+										onChange={(e) => changeValue("phase", e.target.value)}
 									/>
 								</>
 							)}
@@ -417,11 +314,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										width="10rem"
 										id={`${func.id}--stepValue`}
 										className="function__inputs__input"
-										defaultValue={func.stepValue}
-										onChange={() =>
-											onInputChange("stepValue", parseFloat(stepValueRef.current.value))
-										}
-										ref={stepValueRef}
+										value={stepValue}
+										onChange={(e) => changeValue("stepValue", e.target.value)}
 									/>
 									<Input
 										type="number"
@@ -432,11 +326,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										id={`${func.id}--stepTime`}
 										unit="s"
 										className="function__inputs__input"
-										defaultValue={func.stepTime}
-										onChange={() =>
-											onInputChange("stepTime", parseFloat(stepTimeRef.current.value))
-										}
-										ref={stepTimeRef}
+										value={stepTime}
+										onChange={(e) => changeValue("stepTime", e.target.value)}
 									/>
 								</>
 							)}
@@ -451,14 +342,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										id={`${func.id}--rampStart`}
 										unit="s"
 										className="function__inputs__input"
-										defaultValue={func.rampStartTime}
-										onChange={() =>
-											onInputChange(
-												"rampStartTime",
-												parseFloat(rampStartTimeRef.current.value)
-											)
-										}
-										ref={rampStartTimeRef}
+										value={rampStartTime}
+										onChange={(e) => changeValue("rampStartTime", e.target.value)}
 									/>
 									<Input
 										type="number"
@@ -469,14 +354,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										id={`${func.id}--rampEnd`}
 										unit="s"
 										className="function__inputs__input"
-										defaultValue={func.rampEndTime}
-										onChange={() =>
-											onInputChange(
-												"rampEndTime",
-												parseFloat(rampEndTimeRef.current.value)
-											)
-										}
-										ref={rampEndTimeRef}
+										value={rampEndTime}
+										onChange={(e) => changeValue("rampEndTime", e.target.value)}
 									/>
 									<Input
 										type="number"
@@ -486,11 +365,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										width="10rem"
 										id={`${func.id}--slope`}
 										className="function__inputs__input"
-										defaultValue={func.slope}
-										onChange={() =>
-											onInputChange("slope", parseFloat(slopeRef.current.value))
-										}
-										ref={slopeRef}
+										value={slope}
+										onChange={(e) => changeValue("slope", e.target.value)}
 									/>
 								</>
 							)}
@@ -504,11 +380,7 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 										id={`${func.id}--offset`}
 										className="function__inputs__input"
 										value={offset}
-										onChange={(e) => {
-											setOffset(e.target.value);
-											onInputChange("offset", parseFloat(e.target.value));
-										}}
-										ref={offsetRef}
+										onChange={(e) => changeValue("offset", e.target.value)}
 									/>
 								</>
 							)}
@@ -521,11 +393,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 								unit="s"
 								id={`${func.id}--start`}
 								className="function__inputs__input"
-								defaultValue={func.startTime}
-								onChange={() =>
-									onInputChange("startTime", parseFloat(startTimeRef.current.value))
-								}
-								ref={startTimeRef}
+								value={startTime}
+								onChange={(e) => changeValue("startTime", e.target.value)}
 							/>
 							<Input
 								type="number"
@@ -536,11 +405,8 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 								unit="s"
 								id={`${func.id}--length`}
 								className="function__inputs__input"
-								defaultValue={func.length}
-								onChange={() =>
-									onInputChange("length", parseFloat(lengthRef.current.value))
-								}
-								ref={lengthRef}
+								value={length}
+								onChange={(e) => changeValue("length", e.target.value)}
 							/>
 						</div>
 

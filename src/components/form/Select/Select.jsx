@@ -82,6 +82,7 @@ function Select({
 					type="text"
 					id={id}
 					value={options[index]}
+					style={{ "--width": width }}
 					className="select__selected__input"
 					hidden
 					readOnly

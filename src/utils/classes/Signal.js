@@ -86,14 +86,6 @@ class Signal {
 			console.log("The values (x, y) for scale must be numbers.");
 			return;
 		}
-		if (isNaN(scale.x)) {
-			this._scale.x = 1;
-			return;
-		}
-		if (isNaN(scale.y)) {
-			this._scale.y = 1;
-			return;
-		}
 
 		if (isNaN(scale.x) || isNaN(scale.y)) {
 			if (isNaN(scale.x)) this._scale = { ...this._scale, x: 1 };
@@ -146,6 +138,7 @@ class Signal {
 
 		if (isNaN(reverseTime)) {
 			this._reverseTime = null;
+			return;
 		}
 
 		this._reverseTime = reverseTime;
