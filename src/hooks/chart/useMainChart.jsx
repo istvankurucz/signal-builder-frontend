@@ -11,7 +11,7 @@ function useMainChart() {
 	//#endregion
 
 	//#region Variables
-	const dt = Math.round((1 / sampling) * 10000) / 10000;
+	const dt = Math.round((1 / sampling) * 10 ** 4) / 10 ** 4;
 
 	const options = {
 		animation: false,
@@ -64,12 +64,12 @@ function useMainChart() {
 	//#endregion
 
 	//#region Functions
-	function getSignalsMinMax(signals = []) {
+	function getSignalsMinMax(signals = [], maxReverseTime) {
 		// Init min and max variables
 		let minX = Number.POSITIVE_INFINITY;
 		let maxX = Number.NEGATIVE_INFINITY;
 
-		// Loop through every signal
+		// Find the min and maxl
 		signals.forEach((signal) => {
 			// If the signal is not visible skip it
 			if (!signal.visible) return;
@@ -81,7 +81,13 @@ function useMainChart() {
 			});
 		});
 
-		// Return the actual min, max values
+		// Check if there is a max reverse time
+		if (maxReverseTime == null) return { minX, maxX };
+
+		// Check if maxX needs to be changed because of the reverse time
+		const length = maxX - minX;
+		if (maxReverseTime > length / 2) maxX = minX + 2 * maxReverseTime;
+
 		return { minX, maxX };
 	}
 
@@ -98,6 +104,7 @@ function useMainChart() {
 
 	function getMaxReverseTime(signals = []) {
 		const reverseTimes = signals
+			.filter((signal) => signal.visible)
 			.filter((signal) => signal.reverseTime != null)
 			.map((signal) => signal.reverseTime);
 
@@ -120,7 +127,7 @@ function useMainChart() {
 	}
 
 	function createYValues(signals = [], xValues = []) {
-		return signals.map((signal) => {
+		const signalWithCoords = signals.map((signal) => {
 			// Skip the signal if it is hidden
 			if (!signal.visible) return { properties: signal, points: [] };
 
@@ -177,6 +184,27 @@ function useMainChart() {
 
 			return { properties: signal, points: yValues };
 		});
+
+		return signalWithCoords.map((signal) => {
+			const reverseTime = signal.properties.reverseTime;
+
+			// If the signal does not have a reverse time specified then just return the signal
+			if (reverseTime == null) return signal;
+
+			// Get the index from where the values need to be reversed
+			const reverseIndex = xValues.indexOf(reverseTime);
+
+			// Check if the index is valid
+			if (reverseIndex === -1) return signal;
+
+			// Get the points
+			const newPoints = signal.points.slice(0, reverseIndex);
+
+			// Update the points of the signal
+			signal.points = [...newPoints, ...newPoints.toReversed()];
+
+			return signal;
+		});
 	}
 
 	function createDatasets(yValues = []) {
@@ -191,32 +219,25 @@ function useMainChart() {
 
 	// Update the points if something changes inside signals
 	useEffect(() => {
-		// If there is no signals return
+		// Check if there are any signals
 		if (signals.length === 0) return;
 
+		// Get the maximum of reverse time
+		const maxReverseTime = getMaxReverseTime(signals);
+
 		// Get the min and max value along x-axis
-		const { minX, maxX } = getSignalsMinMax(signals);
+		const { minX, maxX } = getSignalsMinMax(signals, maxReverseTime);
 
 		// Check if there is a valid minX and maxX
 		if (!checkSignalsMinMax(minX, maxX)) return;
 
-		// Get the biggest reverse time
-		// const maxReverseTime = getMaxReverseTime(signals);
-		// const length = maxX - minX;
-
-		// if (maxReverseTime != null) {
-		// 	if (maxReverseTime > length / 2) {
-		// 		maxX = minX + 2 * maxReverseTime;
-		// 	}
-		// }
-
 		// Generate the x and y values
 		const numberOfPoints = getNumberOfPoints(maxX - minX, dt);
 		const xValues = createXValues(numberOfPoints, minX, dt);
-		const yValues = createYValues(signals, xValues);
+		const signalsWithCoords = createYValues(signals, xValues);
 
 		// Create the datasets for the chart
-		const datasets = createDatasets(yValues);
+		const datasets = createDatasets(signalsWithCoords);
 
 		// Update the data state
 		setData({
