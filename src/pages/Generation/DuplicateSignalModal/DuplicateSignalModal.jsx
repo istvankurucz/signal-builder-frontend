@@ -5,11 +5,12 @@ import Modal from "../../../components/layout/Modal/Modal";
 import Button from "../../../components/ui/Button/Button";
 import P from "../../../components/ui/P/P";
 import Input from "../../../components/form/Input/Input";
-import "./DuplicateSignalModal.css";
 import Signal from "../../../utils/classes/Signal";
 import getSignalById from "../../../utils/signal/getSignalById";
 import addSignalToSignals from "../../../utils/signal/addSignalToSignals";
 import useDuplicateSignalName from "../../../hooks/signal/useDuplicateSignalName";
+import copyFunctions from "../../../utils/function/copyFunctions";
+import "./DuplicateSignalModal.css";
 
 function DuplicateSignalModal({ show, setShow }) {
 	const [{ signals }, dispatch] = useStateValue();
@@ -29,7 +30,7 @@ function DuplicateSignalModal({ show, setShow }) {
 		newSignal.name = name;
 		newSignal.offset = signal.offset;
 		newSignal.scale = signal.scale;
-		newSignal.functions = signal.functions;
+		newSignal.functions = copyFunctions(signal.functions);
 
 		// Add the new signal to signals
 		addSignalToSignals(signals, dispatch, newSignal);
