@@ -17,7 +17,7 @@ function useLoadSignals(setShow) {
 	}
 	//#endregion
 
-	//#region Effect
+	//#region useEffect
 	useEffect(() => {
 		// Check if there are local signals
 		if (signals.length > 0) {
