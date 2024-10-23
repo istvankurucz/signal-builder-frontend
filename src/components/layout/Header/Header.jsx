@@ -40,7 +40,7 @@ function Header() {
 	return (
 		<header className="header">
 			<Container centered className="header__container">
-				<Link className="header__logo">
+				<Link to="/" className="header__logo">
 					<img src={logo} alt="AVL" className="header__logo__img" />
 					<span className="header__logo__text">Signal builder</span>
 				</Link>

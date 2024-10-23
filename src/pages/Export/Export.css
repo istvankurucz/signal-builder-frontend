@@ -12,18 +12,8 @@
 
 .export__file__inputs {
 	display: flex;
-	flex-direction: column;
-	gap: 1.5rem;
-}
-
-.export__file__full {
-	display: flex;
 	gap: 1rem;
 	align-items: flex-end;
-}
-
-.export__directory {
-	margin-top: 1rem;
 }
 
 .export__alert .p:last-child {
