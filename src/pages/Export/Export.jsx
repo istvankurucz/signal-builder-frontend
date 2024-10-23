@@ -14,11 +14,13 @@ import useSampling from "../../hooks/chart/useSampling";
 import generateExportFileName from "../../utils/general/generateExportFileName";
 import P from "../../components/ui/P/P";
 import useMainChart from "../../hooks/chart/useMainChart";
+import useLoadSignals from "../../hooks/storage/useLoadSignals";
 import "./Export.css";
 
-function Export() {
+function Export({ setShowLoadSignals }) {
 	//#region States
 	const [{ signals }, dispatch] = useStateValue();
+	useLoadSignals(setShowLoadSignals);
 	const [sampling, setSampling] = useSampling();
 	const [filename, setFileName] = useState(generateExportFileName());
 	const [showExportResult, setShowExportResult] = useState(false);

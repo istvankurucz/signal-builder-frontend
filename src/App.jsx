@@ -16,7 +16,6 @@ import Toggle from "./components/form/Toggle/Toggle";
 import Export from "./pages/Export/Export";
 import useSaveSignals from "./hooks/storage/useSaveSignals";
 import LoadSignalsModal from "./pages/Generation/LoadSignalsModal/LoadSignalsModal";
-import useLoadSignals from "./hooks/storage/useLoadSignals";
 import "./App.css";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -24,7 +23,6 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 function App() {
 	useSaveSignals();
 	const [showLoadSignalsModal, setShowLoadSignalsModal] = useState(false);
-	useLoadSignals(setShowLoadSignalsModal);
 
 	return (
 		<>
@@ -32,7 +30,10 @@ function App() {
 			<LoadSignalsModal show={showLoadSignalsModal} setShow={setShowLoadSignalsModal} />
 
 			<Routes>
-				<Route path="/generation" element={<Generation />} />
+				<Route
+					path="/generation"
+					element={<Generation setShowLoadSignals={setShowLoadSignalsModal} />}
+				/>
 				<Route
 					path="/import"
 					element={
@@ -42,7 +43,10 @@ function App() {
 						</>
 					}
 				/>
-				<Route path="/export" element={<Export />} />
+				<Route
+					path="/export"
+					element={<Export setShowLoadSignals={setShowLoadSignalsModal} />}
+				/>
 
 				<Route path="/" element={<Navigate to="/generation" replace />} />
 				<Route path="*" element={<h1>Page not found.</h1>} />

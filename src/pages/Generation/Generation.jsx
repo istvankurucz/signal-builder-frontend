@@ -14,11 +14,13 @@ import SortSignalsModal from "./SortSignalsModal/SortSignalsModal";
 import Signal from "../../utils/classes/Signal";
 import addSignalToSignals from "../../utils/signal/addSignalToSignals";
 import MainChart from "../../components/ui/MainChart/MainChart";
+import useLoadSignals from "../../hooks/storage/useLoadSignals";
 import "./Generation.css";
 
-function Generation() {
+function Generation({ setShowLoadSignals }) {
 	//#region States
 	const [{ signals }, dispatch] = useStateValue();
+	useLoadSignals(setShowLoadSignals);
 	const [showSortSignalsModal, setShowSortSignalsModal] = useState(false);
 	const [index, setIndex] = useState(0);
 	const [, setSearcParams] = useSearchParams();

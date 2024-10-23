@@ -5,16 +5,23 @@ import getSignals from "../../utils/storage/getSignals";
 import getSignalsUpdatedAt from "../../utils/storage/getSignalsUpdatedAt";
 
 function useLoadSignals(setShow) {
+	//#region States
 	const [{ signals }, dispatch] = useStateValue();
 	const [, setSearchParams] = useSearchParams();
 	const location = useLocation();
+	//#endregion
 
+	//#region Functions
+	function updateSignalIdParam(signalId) {
+		if (location.pathname === "/generation") setSearchParams({ signalId });
+	}
+	//#endregion
+
+	//#region Effect
 	useEffect(() => {
 		// Check if there are local signals
 		if (signals.length > 0) {
-			// On Generartion page set the signalId query in the URL
-			if (location.pathname === "/generation") setSearchParams({ signalId: signals[0].id });
-
+			updateSignalIdParam(signals[0].id);
 			return;
 		}
 
@@ -34,9 +41,10 @@ function useLoadSignals(setShow) {
 				signals: signalsFromStorage,
 			});
 
-			setSearchParams({ signalId: signalsFromStorage[0].id });
+			updateSignalIdParam(signalsFromStorage[0].id);
 		}
 	}, [location.pathname]);
+	//#endregion
 }
 
 export default useLoadSignals;
