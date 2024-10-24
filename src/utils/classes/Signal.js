@@ -127,6 +127,7 @@ class Signal {
 		this._autoSort = autoSort;
 	}
 
+	// Reverse time
 	get reverseTime() {
 		return this._reverseTime;
 	}

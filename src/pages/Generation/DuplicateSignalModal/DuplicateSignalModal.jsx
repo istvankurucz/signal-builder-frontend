@@ -30,6 +30,7 @@ function DuplicateSignalModal({ show, setShow }) {
 		newSignal.name = name;
 		newSignal.offset = signal.offset;
 		newSignal.scale = signal.scale;
+		newSignal.reverseTime = signal.reverseTime;
 		newSignal.functions = copyFunctions(signal.functions);
 
 		// Add the new signal to signals
