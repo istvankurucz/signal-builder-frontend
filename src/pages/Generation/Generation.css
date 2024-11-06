@@ -1,6 +1,8 @@
 .generation__section--signals {
+	--chart-width: 600px;
+	--gap: 5rem;
+
 	width: calc(100% - var(--chart-width) - var(--gap));
-	/* flex: 1; */
 }
 
 .generation__signals__general {

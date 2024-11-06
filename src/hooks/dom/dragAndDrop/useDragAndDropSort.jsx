@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import swapArrayElements from "../../../utils/general/swapArrayElements";
 
 function useDragAndDropSort(initialElements = []) {
@@ -14,7 +14,7 @@ function useDragAndDropSort(initialElements = []) {
 		}, -1);
 	}
 
-	function getDragAfterIndex(container, y) {
+	function getDragAfterIndex(container, position, direction) {
 		const draggableElements = Array.from(
 			container.querySelectorAll(".elementSortElement:not(.elementSortElement--dragging)")
 		);
@@ -22,7 +22,9 @@ function useDragAndDropSort(initialElements = []) {
 		const dragAfter = draggableElements.reduce(
 			(closest, child, i) => {
 				const box = child.getBoundingClientRect();
-				const offset = y - box.top - box.height / 2;
+				let offset;
+				if (direction === "vertical") offset = position - box.top - box.height / 2;
+				else offset = position - box.left - box.width / 2;
 
 				if (offset < 0 && offset > closest.offset) {
 					return { offset, index: i };
@@ -51,11 +53,14 @@ function useDragAndDropSort(initialElements = []) {
 		setTempElements((element) => element.map((element) => ({ ...element, dragging: false })));
 	}
 
-	function handleDragOver(e, container) {
+	function handleDragOver(e, container, direction = "vertical") {
 		e.preventDefault();
 
 		const draggingIndex = getDraggingIndex(container);
-		const afterIndex = getDragAfterIndex(container, e.clientY);
+		let afterIndex;
+		if (direction === "vertical")
+			afterIndex = getDragAfterIndex(container, e.clientY, "vertical");
+		else afterIndex = getDragAfterIndex(container, e.clientX, "horizontal");
 
 		if (draggingIndex === afterIndex) return;
 
@@ -64,10 +69,6 @@ function useDragAndDropSort(initialElements = []) {
 		setTempElements(newElements);
 		setActiveIndex(afterIndex);
 	}
-
-	// useEffect(() => {
-	// 	setTempElements(initialElements);
-	// }, [initialElements]);
 
 	return {
 		tempElements,

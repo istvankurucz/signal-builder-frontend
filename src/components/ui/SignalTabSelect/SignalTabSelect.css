@@ -7,6 +7,8 @@
 
 .signalTabSelect__options {
 	display: flex;
+	flex-direction: row;
+	gap: 0;
 	font-size: var(--fs-s);
 	list-style: none;
 }

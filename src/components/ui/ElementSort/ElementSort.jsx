@@ -1,38 +1,19 @@
 import { forwardRef } from "react";
 import ElementSortButtons from "./ElementSortButtons";
 import ElementSortElement from "./ElementSortElement";
+import ElementSortBox from "./ElementSortBox";
 import "./ElementSort.css";
 
-const ElementSort = forwardRef(
-	(
-		{
-			tempElements,
-			setTempElements,
-			activeIndex,
-			setActiveIndex,
-			onDragOver,
-			className = "",
-			children,
-		},
-		ref
-	) => {
-		return (
-			<div className={`elementSort${className !== "" ? ` ${className}` : ""}`} ref={ref}>
-				<ElementSort.Buttons
-					tempElements={tempElements}
-					setTempElements={setTempElements}
-					activeIndex={activeIndex}
-					setActiveIndex={setActiveIndex}
-				/>
-				<div className="elementSort__elements" onDragOver={onDragOver} ref={ref}>
-					{children}
-				</div>
-			</div>
-		);
-	}
-);
+const ElementSort = forwardRef(({ className = "", children }, ref) => {
+	return (
+		<div className={`elementSort${className !== "" ? ` ${className}` : ""}`} ref={ref}>
+			{children}
+		</div>
+	);
+});
 
 ElementSort.Buttons = ElementSortButtons;
 ElementSort.Element = ElementSortElement;
+ElementSort.Box = ElementSortBox;
 
 export default ElementSort;

@@ -1,18 +1,9 @@
-.elementSortElement {
-	border: 0.15rem solid transparent;
-	border-radius: var(--br-l);
-}
-
 .elementSortElement:active {
 	cursor: grabbing;
 }
 .elementSortElement--dragging {
 	opacity: 0.5;
 	animation: vibration 100ms linear infinite alternate;
-}
-.elementSortElement--active {
-	color: var(--secondary-color);
-	border-color: var(--secondary-color);
 }
 
 @keyframes vibration {

@@ -1,0 +1,9 @@
+.elementSortBox {
+	border: 0.15rem solid transparent;
+	border-radius: var(--br-l);
+}
+
+.elementSortBox--active {
+	color: var(--secondary-color);
+	border-color: var(--secondary-color);
+}
