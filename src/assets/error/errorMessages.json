@@ -1,0 +1,89 @@
+[
+	{
+		"code": "class/invalid-property-type",
+		"message": "The given type for the value of the property is invalid.",
+		"details": "",
+		"for": "developer"
+	},
+	{
+		"code": "class/invalid-property-value",
+		"message": "The given value for the property is invalid.",
+		"details": "",
+		"for": "developer"
+	},
+	{
+		"code": "class/property-value-missing",
+		"message": "The given value for the property is missing.",
+		"details": "",
+		"for": "developer"
+	},
+	{
+		"code": "class/invalid-property",
+		"message": "The given property does not exist on the class.",
+		"details": "",
+		"for": "developer"
+	},
+	{
+		"code": "class/not-an-instance",
+		"message": "The given value is not an instance of the class.",
+		"details": "",
+		"for": "developer"
+	},
+
+	{
+		"code": "signal/id-missing",
+		"message": "The signal ID is missing.",
+		"details": "",
+		"for": "developer"
+	},
+	{
+		"code": "signal/not-found",
+		"message": "The signal is not found.",
+		"details": "",
+		"for": "developer"
+	},
+
+	{
+		"code": "function/id-missing",
+		"message": "The function ID is missing.",
+		"details": "",
+		"for": "developer"
+	},
+	{
+		"code": "function/not-found",
+		"message": "The function is not found.",
+		"details": "",
+		"for": "developer"
+	},
+	{
+		"code": "function/invalid-type",
+		"message": "The type of the function is not supported.",
+		"details": "",
+		"for": "developer"
+	},
+
+	{
+		"code": "sorting/no-active-item",
+		"message": "There is no selected item.",
+		"details": "Click on one of the items before moving."
+	},
+
+	{
+		"code": "export/no-data",
+		"message": "There is no data to be exported.",
+		"details": "Check if there is a visible signal or create a new one.",
+		"for": "user"
+	},
+	{
+		"code": "export/filename-missing",
+		"message": "The export filename is missing.",
+		"details": "",
+		"for": "user"
+	},
+	{
+		"code": "export/delimiter-missing",
+		"message": "The delimiter is missing.",
+		"details": "",
+		"for": "user"
+	}
+]

@@ -215,7 +215,6 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 						id={`${func.id}--type`}
 						fullW
 						className="function__settings__type"
-						onChange={() => console.log("changed")}
 					/>
 				</div>
 

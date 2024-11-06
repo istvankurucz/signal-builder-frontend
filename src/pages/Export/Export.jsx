@@ -15,6 +15,7 @@ import generateExportFileName from "../../utils/general/generateExportFileName";
 import P from "../../components/ui/P/P";
 import useMainChart from "../../hooks/chart/useMainChart";
 import useLoadSignals from "../../hooks/storage/useLoadSignals";
+import handleError from "../../utils/error/handleError";
 import "./Export.css";
 
 function Export({ setShowLoadSignals }) {
@@ -33,75 +34,51 @@ function Export({ setShowLoadSignals }) {
 
 	//#region Functions
 	function validateExportInputs() {
-		// Check if there is any signals
-		if (signals.length === 0) {
-			dispatch({
-				type: "SET_FEEDBACK",
-				feedback: {
-					show: true,
-					type: "danger",
-					message: "You have no signal.",
-					details: "Create one before export.",
-				},
-			});
+		try {
+			// Signals
+			if (signals.length === 0) throw new Error("export/no-data");
+
+			// Filename
+			if (filename === "") throw new Error("export/filename-missing");
+
+			// Delimiter
+			const delimiter = delimiterRef.current.value;
+			if (delimiter === "") throw new Error("export/delimiter-missing");
+
+			return true;
+		} catch (e) {
+			handleError(e.message, dispatch);
 			return false;
 		}
-
-		// Check filename
-		if (filename === "") {
-			dispatch({
-				type: "SET_FEEDBACK",
-				feedback: {
-					show: true,
-					type: "danger",
-					message: "Filename is not specified.",
-					details: "",
-				},
-			});
-			return false;
-		}
-
-		// Check delimiter
-		const delimiter = delimiterRef.current.value;
-		if (delimiter === "") {
-			dispatch({
-				type: "SET_FEEDBACK",
-				feedback: {
-					show: true,
-					type: "danger",
-					message: "Delimiter is not specified.",
-					details: "",
-				},
-			});
-			return false;
-		}
-
-		return true;
 	}
 
 	function getCSVData(chartData) {
-		// Check if there is chart data
-		if (chartData == null) {
-			console.log("Chart data is null.");
-			return null;
+		try {
+			// Check if there is chart data
+			if (chartData == null || chartData.datasets.length === 0) {
+				throw new Error("export/no-data");
+			}
+
+			// Filter the visible signals
+			const visibleSignals = chartData.datasets.filter((signal) => signal.data.length > 0);
+
+			// Header
+			const signalNames = visibleSignals.map((signal) => signal.label);
+			const header = ["Time [s]", ...signalNames];
+
+			// Records
+			const records = chartData.labels.map((time, i) => {
+				const signalValues = chartData.datasets.map((signal) => signal.data[i]);
+				return [time, ...signalValues];
+			});
+
+			// CSV data
+			const csvData = [header, ...records];
+			return csvData;
+		} catch (e) {
+			handleError(e.message, dispatch);
+			return [];
 		}
-
-		// Filter the visible signals
-		const visibleSignals = chartData.datasets.filter((signal) => signal.data.length > 0);
-
-		// Header
-		const signalNames = visibleSignals.map((signal) => signal.label);
-		const header = ["Time [s]", ...signalNames];
-
-		// Records
-		const records = chartData.labels.map((time, i) => {
-			const signalValues = chartData.datasets.map((signal) => signal.data[i]);
-			return [time, ...signalValues];
-		});
-
-		// CSV data
-		const csvData = [header, ...records];
-		return csvData;
 	}
 
 	function downloadFile(data) {
@@ -132,6 +109,7 @@ function Export({ setShowLoadSignals }) {
 
 		// Get the CSV data
 		const csvData = getCSVData(chartData);
+		if (csvData.length === 0) return;
 
 		// Parse the data to CSV string
 		const delimiter = delimiterRef.current.value;

@@ -1,4 +1,5 @@
 import functionTypes from "../../assets/function/functionTypes";
+import handleError from "../error/handleError";
 import generateId from "../general/generateId";
 
 const defaultValues = {
@@ -66,16 +67,14 @@ class Function {
 		return this._name;
 	}
 	set name(name) {
-		if (typeof name !== "string") {
-			console.log("Name parameter must be a string.");
-			return;
-		}
-		if (name === "") {
-			console.log("Name parameter cannot be empty.");
-			return;
-		}
+		try {
+			if (typeof name !== "string") throw new Error("class/invalid-property-type");
+			if (name === "") throw new Error("class/property-value-missing");
 
-		this._name = name;
+			this._name = name;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: name");
+		}
 	}
 
 	// Type
@@ -83,16 +82,14 @@ class Function {
 		return this._type;
 	}
 	set type(type) {
-		if (typeof type !== "string") {
-			console.log("Name parameter must be a string.");
-			return;
-		}
-		if (!functionTypes.includes(type)) {
-			console.log("The given function type is not supported.");
-			return;
-		}
+		try {
+			if (typeof type !== "string") throw new Error("class/invalid-property-type");
+			if (!functionTypes.includes(type)) throw new Error("function/invalid-type");
 
-		this._type = type;
+			this._type = type;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: type");
+		}
 	}
 
 	// Start time
@@ -100,16 +97,17 @@ class Function {
 		return this._startTime;
 	}
 	set startTime(startTime) {
-		if (typeof startTime !== "number") {
-			console.log("Start time parameter must be a number.");
-			return;
-		}
-		if (isNaN(startTime)) {
-			this._startTime = defaultValues.startTime;
-			return;
-		}
+		try {
+			if (typeof startTime !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(startTime)) {
+				this._startTime = defaultValues.startTime;
+				return;
+			}
 
-		this._startTime = startTime;
+			this._startTime = startTime;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: startTime");
+		}
 	}
 
 	// Length
@@ -117,16 +115,17 @@ class Function {
 		return this._length;
 	}
 	set length(length) {
-		if (typeof length !== "number") {
-			console.log("Length parameter must be a number.");
-			return;
-		}
-		if (isNaN(length)) {
-			this._length = defaultValues.length;
-			return;
-		}
+		try {
+			if (typeof length !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(length)) {
+				this._length = defaultValues.length;
+				return;
+			}
 
-		this._length = length;
+			this._length = length;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: length");
+		}
 	}
 
 	// Offset
@@ -134,16 +133,17 @@ class Function {
 		return this._offset;
 	}
 	set offset(offset) {
-		if (typeof offset !== "number") {
-			console.log("Offset parameter must be a number.");
-			return;
-		}
-		if (isNaN(offset)) {
-			this._offset = defaultValues.offset;
-			return;
-		}
+		try {
+			if (typeof offset !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(offset)) {
+				this._offset = defaultValues.offset;
+				return;
+			}
 
-		this._offset = offset;
+			this._offset = offset;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: offset");
+		}
 	}
 
 	// Const value
@@ -151,16 +151,17 @@ class Function {
 		return this._constValue;
 	}
 	set constValue(constValue) {
-		if (typeof constValue !== "number") {
-			console.log("Const value parameter must be a number.");
-			return;
-		}
-		if (isNaN(constValue)) {
-			this._constValue = defaultValues.constValue;
-			return;
-		}
+		try {
+			if (typeof constValue !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(constValue)) {
+				this._constValue = defaultValues.constValue;
+				return;
+			}
 
-		this._constValue = constValue;
+			this._constValue = constValue;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: constValue");
+		}
 	}
 
 	// Keep last value
@@ -168,12 +169,13 @@ class Function {
 		return this._keepLastValue;
 	}
 	set keepLastValue(keepLastValue) {
-		if (typeof keepLastValue !== "boolean") {
-			console.log("KeepLastValue parameter must be a boolean.");
-			return;
-		}
+		try {
+			if (typeof keepLastValue !== "boolean") throw new Error("class/invalid-property-type");
 
-		this._keepLastValue = keepLastValue;
+			this._keepLastValue = keepLastValue;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: keepLastValue");
+		}
 	}
 
 	// Slope
@@ -181,16 +183,17 @@ class Function {
 		return this._slope;
 	}
 	set slope(slope) {
-		if (typeof slope !== "number") {
-			console.log("Slope parameter must be a number.");
-			return;
-		}
-		if (isNaN(slope)) {
-			this._slope = defaultValues.slope;
-			return;
-		}
+		try {
+			if (typeof slope !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(slope)) {
+				this._slope = defaultValues.slope;
+				return;
+			}
 
-		this._slope = slope;
+			this._slope = slope;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: slope");
+		}
 	}
 
 	// Frequency
@@ -198,20 +201,17 @@ class Function {
 		return this._frequency;
 	}
 	set frequency(frequency) {
-		if (typeof frequency !== "number") {
-			console.log("Frequency parameter must be a number.");
-			return;
-		}
-		if (isNaN(frequency)) {
-			this._frequency = defaultValues.frequency;
-			return;
-		}
-		if (frequency <= 0) {
-			this._frequency = defaultValues.frequency;
-			return;
-		}
+		try {
+			if (typeof frequency !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(frequency) || frequency <= 0) {
+				this._frequency = defaultValues.frequency;
+				return;
+			}
 
-		this._frequency = frequency;
+			this._frequency = frequency;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: frequency");
+		}
 	}
 
 	// Amplitude
@@ -219,20 +219,17 @@ class Function {
 		return this._amplitude;
 	}
 	set amplitude(amplitude) {
-		if (typeof amplitude !== "number") {
-			console.log("Amplitude parameter must be a number.");
-			return;
-		}
-		if (isNaN(amplitude)) {
-			this._amplitude = defaultValues.amplitude;
-			return;
-		}
-		if (amplitude <= 0) {
-			this._amplitude = defaultValues.amplitude;
-			return;
-		}
+		try {
+			if (typeof amplitude !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(amplitude) || amplitude <= 0) {
+				this._amplitude = defaultValues.amplitude;
+				return;
+			}
 
-		this._amplitude = amplitude;
+			this._amplitude = amplitude;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: amplitude");
+		}
 	}
 
 	// Phase
@@ -240,16 +237,17 @@ class Function {
 		return this._phase;
 	}
 	set phase(phase) {
-		if (typeof phase !== "number") {
-			console.log("Phase parameter must be a number.");
-			return;
-		}
-		if (isNaN(phase)) {
-			this._phase = defaultValues.phase;
-			return;
-		}
+		try {
+			if (typeof phase !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(phase)) {
+				this._phase = defaultValues.phase;
+				return;
+			}
 
-		this._phase = phase;
+			this._phase = phase;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: phase");
+		}
 	}
 
 	// Step value
@@ -257,16 +255,17 @@ class Function {
 		return this._stepValue;
 	}
 	set stepValue(stepValue) {
-		if (typeof stepValue !== "number") {
-			console.log("Step value parameter must be a number.");
-			return;
-		}
-		if (isNaN(stepValue)) {
-			this._stepValue = defaultValues.stepValue;
-			return;
-		}
+		try {
+			if (typeof stepValue !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(stepValue)) {
+				this._stepValue = defaultValues.stepValue;
+				return;
+			}
 
-		this._stepValue = stepValue;
+			this._stepValue = stepValue;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: stepValue");
+		}
 	}
 
 	// Step time
@@ -274,16 +273,17 @@ class Function {
 		return this._stepTime;
 	}
 	set stepTime(stepTime) {
-		if (typeof stepTime !== "number") {
-			console.log("Step time parameter must be a number.");
-			return;
-		}
-		if (isNaN(stepTime)) {
-			this._stepTime = defaultValues.stepTime;
-			return;
-		}
+		try {
+			if (typeof stepTime !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(stepTime)) {
+				this._stepTime = defaultValues.stepTime;
+				return;
+			}
 
-		this._stepTime = stepTime;
+			this._stepTime = stepTime;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: stepTime");
+		}
 	}
 
 	// Ramp start time
@@ -291,16 +291,17 @@ class Function {
 		return this._rampStartTime;
 	}
 	set rampStartTime(rampStartTime) {
-		if (typeof rampStartTime !== "number") {
-			console.log("Ramp start time parameter must be a number.");
-			return;
-		}
-		if (isNaN(rampStartTime)) {
-			this._rampStartTime = defaultValues.rampStartTime;
-			return;
-		}
+		try {
+			if (typeof rampStartTime !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(rampStartTime)) {
+				this._rampStartTime = defaultValues.rampStartTime;
+				return;
+			}
 
-		this._rampStartTime = rampStartTime;
+			this._rampStartTime = rampStartTime;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: rampStartTime");
+		}
 	}
 
 	// Ramp end time
@@ -308,16 +309,17 @@ class Function {
 		return this._rampEndTime;
 	}
 	set rampEndTime(rampEndTime) {
-		if (typeof rampEndTime !== "number") {
-			console.log("Ramp end time parameter must be a number.");
-			return;
-		}
-		if (isNaN(rampEndTime)) {
-			this._rampEndTime = defaultValues.rampEndTime;
-			return;
-		}
+		try {
+			if (typeof rampEndTime !== "number") throw new Error("class/invalid-property-type");
+			if (isNaN(rampEndTime)) {
+				this._rampEndTime = defaultValues.rampEndTime;
+				return;
+			}
 
-		this._rampEndTime = rampEndTime;
+			this._rampEndTime = rampEndTime;
+		} catch (e) {
+			handleError(e.message, null, "Class: Function, property: rampEndTime");
+		}
 	}
 }
 

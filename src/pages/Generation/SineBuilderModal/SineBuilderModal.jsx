@@ -32,8 +32,6 @@ function SineBuilderModal({ show, setShow }) {
 	const [searchParams, setSearchParams] = useSearchParams();
 	//#endregion
 
-	// console.log("Function: ", func);
-
 	//#region Refs
 	const timeoutRef = useRef();
 	//#endregion

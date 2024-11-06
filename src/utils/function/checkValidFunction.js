@@ -1,10 +1,13 @@
 import Function from "../classes/Function";
+import handleError from "../error/handleError";
 
 export default function checkValidFunction(func) {
-	if (func instanceof Function === false) {
-		console.log("The given function is not an instance of the Function class.");
+	try {
+		if (func instanceof Function === false) throw new Error("class/not-an-instance");
+
+		return true;
+	} catch (e) {
+		handleError(e.message, null, "Class: Function");
 		return false;
 	}
-
-	return true;
 }

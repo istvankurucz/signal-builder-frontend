@@ -1,5 +1,6 @@
 import generateId from "../general/generateId";
 import checkValidFunctions from "../function/checkValidFunctions";
+import handleError from "../error/handleError";
 
 class Signal {
 	static count = 1;
@@ -39,16 +40,14 @@ class Signal {
 		return this._name;
 	}
 	set name(name) {
-		if (typeof name !== "string") {
-			console.log("Name parameter must be a string.");
-			return;
-		}
-		if (name === "") {
-			console.log("Name parameter cannot be empty.");
-			return;
-		}
+		try {
+			if (typeof name !== "string") throw new Error("class/invalid-property-type");
+			if (name === "") throw new Error("class/property-value-missing");
 
-		this._name = name;
+			this._name = name;
+		} catch (e) {
+			handleError(e.message, null, "Class: Signal, property: name");
+		}
 	}
 
 	// Offset
@@ -56,17 +55,18 @@ class Signal {
 		return this._offset;
 	}
 	set offset(offset) {
-		if (typeof offset !== "number") {
-			console.log("Offset parameter must be a number");
-			return;
-		}
+		try {
+			if (typeof offset !== "number") throw new Error("class/invalid-property-type");
 
-		if (isNaN(offset)) {
-			this.offset = 0;
-			return;
-		}
+			if (isNaN(offset)) {
+				this.offset = 0;
+				return;
+			}
 
-		this._offset = offset;
+			this._offset = offset;
+		} catch (e) {
+			handleError(e.message, null, "Class: Signal, property: offset");
+		}
 	}
 
 	// Scale
@@ -74,27 +74,27 @@ class Signal {
 		return this._scale;
 	}
 	set scale(scale) {
-		if (typeof scale !== "object") {
-			console.log("Scale parameter must be an object.");
-			return;
-		}
-		if (!scale.hasOwnProperty("x") || !scale.hasOwnProperty("y")) {
-			console.log("Scale parameter must have an 'x' and a 'y' property.");
-			return;
-		}
-		if (typeof scale.x !== "number" || typeof scale.y !== "number") {
-			console.log("The values (x, y) for scale must be numbers.");
-			return;
-		}
+		try {
+			if (typeof scale !== "object") throw new Error("class/invalid-property-type");
 
-		if (isNaN(scale.x) || isNaN(scale.y)) {
-			if (isNaN(scale.x)) this._scale = { ...this._scale, x: 1 };
-			if (isNaN(scale.y)) this._scale = { ...this._scale, y: 1 };
+			if (!scale.hasOwnProperty("x") || !scale.hasOwnProperty("y")) {
+				throw new Error("class/invalid-property-value");
+			}
 
-			return;
+			if (typeof scale.x !== "number" || typeof scale.y !== "number") {
+				throw new Error("class/invalid-property-type");
+			}
+
+			if (isNaN(scale.x) || isNaN(scale.y)) {
+				if (isNaN(scale.x)) this._scale = { ...this._scale, x: 1 };
+				if (isNaN(scale.y)) this._scale = { ...this._scale, y: 1 };
+				return;
+			}
+
+			this._scale = scale;
+		} catch (e) {
+			handleError(e.message, null, "Class: Signal, property: scale");
 		}
-
-		this._scale = scale;
 	}
 
 	// Functions
@@ -102,16 +102,14 @@ class Signal {
 		return this._functions;
 	}
 	set functions(functions) {
-		if (functions.constructor !== Array) {
-			console.log("The given parameter in not an array.");
-			return;
-		}
-		if (!checkValidFunctions(functions)) {
-			console.log("The given parameters are not valid instances of class Function.");
-			return;
-		}
+		try {
+			if (functions.constructor !== Array) throw new Error("class/invalid-property-type");
+			if (!checkValidFunctions(functions)) throw new Error("class/not-an-instance");
 
-		this._functions = functions;
+			this._functions = functions;
+		} catch (e) {
+			handleError(e.message, null, "Class: Signal, property: functions");
+		}
 	}
 
 	// Auto sort
@@ -119,12 +117,13 @@ class Signal {
 		return this._autoSort;
 	}
 	set autoSort(autoSort) {
-		if (typeof autoSort !== "boolean") {
-			console.log("AutoSort parameter must be a boolean.");
-			return;
-		}
+		try {
+			if (typeof autoSort !== "boolean") throw new Error("class/invalid-property-type");
 
-		this._autoSort = autoSort;
+			this._autoSort = autoSort;
+		} catch (e) {
+			handleError(e.message, null, "Class: Signal, property: autosort");
+		}
 	}
 
 	// Reverse time
@@ -132,17 +131,19 @@ class Signal {
 		return this._reverseTime;
 	}
 	set reverseTime(reverseTime) {
-		if (reverseTime != null && typeof reverseTime !== "number") {
-			console.log("Reverse time parameter must be a number or null");
-			return;
-		}
+		try {
+			if (reverseTime != null && typeof reverseTime !== "number") {
+				throw new Error("class/invalid-property-type");
+			}
+			if (isNaN(reverseTime)) {
+				this._reverseTime = null;
+				return;
+			}
 
-		if (isNaN(reverseTime)) {
-			this._reverseTime = null;
-			return;
+			this._reverseTime = reverseTime;
+		} catch (e) {
+			handleError(e.message, null, "Class: Signal, property: reverseTime");
 		}
-
-		this._reverseTime = reverseTime;
 	}
 
 	// Visible
@@ -150,12 +151,13 @@ class Signal {
 		return this._visible;
 	}
 	set visible(visible) {
-		if (typeof visible !== "boolean") {
-			console.log("Visible parameter must be a boolean.");
-			return;
-		}
+		try {
+			if (typeof visible !== "boolean") throw new Error("class/invalid-property-type");
 
-		this._visible = visible;
+			this._visible = visible;
+		} catch (e) {
+			handleError(e.message, null, "Class: Signal, property: visible");
+		}
 	}
 }
 

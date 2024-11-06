@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import useSignal from "./useSignal";
 import updateSignals from "../../utils/signal/updateSignals";
+import handleError from "../../utils/error/handleError";
 
 function useSignalProperties() {
 	//#region States
@@ -56,54 +57,60 @@ function useSignalProperties() {
 	}
 
 	function updateInputValue(property, value) {
-		// Based on the given property update the appropriate state
-		switch (property) {
-			case "name":
-				setName(value);
-				break;
-			case "offset":
-				setOffset(value);
-				break;
-			case "scale":
-				setScale(value);
-				break;
-			case "hasReverseTime":
-				setHasReverseTime(value);
-				if (value === false) setReverseTime("");
-				break;
-			case "reverseTime":
-				setReverseTime(value);
-				break;
-			default:
-				console.log(`The given property (${property}) is not found: `);
+		try {
+			switch (property) {
+				case "name":
+					setName(value);
+					break;
+				case "offset":
+					setOffset(value);
+					break;
+				case "scale":
+					setScale(value);
+					break;
+				case "hasReverseTime":
+					setHasReverseTime(value);
+					if (value === false) setReverseTime("");
+					break;
+				case "reverseTime":
+					setReverseTime(value);
+					break;
+				default:
+					throw new Error("class/invalid-property");
+			}
+		} catch (e) {
+			handleError(e.message, dispatch);
 		}
 	}
 
 	function updateProperty(property, value) {
-		// Based on the given property update the appropriate property of the Signal
-		switch (property) {
-			case "name":
-				signal.name = value;
-				break;
-			case "offset":
-				signal.offset = parseFloat(value);
-				break;
-			case "scale":
-				const scale = { x: parseFloat(value.x), y: parseFloat(value.y) };
-				signal.scale = scale;
-				break;
-			case "hasReverseTime":
-				if (value === false) signal.reverseTime = null;
-				break;
-			case "reverseTime":
-				signal.reverseTime = parseFloat(value);
-				break;
-			default:
-				console.log("Signal class does not have the given property: ", property);
-		}
+		try {
+			switch (property) {
+				case "name":
+					signal.name = value;
+					break;
+				case "offset":
+					signal.offset = parseFloat(value);
+					break;
+				case "scale":
+					const scale = { x: parseFloat(value.x), y: parseFloat(value.y) };
+					signal.scale = scale;
+					break;
+				case "hasReverseTime":
+					if (value === false) signal.reverseTime = null;
+					break;
+				case "reverseTime":
+					signal.reverseTime = parseFloat(value);
+					break;
+				default:
+					throw new Error("class/invalid-property");
+			}
 
-		// Update signals array
-		updateSignals(signals, dispatch);
+			// Update signals array
+			updateSignals(signals, dispatch);
+		} catch (e) {
+			handleError(e.message, dispatch);
+		}
 	}
 	//#endregion
 

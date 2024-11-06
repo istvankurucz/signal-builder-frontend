@@ -18,6 +18,7 @@ import Checkbox from "../../form/Checkbox/Checkbox";
 import chartColors from "../../../assets/chart/chartColors";
 import getSignalById from "../../../utils/signal/getSignalById";
 import updateSignals from "../../../utils/signal/updateSignals";
+import handleError from "../../../utils/error/handleError";
 import "./MainChart.css";
 
 function MainChart() {
@@ -30,29 +31,24 @@ function MainChart() {
 
 	//#region Functions
 	function changeSignalVisibility(e, signalId = "") {
-		// Check if there is a signal ID
-		if (signalId === "") {
-			console.log("No signal ID was provided.");
-			return;
+		try {
+			// Check if there is a signal ID
+			if (signalId === "") throw new Error("signal/id-missing");
+
+			// Get the signal from state
+			const signal = getSignalById(signals, signalId);
+
+			// Check if the signal exists
+			if (signal == null) throw new Error("signal/not-found");
+
+			// Update the visible property
+			signal.visible = e.target.checked;
+
+			// Update signals array
+			updateSignals(signals, dispatch);
+		} catch (e) {
+			handleError(e.message);
 		}
-
-		// console.log(signalId);
-
-		// Get the signal from state
-		const signal = getSignalById(signals, signalId);
-
-		// console.log(signal);
-
-		// Check if the signal exists
-		if (signal == null) return;
-
-		// Update the visible property
-		signal.visible = e.target.checked;
-
-		// console.log(e.target.checked);
-
-		// Update signals array
-		updateSignals(signals, dispatch);
 	}
 	//#endregion
 

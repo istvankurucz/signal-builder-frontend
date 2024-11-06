@@ -1,3 +1,4 @@
+import handleError from "../error/handleError";
 import checkValidSignal from "../signal/checkValidSignal";
 
 function checkSignals(signals = []) {
@@ -10,13 +11,14 @@ function checkSignals(signals = []) {
 }
 
 export default function saveSignals(signals = []) {
-	// Check if the given signals are valid
-	if (!checkSignals(signals)) {
-		console.log("The given signals are not an instance of Signal class.");
-		return;
-	}
+	try {
+		// Check if the given signals are valid
+		if (!checkSignals(signals)) throw new Error("class/not-an-instance");
 
-	// Save the signals to localstorage
-	window.localStorage.setItem("signals", JSON.stringify(signals));
-	window.localStorage.setItem("signalsUpdatedAt", JSON.stringify(new Date()));
+		// Save the signals to localstorage
+		window.localStorage.setItem("signals", JSON.stringify(signals));
+		window.localStorage.setItem("signalsUpdatedAt", JSON.stringify(new Date()));
+	} catch (e) {
+		handleError(e.message, null);
+	}
 }
