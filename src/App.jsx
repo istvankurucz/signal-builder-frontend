@@ -12,8 +12,8 @@ import {
 } from "chart.js";
 import Feedback from "./components/ui/Feedback/Feedback";
 import Generation from "./pages/Generation/Generation";
-import Toggle from "./components/form/Toggle/Toggle";
 import Export from "./pages/Export/Export";
+import Import from "./pages/Import/Import";
 import useSaveSignals from "./hooks/storage/useSaveSignals";
 import LoadSignalsModal from "./pages/Generation/LoadSignalsModal/LoadSignalsModal";
 import "./App.css";
@@ -36,12 +36,8 @@ function App() {
 				/>
 				<Route
 					path="/import"
-					element={
-						<>
-							<h1>import page</h1>
-							<Toggle variant="accent" id="toggle" label="Toggle button" />
-						</>
-					}
+					setShowLoadSignals={setShowLoadSignalsModal}
+					element={<Import />}
 				/>
 				<Route
 					path="/export"

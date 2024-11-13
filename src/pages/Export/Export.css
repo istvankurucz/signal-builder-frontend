@@ -1,5 +1,4 @@
-.export__left {
-	flex: 1;
+.export__main {
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;

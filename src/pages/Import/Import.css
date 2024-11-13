@@ -1,0 +1,29 @@
+.import__main {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.import__settings__inputs {
+	display: flex;
+	gap: 5rem;
+}
+
+.import__settings__delimiter {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.import__settings__delimiter__input {
+	margin-left: 2rem;
+}
+
+.import__file__input .input__input {
+	border: none;
+	padding-inline: 0;
+}
+
+.import__button {
+	width: fit-content;
+}

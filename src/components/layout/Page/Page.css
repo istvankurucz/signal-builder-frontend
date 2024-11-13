@@ -1,3 +1,15 @@
 .page {
 	padding: 2rem 1rem;
 }
+
+.page__container {
+	--chart-width: 600px;
+	--gap: 5rem;
+
+	display: flex;
+	gap: 5rem;
+}
+
+.page__left {
+	width: calc(100vw - var(--chart-width) - var(--gap));
+}

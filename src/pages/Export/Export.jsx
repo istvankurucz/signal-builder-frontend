@@ -9,7 +9,6 @@ import ShadowBox from "../../components/layout/ShadowBox/ShadowBox";
 import Alert from "../../components/ui/Alert/Alert";
 import H2 from "../../components/ui/H2/H2";
 import Button from "../../components/ui/Button/Button";
-import MainChart from "../../components/ui/MainChart/MainChart";
 import useSampling from "../../hooks/chart/useSampling";
 import generateExportFileName from "../../utils/general/generateExportFileName";
 import P from "../../components/ui/P/P";
@@ -134,81 +133,77 @@ function Export({ setShowLoadSignals }) {
 
 	return (
 		<Page className="export">
-			<Page.Container className="export__container">
-				<section className="export__left">
-					<ShadowBox className="export__settings">
-						<H2>Settings</H2>
+			<section className="export__main">
+				<ShadowBox className="export__settings">
+					<H2>Settings</H2>
 
-						<div className="export__settings__inputs">
-							<Input
-								type="number"
-								min="1"
-								label="Sampling"
-								id="exportSampling"
-								placeholder="Sampling"
-								unit="Hz"
-								value={sampling}
-								onChange={setSampling}
-							/>
+					<div className="export__settings__inputs">
+						<Input
+							type="number"
+							min="1"
+							label="Sampling"
+							id="exportSampling"
+							placeholder="Sampling"
+							unit="Hz"
+							value={sampling}
+							onChange={setSampling}
+						/>
 
-							<Input
-								type="text"
-								label="Delimiter"
-								id="exportDelimiter"
-								placeholder="Delimiter"
-								defaultValue=";"
-								width="4rem"
-								ref={delimiterRef}
-							/>
-						</div>
-					</ShadowBox>
+						<Input
+							type="text"
+							label="Delimiter"
+							id="exportDelimiter"
+							placeholder="Delimiter"
+							defaultValue=";"
+							width="4rem"
+							ref={delimiterRef}
+						/>
+					</div>
+				</ShadowBox>
 
-					<ShadowBox className="export__file">
-						<H2>File</H2>
+				<ShadowBox className="export__file">
+					<H2>File</H2>
 
-						<div className="export__file__inputs">
-							<Input
-								type="text"
-								label="Filename"
-								id="exportFileName"
-								placeholder="Filename"
-								fullW
-								value={filename}
-								onChange={(e) => setFileName(e.target.value)}
-							/>
-							<Input
-								type="text"
-								label=""
-								id="exportFileExtension"
-								width="3.5rem"
-								value=".csv"
-								readOnly
-							/>
-						</div>
-					</ShadowBox>
+					<div className="export__file__inputs">
+						<Input
+							type="text"
+							label="Filename"
+							id="exportFileName"
+							placeholder="Filename"
+							fullW
+							value={filename}
+							onChange={(e) => setFileName(e.target.value)}
+						/>
+						<Input
+							type="text"
+							label=""
+							id="exportFileExtension"
+							width="3.5rem"
+							value=".csv"
+							readOnly
+						/>
+					</div>
+				</ShadowBox>
 
-					<Alert variant="info" className="export__alert">
-						<P>Only the visible signals will be exported!</P>
-						<P>You can change the visibility below the chart.</P>
+				<Alert variant="info" className="export__alert">
+					<P>Only the visible signals will be exported!</P>
+					<P>You can change the visibility below the chart.</P>
+				</Alert>
+
+				<Button className="export__button" onClick={exportData}>
+					<FontAwesomeIcon icon={faArrowRightFromBracket} />
+					Export
+				</Button>
+
+				{showExportResult && (
+					<Alert variant="success" icon={faCheck} className="export__result">
+						<P>File was written successfully.</P>
+						<P>
+							Check it in your <strong>Downloads</strong> folder.
+						</P>
 					</Alert>
-
-					<Button className="export__button" onClick={exportData}>
-						<FontAwesomeIcon icon={faArrowRightFromBracket} />
-						Export
-					</Button>
-
-					{showExportResult && (
-						<Alert variant="success" icon={faCheck} className="export__result">
-							<P>File was written successfully.</P>
-							<P>
-								Check it in your <strong>Downloads</strong> folder.
-							</P>
-						</Alert>
-					)}
-				</section>
-
-				<MainChart />
-			</Page.Container>
+				)}
+			</section>
 		</Page>
 	);
 }

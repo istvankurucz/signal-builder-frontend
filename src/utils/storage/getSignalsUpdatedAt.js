@@ -1,6 +1,8 @@
-export default function getSignalsUpdatedAt() {
-	const signalsUpdatedAtString = window.localStorage.getItem("signalsUpdatedAt");
+import getStorageData from "./getStorageData";
 
-	if (signalsUpdatedAtString == null) return null;
-	return new Date(JSON.parse(signalsUpdatedAtString));
+export default function getSignalsUpdatedAt() {
+	const { updatedAt } = getStorageData();
+
+	if (updatedAt == null) return null;
+	return new Date(updatedAt);
 }

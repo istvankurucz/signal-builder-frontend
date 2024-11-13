@@ -1,10 +1,3 @@
-.generation__section--signals {
-	--chart-width: 600px;
-	--gap: 5rem;
-
-	width: calc(100% - var(--chart-width) - var(--gap));
-}
-
 .generation__signals__general {
 	margin-bottom: 3rem;
 }

@@ -16,8 +16,12 @@ export default function saveSignals(signals = []) {
 		if (!checkSignals(signals)) throw new Error("class/not-an-instance");
 
 		// Save the signals to localstorage
-		window.localStorage.setItem("signals", JSON.stringify(signals));
-		window.localStorage.setItem("signalsUpdatedAt", JSON.stringify(new Date()));
+		const avlSignalBuilderData = {
+			signals,
+			recentImportFilePaths: [],
+			updatedAt: new Date(),
+		};
+		window.localStorage.setItem("AVLSignalBuilderData", JSON.stringify(avlSignalBuilderData));
 	} catch (e) {
 		handleError(e.message, null);
 	}

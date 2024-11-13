@@ -69,6 +69,25 @@
 	},
 
 	{
+		"code": "import/no-file",
+		"message": "There is no file selected.",
+		"details": "",
+		"for": "user"
+	},
+	{
+		"code": "import/delimiter-missing",
+		"message": "The delimiter is missing.",
+		"details": "",
+		"for": "user"
+	},
+	{
+		"code": "import/number-of-header-lines-missing",
+		"message": "Number of header lines is missing or invalid.",
+		"details": "",
+		"for": "user"
+	},
+
+	{
 		"code": "export/no-data",
 		"message": "There is no data to be exported.",
 		"details": "Check if there is a visible signal or create a new one.",

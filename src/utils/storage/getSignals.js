@@ -1,14 +1,13 @@
 import Function from "../classes/Function";
 import Signal from "../classes/Signal";
+import getStorageData from "./getStorageData";
 
 export default function getSignals() {
-	const signalsString = window.localStorage.getItem("signals");
-
-	// If the item is not defined in localstorage
-	if (signalsString == null) return [];
+	// Get the signals from storage
+	const { signals } = getStorageData();
 
 	// Create Signal objects from the strings
-	return JSON.parse(signalsString).map((signal) => {
+	return signals.map((signal) => {
 		const functions = signal._functions.map((f) => {
 			return new Function(
 				f._id,

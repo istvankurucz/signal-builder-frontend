@@ -13,7 +13,6 @@ import SignalComponent from "../../components/ui/Signal/Signal";
 import SortSignalsModal from "./SortSignalsModal/SortSignalsModal";
 import Signal from "../../utils/classes/Signal";
 import addSignalToSignals from "../../utils/signal/addSignalToSignals";
-import MainChart from "../../components/ui/MainChart/MainChart";
 import useLoadSignals from "../../hooks/storage/useLoadSignals";
 import "./Generation.css";
 
@@ -54,58 +53,51 @@ function Generation({ setShowLoadSignals }) {
 		<Page className="generation">
 			<SortSignalsModal show={showSortSignalsModal} setShow={setShowSortSignalsModal} />
 
-			<Page.Container className="generation__container">
-				<section className="generation__section generation__section--signals">
-					<ShadowBox className="generation__signals__general">
-						<H2>General settings</H2>
+			<section className="generation__section generation__section--signals">
+				<ShadowBox className="generation__signals__general">
+					<H2>General settings</H2>
 
-						<P variant="info" className="generation__signals__general__p">
-							Create a new signal or change their order.
-						</P>
+					<P variant="info" className="generation__signals__general__p">
+						Create a new signal or change their order.
+					</P>
 
-						<div className="generation__signals__general__buttons">
-							<Button variant="accent" onClick={createSignal}>
-								<FontAwesomeIcon icon={faAdd} />
-								Add signal
+					<div className="generation__signals__general__buttons">
+						<Button variant="accent" onClick={createSignal}>
+							<FontAwesomeIcon icon={faAdd} />
+							Add signal
+						</Button>
+
+						{signals.length > 1 && (
+							<Button variant="info" onClick={() => setShowSortSignalsModal(true)}>
+								<FontAwesomeIcon icon={faSort} />
+								Sort signals
 							</Button>
+						)}
+					</div>
+				</ShadowBox>
 
-							{signals.length > 1 && (
-								<Button variant="info" onClick={() => setShowSortSignalsModal(true)}>
-									<FontAwesomeIcon icon={faSort} />
-									Sort signals
-								</Button>
-							)}
+				{signals.length > 0 ? (
+					<>
+						<SignalTabSelect
+							index={index}
+							setIndex={setIndex}
+							options={signals.map((signal) => signal.name)}
+							className="generation__signals__select"
+						/>
+						<SignalComponent />
+					</>
+				) : (
+					<div className="generation__signals__noSignal">
+						<FontAwesomeIcon icon={faBan} className="generation__signals__noSignal__icon" />
+						<div className="generation__signals__noSignal__description">
+							<P className="">There is no signal.</P>
+							<P>
+								Click on <strong>Add Signal</strong> button to create one.
+							</P>
 						</div>
-					</ShadowBox>
-
-					{signals.length > 0 ? (
-						<>
-							<SignalTabSelect
-								index={index}
-								setIndex={setIndex}
-								options={signals.map((signal) => signal.name)}
-								className="generation__signals__select"
-							/>
-							<SignalComponent />
-						</>
-					) : (
-						<div className="generation__signals__noSignal">
-							<FontAwesomeIcon
-								icon={faBan}
-								className="generation__signals__noSignal__icon"
-							/>
-							<div className="generation__signals__noSignal__description">
-								<P className="">There is no signal.</P>
-								<P>
-									Click on <strong>Add Signal</strong> button to create one.
-								</P>
-							</div>
-						</div>
-					)}
-				</section>
-
-				<MainChart />
-			</Page.Container>
+					</div>
+				)}
+			</section>
 		</Page>
 	);
 }

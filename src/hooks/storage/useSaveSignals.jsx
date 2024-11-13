@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
-import saveSignals from "../../utils/storage/saveSignals";
+import saveSignals from "../../utils/storage/saveToStorage";
 
 function useSaveSignals() {
 	const [{ signals }] = useStateValue();

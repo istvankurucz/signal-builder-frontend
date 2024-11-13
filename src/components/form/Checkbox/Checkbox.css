@@ -11,6 +11,7 @@
 	outline: auto;
 }
 
+/* #region Variants */
 .checkbox--secondary {
 	--icon-color: var(--primary-color);
 	--bg-color: var(--secondary-color);
@@ -19,6 +20,7 @@
 	--icon-color: var(--primary-color);
 	--bg-color: var(--accent-color);
 }
+/* #endregion */
 
 .checkbox__input {
 	opacity: 0;
@@ -63,6 +65,5 @@
 }
 
 .checkbox__label {
-	font-size: var(--fs-s);
 	cursor: pointer;
 }
