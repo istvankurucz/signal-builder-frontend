@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useStateValue } from "../../../contexts/Context API/StateProvider";
 import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -42,8 +42,14 @@ function SignalTabSelect({ className = "" }) {
 	}
 	//#endregion
 
+	//#region Variables
+	const signalNames = useMemo(() => {
+		return signals.map((signal) => signal.name);
+	}, [JSON.stringify(signals)]);
+	//#endregion
+
 	//#region Hooks
-	// Update the initial temp elements when the local states loaded
+	// Update the initial temp elements when the local states loaded or the name of a signal changes
 	useEffect(() => {
 		if (signals.length === 0) return;
 
@@ -53,7 +59,7 @@ function SignalTabSelect({ className = "" }) {
 			dragging: false,
 		}));
 		setTempElements(newTempSignals);
-	}, [signals]);
+	}, [signals, signalNames]);
 
 	// Checks if the content of the tab select element overflows
 	useLayoutEffect(() => {

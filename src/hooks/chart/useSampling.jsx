@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 
 function useSampling() {
@@ -30,6 +30,11 @@ function useSampling() {
 		}, 1000);
 	}
 	//#endregion
+
+	// Update the sampling in every sampling input
+	useEffect(() => {
+		if (sampling !== parseFloat(samplingValue)) setSamplingValue(sampling);
+	}, [sampling]);
 
 	return [samplingValue, setSampling];
 }

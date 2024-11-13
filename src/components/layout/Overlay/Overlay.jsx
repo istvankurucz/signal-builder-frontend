@@ -11,7 +11,7 @@ function Overlay({ show = false, className = "", children }) {
 	}, [show]);
 
 	// Tab inside the overlay
-	useLayoutEffect(() => {
+	/*useLayoutEffect(() => {
 		// When the overlay becomes visible select the first tabable element
 		if (show) {
 			const tabElements = selectAllTabElements(overlayRef.current);
@@ -41,7 +41,7 @@ function Overlay({ show = false, className = "", children }) {
 		window.addEventListener("keydown", handleKeydown);
 
 		return () => window.addEventListener("keydown", handleKeydown);
-	}, [show]);
+	}, [show]);*/
 
 	return (
 		<div

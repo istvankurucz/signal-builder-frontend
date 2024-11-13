@@ -126,6 +126,7 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 	//#region Hooks
 	// Const keep last value logic
 	useEffect(() => {
+		if (func == null || signal == null) return;
 		if (!func.keepLastValue) return;
 
 		let minDiff = Number.POSITIVE_INFINITY;
@@ -142,7 +143,7 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 		const lastValue = beforeFunctionPoints.y[beforeFunctionPoints.y.length - 1];
 
 		changeValue("constValue", lastValue);
-	}, [JSON.stringify(signals)]);
+	}, [JSON.stringify(signal), sampling]);
 	//#endregion
 
 	return (
@@ -413,11 +414,15 @@ function FunctionComponent({ func, setShowSineBuilder, className = "" }) {
 							<div className="function__params__info">
 								<div className="function__params__info__row">
 									<span className="function__params__info__property">Min:</span>
-									<span className="function__params__info__value">{minValue}</span>
+									<span className="function__params__info__value">
+										{Math.round(minValue * 100) / 100}
+									</span>
 								</div>
 								<div className="function__params__info__row">
 									<span className="function__params__info__property">Max:</span>
-									<span className="function__params__info__value">{maxValue}</span>
+									<span className="function__params__info__value">
+										{Math.round(maxValue * 100) / 100}
+									</span>
 								</div>
 							</div>
 						)}

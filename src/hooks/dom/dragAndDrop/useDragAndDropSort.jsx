@@ -1,8 +1,8 @@
 import { useState } from "react";
 import swapArrayElements from "../../../utils/general/swapArrayElements";
 
-function useDragAndDropSort(initialElements = []) {
-	const [tempElements, setTempElements] = useState(initialElements);
+function useDragAndDropSort(elements = []) {
+	const [tempElements, setTempElements] = useState(elements);
 	const [activeIndex, setActiveIndex] = useState(-1);
 
 	function getDraggingIndex(container) {
