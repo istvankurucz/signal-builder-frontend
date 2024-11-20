@@ -19,6 +19,10 @@
 	margin-left: 2rem;
 }
 
+.import__file--dragover {
+	outline: 0.25rem dashed var(--secondary-color);
+}
+
 .import__file__input .input__input {
 	border: none;
 	padding-inline: 0;

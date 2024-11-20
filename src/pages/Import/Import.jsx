@@ -10,9 +10,9 @@ import ShadowBox from "../../components/layout/ShadowBox/ShadowBox";
 import H2 from "../../components/ui/H2/H2";
 import useLoadSignals from "../../hooks/storage/useLoadSignals";
 import handleError from "../../utils/error/handleError";
-import "./Import.css";
 import importData from "../../utils/import/importData";
-import papa from "papaparse";
+import detectSignalBreakpoints from "../../utils/import/identification/detectSignalBreakpoints";
+import "./Import.css";
 
 function Import({ setShowLoadSignals }) {
 	//#region States
@@ -28,6 +28,47 @@ function Import({ setShowLoadSignals }) {
 	//#endregion
 
 	//#region Functions
+	function setDropElementActiveClass(method) {
+		const dropElement = document.querySelector(".import__file");
+
+		if (method === "add") dropElement.classList.add("import__file--dragover");
+		else dropElement.classList.remove("import__file--dragover");
+	}
+
+	function handleFileDragOver(e) {
+		e.preventDefault();
+
+		setDropElementActiveClass("add");
+	}
+
+	function handleFileDragLeave(e) {
+		e.preventDefault();
+
+		setDropElementActiveClass("remove");
+	}
+
+	function handleFileDrop(e) {
+		e.preventDefault();
+
+		try {
+			// Get the files to be uploaded
+			const files = e.dataTransfer.files;
+
+			// Select the first one (only one file can be uploaded)
+			const file = Array.from(files)[0];
+
+			// Check file type
+			if (file.type !== "text/csv") throw new Error("import/invalid-file");
+
+			// Set the value of the input
+			fileRef.current.files = files;
+		} catch (e) {
+			handleError(e.message, dispatch);
+		}
+
+		setDropElementActiveClass("remove");
+	}
+
 	function validateImportInputs() {
 		try {
 			// File
@@ -64,6 +105,10 @@ function Import({ setShowLoadSignals }) {
 		// Parsed data
 		const { header, data } = await importData(file, delimiter, headerRows);
 		console.log({ header, data });
+
+		// Breakpoint detection
+		const breakpoints = detectSignalBreakpoints(data);
+		console.log(breakpoints);
 	}
 	//#endregion
 
@@ -106,7 +151,12 @@ function Import({ setShowLoadSignals }) {
 					</div>
 				</ShadowBox>
 
-				<ShadowBox className="inport__file">
+				<ShadowBox
+					className="import__file"
+					onDragOver={handleFileDragOver}
+					onDragLeave={handleFileDragLeave}
+					onDrop={handleFileDrop}
+				>
 					<H2>File</H2>
 
 					<Input
