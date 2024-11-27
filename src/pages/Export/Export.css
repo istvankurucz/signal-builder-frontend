@@ -19,6 +19,10 @@
 	margin-bottom: 0;
 }
 
+.export__alert--files ul {
+	margin-left: 2rem;
+}
+
 .export__button {
 	width: fit-content;
 }

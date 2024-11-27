@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import papa from "papaparse";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faCheck, faInfo } from "@fortawesome/free-solid-svg-icons";
 import Input from "../../components/form/Input/Input";
 import Page from "../../components/layout/Page/Page";
 import ShadowBox from "../../components/layout/ShadowBox/ShadowBox";
@@ -80,15 +80,12 @@ function Export({ setShowLoadSignals }) {
 		}
 	}
 
-	function downloadFile(data) {
-		// Create a Blob from the response data
-		const url = window.URL.createObjectURL(new Blob([data], { type: "text/csv" }));
-
+	function downloadFile(url, filename) {
 		// Create an a element to the URL
 		const a = document.createElement("a");
 		a.style.display = "none";
 		a.href = url;
-		a.download = `${filename}.csv`; // name of the file that will be downloaded
+		a.download = filename; // name of the file that will be downloaded
 
 		// Trigger the event
 		document.body.appendChild(a);
@@ -118,7 +115,14 @@ function Export({ setShowLoadSignals }) {
 		});
 
 		// Download the CSV string as a CSV file
-		downloadFile(csvString);
+		const csvURL = window.URL.createObjectURL(new Blob([csvString], { type: "text/csv" }));
+		downloadFile(csvURL, `${filename}.csv`);
+
+		// Download the parameters as a JSON file
+		const jsonURL = window.URL.createObjectURL(
+			new Blob([JSON.stringify(signals)], { type: "text/json" })
+		);
+		downloadFile(jsonURL, `${filename}-parameters.json`);
 
 		// Show the result alert
 		setShowExportResult(true);
@@ -161,6 +165,11 @@ function Export({ setShowLoadSignals }) {
 					</div>
 				</ShadowBox>
 
+				<Alert variant="info" className="export__alert">
+					<P>Only the visible signals will be exported!</P>
+					<P>You can change the visibility below the chart.</P>
+				</Alert>
+
 				<ShadowBox className="export__file">
 					<H2>File</H2>
 
@@ -185,9 +194,16 @@ function Export({ setShowLoadSignals }) {
 					</div>
 				</ShadowBox>
 
-				<Alert variant="info" className="export__alert">
-					<P>Only the visible signals will be exported!</P>
-					<P>You can change the visibility below the chart.</P>
+				<Alert variant="info" icon={faInfo} className="export__alert export__alert--files">
+					<P>2 files will be exported.</P>
+					<ul>
+						<li>
+							<strong>.csv</strong>: Contains the raw data.
+						</li>
+						<li>
+							<strong>.json</strong>: Contains the parameters of the signals, functions.
+						</li>
+					</ul>
 				</Alert>
 
 				<Button className="export__button" onClick={exportData}>
