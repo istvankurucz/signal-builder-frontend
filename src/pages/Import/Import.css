@@ -28,6 +28,17 @@
 	padding-inline: 0;
 }
 
+.import__parsing__window {
+	margin-bottom: 1.5rem;
+}
+
+.import__parsing__inputs {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-left: 1.5rem;
+}
+
 .import__button {
 	width: fit-content;
 }

@@ -36,8 +36,7 @@ function App() {
 				/>
 				<Route
 					path="/import"
-					setShowLoadSignals={setShowLoadSignalsModal}
-					element={<Import />}
+					element={<Import setShowLoadSignals={setShowLoadSignalsModal} />}
 				/>
 				<Route
 					path="/export"

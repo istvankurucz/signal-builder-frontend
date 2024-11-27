@@ -81,6 +81,12 @@
 		"for": "user"
 	},
 	{
+		"code": "import/many-files",
+		"message": "Only one file can be uploaded.",
+		"details": "",
+		"for": "user"
+	},
+	{
 		"code": "import/delimiter-missing",
 		"message": "The delimiter is missing.",
 		"details": "",
@@ -90,6 +96,18 @@
 		"code": "import/number-of-header-lines-missing",
 		"message": "Number of header lines is missing or invalid.",
 		"details": "",
+		"for": "user"
+	},
+	{
+		"code": "import/invalid-window-size",
+		"message": "Window size is missing or invalid.",
+		"details": "It must be a positive number.",
+		"for": "user"
+	},
+	{
+		"code": "import/invalid-tolerance",
+		"message": "Tolerance is missing or invalid.",
+		"details": "It must be a positive number.",
 		"for": "user"
 	},
 

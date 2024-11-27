@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightToBracket, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/ui/Button/Button";
 import Checkbox from "../../components/form/Checkbox/Checkbox";
 import Input from "../../components/form/Input/Input";
@@ -13,6 +13,7 @@ import handleError from "../../utils/error/handleError";
 import importData from "../../utils/import/importData";
 import detectSignalBreakpoints from "../../utils/import/identification/detectSignalBreakpoints";
 import "./Import.css";
+import Accordion from "../../components/ui/Accordion/Accordion";
 
 function Import({ setShowLoadSignals }) {
 	//#region States
@@ -25,6 +26,9 @@ function Import({ setShowLoadSignals }) {
 	const headerRowsRef = useRef();
 	const delimiterRef = useRef();
 	const fileRef = useRef();
+	const windowSizeRef = useRef();
+	const amplitudeToleranceRef = useRef();
+	const frequencyToleranceRef = useRef();
 	//#endregion
 
 	//#region Functions
@@ -51,17 +55,17 @@ function Import({ setShowLoadSignals }) {
 		e.preventDefault();
 
 		try {
-			// Get the files to be uploaded
-			const files = e.dataTransfer.files;
+			// Get the uploaded files
+			const files = Array.from(e.dataTransfer.files);
 
-			// Select the first one (only one file can be uploaded)
-			const file = Array.from(files)[0];
+			// Check number of files
+			if (files.length > 1) throw new Error("import/many-files");
 
-			// Check file type
-			if (file.type !== "text/csv") throw new Error("import/invalid-file");
+			// Check thy type of the file
+			if (files[0].type !== "text/csv") throw new Error("import/invalid-file");
 
 			// Set the value of the input
-			fileRef.current.files = files;
+			fileRef.current.files = e.dataTransfer.files;
 		} catch (e) {
 			handleError(e.message, dispatch);
 		}
@@ -86,6 +90,24 @@ function Import({ setShowLoadSignals }) {
 				throw new Error("import/number-of-header-lines-missing");
 			}
 
+			// Window size
+			const windowSize = parseInt(windowSizeRef.current.value);
+			if (isNaN(windowSize) || windowSize < 1) {
+				throw new Error("import/invalid-window-size");
+			}
+
+			// Amplitude tolerance
+			const amplitudeTolerance = parseFloat(amplitudeToleranceRef.current.value);
+			if (isNaN(amplitudeTolerance) || amplitudeTolerance < 0) {
+				throw new Error("import/invalid-tolerance");
+			}
+
+			// Frequency tolerance
+			const frequencyTolerance = parseFloat(frequencyToleranceRef.current.value);
+			if (isNaN(frequencyTolerance) || frequencyTolerance < 0) {
+				throw new Error("import/invalid-tolerance");
+			}
+
 			return true;
 		} catch (e) {
 			handleError(e.message, dispatch);
@@ -97,17 +119,24 @@ function Import({ setShowLoadSignals }) {
 		// Check if the input values are valid
 		if (!validateImportInputs()) return;
 
-		// Parse params
+		// File settings
 		const file = fileRef.current.files[0];
 		const delimiter = delimiterAutoDetect ? "" : delimiterRef.current.value;
 		const headerRows = parseInt(headerRowsRef.current.value);
 
+		// Parse settings
+		const windowSize = parseInt(windowSizeRef.current.value);
+		const amplitudeTolerance = parseFloat(amplitudeToleranceRef.current.value);
+		const frequencyTolerance = parseFloat(frequencyToleranceRef.current.value);
+
 		// Parsed data
 		const { header, data } = await importData(file, delimiter, headerRows);
-		console.log({ header, data });
 
 		// Breakpoint detection
-		const breakpoints = detectSignalBreakpoints(data);
+		const breakpoints = detectSignalBreakpoints(data, windowSize, {
+			amplitude: amplitudeTolerance,
+			frequency: frequencyTolerance,
+		});
 		console.log(breakpoints);
 	}
 	//#endregion
@@ -167,6 +196,48 @@ function Import({ setShowLoadSignals }) {
 						className="import__file__input"
 						ref={fileRef}
 					/>
+				</ShadowBox>
+
+				<ShadowBox>
+					<H2>Parsing</H2>
+
+					<Input
+						direction="horizontal"
+						type="number"
+						label="Window size:"
+						id="importWindowSize"
+						defaultValue={7}
+						min={1}
+						className="import__parsing__window"
+						ref={windowSizeRef}
+					/>
+
+					<Accordion>
+						<Accordion.Header icon={faCaretRight}>Tolerances</Accordion.Header>
+						<Accordion.Body>
+							<div className="import__parsing__inputs">
+								<Input
+									direction="horizontal"
+									type="number"
+									label="Amplitude:"
+									id="importAmplitudeTolerance"
+									defaultValue={0.01}
+									min={0}
+									ref={amplitudeToleranceRef}
+								/>
+								<Input
+									direction="horizontal"
+									type="number"
+									label="Frequency:"
+									id="importAmplitudeTolerance"
+									defaultValue={0.01}
+									min={0}
+									unit="Hz"
+									ref={frequencyToleranceRef}
+								/>
+							</div>
+						</Accordion.Body>
+					</Accordion>
 				</ShadowBox>
 
 				<Button className="import__button" onClick={handleImportClick}>
