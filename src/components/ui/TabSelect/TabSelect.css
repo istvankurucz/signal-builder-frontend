@@ -1,0 +1,28 @@
+.tabSelect__items {
+	display: flex;
+	gap: 2rem;
+	list-style: none;
+}
+
+.tabSelect__item {
+	transition: color 200ms ease-in-out;
+	cursor: pointer;
+}
+.tabSelect__item:hover {
+	color: var(--secondary-color);
+}
+
+.tabSelect__item--active {
+	color: var(--secondary-color);
+	position: relative;
+}
+.tabSelect__item--active::after {
+	content: "";
+	height: 0.1rem;
+	background-color: var(--secondary-color);
+	border-radius: var(--br-pill);
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}

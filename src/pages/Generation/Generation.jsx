@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
 import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAdd, faBan, faSort } from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faBan, faSort, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Page from "../../components/layout/Page/Page";
 import Button from "../../components/ui/Button/Button";
 import H2 from "../../components/ui/H2/H2";
@@ -14,6 +14,7 @@ import SortSignalsModal from "./SortSignalsModal/SortSignalsModal";
 import Signal from "../../utils/classes/Signal";
 import addSignalToSignals from "../../utils/signal/addSignalToSignals";
 import useLoadSignals from "../../hooks/storage/useLoadSignals";
+import DeleteAllSignalsModal from "./DeleteAllSignalsModal/DeleteAllSignalsModal";
 import "./Generation.css";
 
 function Generation({ setShowLoadSignals }) {
@@ -21,6 +22,7 @@ function Generation({ setShowLoadSignals }) {
 	const [{ signals }, dispatch] = useStateValue();
 	useLoadSignals(setShowLoadSignals);
 	const [showSortSignalsModal, setShowSortSignalsModal] = useState(false);
+	const [showDeleteAllSignalsModal, setShowDeleteAllSignalsModal] = useState(false);
 	const [index, setIndex] = useState(0);
 	const [, setSearcParams] = useSearchParams();
 	//#endregion
@@ -52,6 +54,10 @@ function Generation({ setShowLoadSignals }) {
 	return (
 		<Page className="generation">
 			<SortSignalsModal show={showSortSignalsModal} setShow={setShowSortSignalsModal} />
+			<DeleteAllSignalsModal
+				show={showDeleteAllSignalsModal}
+				setShow={setShowDeleteAllSignalsModal}
+			/>
 
 			<section className="generation__section generation__section--signals">
 				<ShadowBox className="generation__signals__general">
@@ -71,6 +77,17 @@ function Generation({ setShowLoadSignals }) {
 							<Button variant="info" onClick={() => setShowSortSignalsModal(true)}>
 								<FontAwesomeIcon icon={faSort} />
 								Sort signals
+							</Button>
+						)}
+
+						{signals.length > 0 && (
+							<Button
+								variant="danger"
+								outlined
+								onClick={() => setShowDeleteAllSignalsModal(true)}
+							>
+								<FontAwesomeIcon icon={faTrash} />
+								Delete all signals
 							</Button>
 						)}
 					</div>

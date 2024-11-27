@@ -77,7 +77,13 @@
 	{
 		"code": "import/invalid-file",
 		"message": "The uploaded file is invalid.",
-		"details": "Try to upload a CSV file.",
+		"details": "Try to upload a CSV or JSON file.",
+		"for": "user"
+	},
+	{
+		"code": "import/invalid-json",
+		"message": "The uploaded JSON file is invalid.",
+		"details": "The structure of the data is incorrect.",
 		"for": "user"
 	},
 	{

@@ -23,6 +23,10 @@
 	outline: 0.25rem dashed var(--secondary-color);
 }
 
+.import__file__type {
+	margin-bottom: 1.5rem;
+}
+
 .import__file__input .input__input {
 	border: none;
 	padding-inline: 0;

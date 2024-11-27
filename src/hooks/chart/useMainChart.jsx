@@ -220,7 +220,10 @@ function useMainChart() {
 	// Update the points if something changes inside signals
 	useEffect(() => {
 		// Check if there are any signals
-		if (signals.length === 0) return;
+		if (signals.length === 0) {
+			setData({ labels: [], datasets: [] });
+			return;
+		}
 
 		// Get the maximum of reverse time
 		const maxReverseTime = getMaxReverseTime(signals);

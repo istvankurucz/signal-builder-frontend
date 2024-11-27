@@ -120,7 +120,7 @@ function Export({ setShowLoadSignals }) {
 
 		// Download the parameters as a JSON file
 		const jsonURL = window.URL.createObjectURL(
-			new Blob([JSON.stringify(signals)], { type: "text/json" })
+			new Blob([JSON.stringify(signals)], { type: "application/json" })
 		);
 		downloadFile(jsonURL, `${filename}-parameters.json`);
 

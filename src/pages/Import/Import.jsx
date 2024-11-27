@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useStateValue } from "../../contexts/Context API/StateProvider";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightToBracket, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/ui/Button/Button";
@@ -12,14 +13,30 @@ import useLoadSignals from "../../hooks/storage/useLoadSignals";
 import handleError from "../../utils/error/handleError";
 import importData from "../../utils/import/importData";
 import detectSignalBreakpoints from "../../utils/import/identification/detectSignalBreakpoints";
-import "./Import.css";
 import Accordion from "../../components/ui/Accordion/Accordion";
+import TabSelect from "../../components/ui/TabSelect/TabSelect";
+import createSignal from "../../utils/signal/createSignal";
+import updateSignals from "../../utils/signal/updateSignals";
+import "./Import.css";
+
+const importFileTypes = [
+	{
+		id: "csv",
+		text: "CSV",
+	},
+	{
+		id: "json",
+		text: "JSON",
+	},
+];
 
 function Import({ setShowLoadSignals }) {
 	//#region States
 	const [, dispatch] = useStateValue();
 	useLoadSignals(setShowLoadSignals);
 	const [delimiterAutoDetect, setDelimiterAutoDetect] = useState(true);
+	const [fileTypeIndex, setFileTypeIndex] = useState(0);
+	const navigate = useNavigate();
 	//#endregion
 
 	//#region Refs
@@ -29,6 +46,10 @@ function Import({ setShowLoadSignals }) {
 	const windowSizeRef = useRef();
 	const amplitudeToleranceRef = useRef();
 	const frequencyToleranceRef = useRef();
+	//#endregion
+
+	//#region Variables
+	const fileType = importFileTypes[fileTypeIndex].id;
 	//#endregion
 
 	//#region Functions
@@ -61,8 +82,13 @@ function Import({ setShowLoadSignals }) {
 			// Check number of files
 			if (files.length > 1) throw new Error("import/many-files");
 
-			// Check thy type of the file
-			if (files[0].type !== "text/csv") throw new Error("import/invalid-file");
+			// Check the type of the file
+			if (fileType === "csv" && files[0].type !== "text/csv") {
+				throw new Error("import/invalid-file");
+			}
+			if (fileType === "json" && files[0].type !== "application/json") {
+				throw new Error("import/invalid-file");
+			}
 
 			// Set the value of the input
 			fileRef.current.files = e.dataTransfer.files;
@@ -78,6 +104,8 @@ function Import({ setShowLoadSignals }) {
 			// File
 			const file = fileRef.current.files[0];
 			if (file == undefined) throw new Error("import/no-file");
+
+			if (fileType === "json") return true;
 
 			// Delimiter
 			if (!delimiterAutoDetect && delimiterRef.current.value === "") {
@@ -119,8 +147,45 @@ function Import({ setShowLoadSignals }) {
 		// Check if the input values are valid
 		if (!validateImportInputs()) return;
 
-		// File settings
+		// File
 		const file = fileRef.current.files[0];
+
+		// Process JSON file
+		if (fileType === "json") {
+			try {
+				const fileReader = new FileReader();
+				fileReader.onload = (e) => {
+					const data = JSON.parse(e.target.result);
+					if (!Array.isArray(data)) throw new Error("import/invalid-json");
+					const signals = data.map((signal) => createSignal(signal));
+
+					// Update the local signals
+					updateSignals(signals, dispatch);
+
+					// Navigate to /generation
+					navigate(`/generation?signalId=${signals[0].id}`);
+
+					// Show feedback
+					dispatch({
+						type: "SET_FEEDBACK",
+						feedback: {
+							show: true,
+							type: "info",
+							message: "Successful import.",
+							details: "",
+						},
+					});
+				};
+				fileReader.readAsText(file);
+			} catch (e) {
+				handleError(e.message, dispatch);
+				console.log("Error:\n", e);
+			}
+
+			return;
+		}
+
+		// File settings
 		const delimiter = delimiterAutoDetect ? "" : delimiterRef.current.value;
 		const headerRows = parseInt(headerRowsRef.current.value);
 
@@ -144,42 +209,6 @@ function Import({ setShowLoadSignals }) {
 	return (
 		<Page className="import">
 			<div className="import__main">
-				<ShadowBox className="import__settings">
-					<H2>Settings</H2>
-
-					<div className="import__settings__inputs">
-						<Input
-							type="number"
-							id="importHeaderRows"
-							label="Number of header rows"
-							placeholder="Number of header rows"
-							defaultValue="1"
-							ref={headerRowsRef}
-						/>
-
-						<div className="import__settings__delimiter">
-							<Checkbox
-								label="Auto detect delimiter"
-								id="importDelimiterAutoDetect"
-								checked={delimiterAutoDetect}
-								onChange={(e) => setDelimiterAutoDetect(e.target.checked)}
-							/>
-							{!delimiterAutoDetect && (
-								<Input
-									type="text"
-									id="importDelimiter"
-									label="Delimiter"
-									placeholder="Delimiter"
-									defaultValue=";"
-									width="4rem"
-									className="import__settings__delimiter__input"
-									ref={delimiterRef}
-								/>
-							)}
-						</div>
-					</div>
-				</ShadowBox>
-
 				<ShadowBox
 					className="import__file"
 					onDragOver={handleFileDragOver}
@@ -188,57 +217,104 @@ function Import({ setShowLoadSignals }) {
 				>
 					<H2>File</H2>
 
+					<TabSelect
+						options={importFileTypes.map((type) => type.text)}
+						index={fileTypeIndex}
+						setIndex={setFileTypeIndex}
+						className="import__file__type"
+					/>
+
 					<Input
 						type="file"
 						id="importFile"
-						label="Select file"
+						label={`Select ${fileType === "csv" ? "CSV" : "JSON"} file`}
 						fullW
 						className="import__file__input"
 						ref={fileRef}
 					/>
 				</ShadowBox>
 
-				<ShadowBox>
-					<H2>Parsing</H2>
+				{fileType === "csv" && (
+					<>
+						<ShadowBox className="import__settings">
+							<H2>Settings</H2>
 
-					<Input
-						direction="horizontal"
-						type="number"
-						label="Window size:"
-						id="importWindowSize"
-						defaultValue={7}
-						min={1}
-						className="import__parsing__window"
-						ref={windowSizeRef}
-					/>
+							<div className="import__settings__inputs">
+								<Input
+									type="number"
+									id="importHeaderRows"
+									label="Number of header rows"
+									placeholder="Number of header rows"
+									defaultValue="1"
+									ref={headerRowsRef}
+								/>
 
-					<Accordion>
-						<Accordion.Header icon={faCaretRight}>Tolerances</Accordion.Header>
-						<Accordion.Body>
-							<div className="import__parsing__inputs">
-								<Input
-									direction="horizontal"
-									type="number"
-									label="Amplitude:"
-									id="importAmplitudeTolerance"
-									defaultValue={0.01}
-									min={0}
-									ref={amplitudeToleranceRef}
-								/>
-								<Input
-									direction="horizontal"
-									type="number"
-									label="Frequency:"
-									id="importAmplitudeTolerance"
-									defaultValue={0.01}
-									min={0}
-									unit="Hz"
-									ref={frequencyToleranceRef}
-								/>
+								<div className="import__settings__delimiter">
+									<Checkbox
+										label="Auto detect delimiter"
+										id="importDelimiterAutoDetect"
+										checked={delimiterAutoDetect}
+										onChange={(e) => setDelimiterAutoDetect(e.target.checked)}
+									/>
+									{!delimiterAutoDetect && (
+										<Input
+											type="text"
+											id="importDelimiter"
+											label="Delimiter"
+											placeholder="Delimiter"
+											defaultValue=";"
+											width="4rem"
+											className="import__settings__delimiter__input"
+											ref={delimiterRef}
+										/>
+									)}
+								</div>
 							</div>
-						</Accordion.Body>
-					</Accordion>
-				</ShadowBox>
+						</ShadowBox>
+
+						<ShadowBox>
+							<H2>Parsing</H2>
+
+							<Input
+								direction="horizontal"
+								type="number"
+								label="Window size:"
+								id="importWindowSize"
+								defaultValue={7}
+								min={1}
+								className="import__parsing__window"
+								ref={windowSizeRef}
+							/>
+
+							<Accordion>
+								<Accordion.Header icon={faCaretRight}>Tolerances</Accordion.Header>
+								<Accordion.Body>
+									<div className="import__parsing__inputs">
+										<Input
+											direction="horizontal"
+											type="number"
+											label="Amplitude:"
+											id="importAmplitudeTolerance"
+											defaultValue={0.01}
+											min={0}
+											ref={amplitudeToleranceRef}
+										/>
+										<Input
+											direction="horizontal"
+											type="number"
+											label="Frequency:"
+											id="importAmplitudeTolerance"
+											defaultValue={0.01}
+											min={0}
+											unit="Hz"
+											ref={frequencyToleranceRef}
+										/>
+									</div>
+								</Accordion.Body>
+							</Accordion>
+						</ShadowBox>
+					</>
+				)}
 
 				<Button className="import__button" onClick={handleImportClick}>
 					<FontAwesomeIcon icon={faArrowRightToBracket} />

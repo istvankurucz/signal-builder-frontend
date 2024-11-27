@@ -13,6 +13,7 @@
 
 .generation__signals__general__buttons {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 2rem;
 }
 
