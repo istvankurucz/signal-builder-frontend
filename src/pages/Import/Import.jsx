@@ -17,7 +17,13 @@ import Accordion from "../../components/ui/Accordion/Accordion";
 import TabSelect from "../../components/ui/TabSelect/TabSelect";
 import createSignal from "../../utils/signal/createSignal";
 import updateSignals from "../../utils/signal/updateSignals";
+import Signal from "../../utils/classes/Signal";
+import Function from "../../utils/classes/Function";
+import checkSameArrayValues from "../../utils/general/checkSameArrayValues";
+import parseDataToNumbers from "../../utils/import/parseDataToNumbers";
+import transposeMatrix from "../../utils/general/transposeMatrix";
 import "./Import.css";
+import getSignalsFromBreakpoints from "../../utils/import/getSignalsFromBreakpoints";
 
 const importFileTypes = [
 	{
@@ -143,6 +149,65 @@ function Import({ setShowLoadSignals }) {
 		}
 	}
 
+	function checkValidJSONData(data) {
+		try {
+			// Check if the data is an array
+			if (!Array.isArray(data)) throw new Error("import/invalid-json");
+
+			// Check if the data is an array of Signals
+			const signalProperties = Object.keys(new Signal());
+			const functionProperties = Object.keys(new Function());
+
+			for (let i = 0; i < data.length; i++) {
+				// Properties of signal inside data
+				const dataSignalProperties = Object.keys(data[i]);
+
+				// Check if the data has the same properties
+				if (!checkSameArrayValues(signalProperties, dataSignalProperties)) {
+					throw new Error("import/invalid-json");
+				}
+
+				// Check if the signal has a _functions array property
+				if (!Array.isArray(data[i]._functions)) throw new Error("import/invalid-json");
+
+				// Properties of function inside signal
+				for (let j = 0; j < data[i]._functions.length; j++) {
+					// Properties od function data
+					const dataFunctionProperties = Object.keys(data[i]._functions[j]);
+
+					// Check if the data has the same properties
+					if (!checkSameArrayValues(functionProperties, dataFunctionProperties)) {
+						throw new Error("import/invalid-json");
+					}
+				}
+			}
+
+			return true;
+		} catch (e) {
+			handleError(e.message, dispatch);
+			return false;
+		}
+	}
+
+	function doPostParsing(signals) {
+		// Update the local signals
+		updateSignals(signals, dispatch);
+
+		// Navigate to /generation
+		navigate(`/generation?signalId=${signals[0].id}`);
+
+		// Show feedback
+		dispatch({
+			type: "SET_FEEDBACK",
+			feedback: {
+				show: true,
+				type: "info",
+				message: "Successful import.",
+				details: "",
+			},
+		});
+	}
+
 	async function handleImportClick() {
 		// Check if the input values are valid
 		if (!validateImportInputs()) return;
@@ -155,54 +220,71 @@ function Import({ setShowLoadSignals }) {
 			try {
 				const fileReader = new FileReader();
 				fileReader.onload = (e) => {
+					// Parse the data
 					const data = JSON.parse(e.target.result);
-					if (!Array.isArray(data)) throw new Error("import/invalid-json");
+
+					// Check if the data is valid
+					if (!checkValidJSONData(data)) return;
+
+					// Create the signals
 					const signals = data.map((signal) => createSignal(signal));
 
-					// Update the local signals
-					updateSignals(signals, dispatch);
-
-					// Navigate to /generation
-					navigate(`/generation?signalId=${signals[0].id}`);
-
-					// Show feedback
-					dispatch({
-						type: "SET_FEEDBACK",
-						feedback: {
-							show: true,
-							type: "info",
-							message: "Successful import.",
-							details: "",
-						},
-					});
+					// Post paring things
+					doPostParsing(signals);
 				};
 				fileReader.readAsText(file);
 			} catch (e) {
 				handleError(e.message, dispatch);
-				console.log("Error:\n", e);
 			}
 
 			return;
 		}
 
-		// File settings
-		const delimiter = delimiterAutoDetect ? "" : delimiterRef.current.value;
-		const headerRows = parseInt(headerRowsRef.current.value);
+		// Process CSV file
+		if (fileType === "csv") {
+			// File settings
+			const delimiter = delimiterAutoDetect ? "" : delimiterRef.current.value;
+			const headerRows = parseInt(headerRowsRef.current.value);
 
-		// Parse settings
-		const windowSize = parseInt(windowSizeRef.current.value);
-		const amplitudeTolerance = parseFloat(amplitudeToleranceRef.current.value);
-		const frequencyTolerance = parseFloat(frequencyToleranceRef.current.value);
+			// Parse settings
+			const windowSize = parseInt(windowSizeRef.current.value);
+			const amplitudeTolerance = parseFloat(amplitudeToleranceRef.current.value);
+			const frequencyTolerance = parseFloat(frequencyToleranceRef.current.value);
 
-		// Parsed data
-		const { header, data } = await importData(file, delimiter, headerRows);
+			// Parsed data
+			const { header, data } = await importData(file, delimiter, headerRows);
+			console.log(header);
 
-		// Breakpoint detection
-		const breakpoints = detectSignalBreakpoints(data, windowSize, {
-			amplitude: amplitudeTolerance,
-			frequency: frequencyTolerance,
-		});
-		console.log(breakpoints);
+			// Convert the data to numbers
+			const parsedData = parseDataToNumbers(data);
+
+			// Group the data by signals
+			const groupedData = transposeMatrix(parsedData);
+			const timeData = groupedData[0];
+			const signalsData = groupedData.slice(1);
+
+			// Breakpoint detection
+			const breakpoints = detectSignalBreakpoints(timeData, signalsData, windowSize, {
+				amplitude: amplitudeTolerance,
+				frequency: frequencyTolerance,
+			});
+			// console.log(breakpoints);
+
+			// Signals
+			const signals = getSignalsFromBreakpoints(timeData, signalsData, breakpoints, windowSize, {
+				amplitude: amplitudeTolerance,
+				frequency: frequencyTolerance,
+			});
+
+			// Add the names to the signals
+			signals.forEach((signal, i) => {
+				signal.name = header[0][i + 1];
+			});
+			// console.log("Signals:", signals);
+
+			// Post paring things
+			doPostParsing(signals);
+		}
 	}
 	//#endregion
 

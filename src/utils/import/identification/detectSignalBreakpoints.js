@@ -1,60 +1,20 @@
+import getDt from "../getDt";
+import roundToTolerance from "../roundToTolerance";
+import getSineMaxValues from "./getSineMaxValues";
+import hasNaN from "../../general/hasNaN";
+import calculateDifferences from "./calculateDifferences";
+
 //#region Functions
-// Returns the time between values
-function getDt(data) {
-	const row0Time = parseFloat(data[0][0]);
-	const row1Time = parseFloat(data[1][0]);
-
-	return row1Time - row0Time;
-}
-
-// Parses the string data to numbers
-function parseDataToNumbers(data) {
-	return data.map((row) => row.map((element) => parseFloat(element)));
-}
-
-// Transposes the data array -> data will be grouped by signals
-function transposeArray(array) {
-	const cols = array[0].length;
-	const transposedArray = new Array(cols);
-
-	for (let i = 0; i < cols; i++) {
-		const signalData = array.map((row) => row[i]);
-		transposedArray[i] = signalData;
-	}
-
-	return transposedArray;
-}
-
 // Returns the last valid value of the signal
-function getLastTimeValueOfSignals(signalsData, timeData, dt) {
+function getLastTimeValueOfSignals(signalsData, timeData) {
 	return signalsData.map((signalData) => {
 		const reversedData = signalData.toReversed();
 		for (let i = 0; i < reversedData.length; i++) {
-			if (!isNaN(reversedData[i])) return timeData[reversedData.length - i - 1] + dt;
+			if (!isNaN(reversedData[i])) return timeData[reversedData.length - i - 1];
 		}
 
 		return timeData[0];
 	});
-}
-
-// Calculates the differences between consecutive values
-function calculateDifferences(data, dt) {
-	return data.map((values) => {
-		const differences = [];
-		for (let i = 0; i < values.length - 1; i++) {
-			differences.push((values[i + 1] - values[i]) / dt);
-		}
-
-		return differences;
-	});
-}
-
-// Checks if the array has NaN value
-function hasNaN(array) {
-	for (let i = 0; i < array.length; i++) {
-		if (isNaN(array[i])) return true;
-	}
-	return false;
 }
 
 // Checks if the values (differences) represent the values of a constant function
@@ -154,67 +114,17 @@ function getFunctionTypeBreakpoints(breakpoints, windowSize, dt, tolerance, last
 	return finalBreakpoints;
 }
 
-function checkSineMax(values) {
-	const middleIndex = Math.floor(values.length / 2);
-
-	// Check real max
-	let isMax = true;
-	for (let i = 0; i < values.length - 1; i++) {
-		if (i < middleIndex && values[i] > values[i + 1]) isMax = false;
-		if (i >= middleIndex && values[i] < values[i + 1]) isMax = false;
-	}
-
-	return isMax;
-}
-
-function getInitialSineMaxValues(signalData, timeData, startTime, endTime, windowSize) {
-	const windowMiddleIndex = Math.floor(windowSize / 2);
-
-	const maxValues = [];
-	for (let i = 0; i < signalData.length - windowSize; i++) {
-		if (timeData[i] < startTime) continue;
-		if (timeData[i + windowSize] >= endTime) break;
-
-		const window = signalData.slice(i, i + windowSize);
-		if (hasNaN(window)) continue;
-
-		if (checkSineMax(window)) {
-			maxValues.push({
-				time: timeData[i + windowMiddleIndex],
-				value: signalData[i + windowMiddleIndex],
-			});
-		}
-	}
-
-	return maxValues;
-}
-
 function checkNewMax(maxValue1, maxValue2, tolerance) {
 	return Math.abs(maxValue1 - maxValue2) > tolerance;
 }
 
-function corrigateSineMaxValues(maxValues, dt, tolerance) {
-	const corrigatedMaxValues = [];
-	for (let i = 0; i < maxValues.length; i++) {
-		if (i === maxValues.length - 1) {
-			corrigatedMaxValues.push(maxValues[i]);
-			break;
-		}
-
-		if (Math.abs(maxValues[i].time - maxValues[i + 1].time) < dt + tolerance) {
-			const newMaxValue = (maxValues[i].value + maxValues[i + 1].value) / 2;
-			corrigatedMaxValues.push({ time: maxValues[i].time, value: newMaxValue });
-			i++;
-		} else corrigatedMaxValues.push(maxValues[i]);
-	}
-
-	return corrigatedMaxValues;
-}
-
 function findSineBreakpoints(maxValues, dt, tolerances) {
 	function addBreakpoint(maxValueIndex) {
-		const startTime = (maxValues[maxValueIndex].time + maxValues[maxValueIndex + 1].time) / 2;
-		breakpoints.push({ startTime, type: "sine" });
+		const startTime = roundToTolerance(
+			(maxValues[maxValueIndex].time + maxValues[maxValueIndex + 1].time) / 2,
+			dt
+		);
+		breakpoints.push({ startTime: startTime, type: "sine" });
 	}
 
 	const breakpoints = [];
@@ -251,18 +161,15 @@ function getFinalBreakpoints(signalsData, timeData, breakpoints, windowSize, dt,
 			newBreakpoints.push(breakpoints[i][j]);
 
 			if (breakpoints[i][j].type === "sine") {
-				// Get the max values of sine
-				const initialMaxValues = getInitialSineMaxValues(
-					signalData,
+				const maxValues = getSineMaxValues(
 					timeData,
+					signalData,
 					breakpoints[i][j].startTime,
 					breakpoints[i][j + 1].startTime,
-					windowSize
+					windowSize,
+					dt,
+					tolerances.general
 				);
-				// console.log("Initial max values:", initialMaxValues);
-
-				const maxValues = corrigateSineMaxValues(initialMaxValues, dt, tolerances.amplitude);
-				// console.log("Corrigated max values:", maxValues);
 
 				// Calculate the sine breakpoints
 				const sineBreakpoints = findSineBreakpoints(maxValues, dt, tolerances);
@@ -273,27 +180,22 @@ function getFinalBreakpoints(signalsData, timeData, breakpoints, windowSize, dt,
 			}
 		}
 
+		// Add the last (END) breakpoint to the list
+		newBreakpoints.push(breakpoints[i].at(-1));
+
 		return newBreakpoints;
 	});
 }
 //#endregion
 
-export default function detectSignalBreakpoints(data, windowSize, tolerances) {
+export default function detectSignalBreakpoints(timeData, signalsData, windowSize, tolerances) {
 	// Parameters
 	tolerances = {
 		...tolerances,
 		general: 1e-4,
 	};
-	const dt = getDt(data);
-
-	// Convert the data to numbers
-	const parsedData = parseDataToNumbers(data);
-
-	// Group the data by signals
-	const groupedData = transposeArray(parsedData);
-	const timeData = groupedData[0];
-	const signalsData = groupedData.slice(1);
-	const lastTimeValues = getLastTimeValueOfSignals(signalsData, timeData, dt);
+	const dt = getDt(timeData);
+	const lastTimeValues = getLastTimeValueOfSignals(signalsData, timeData);
 
 	// Calculate the differences
 	const signalsDifferences = calculateDifferences(signalsData, dt);
@@ -306,6 +208,7 @@ export default function detectSignalBreakpoints(data, windowSize, tolerances) {
 		dt,
 		tolerances.general
 	);
+	// console.log("Initial breakpoints:", initialBreakpoints);
 
 	// Filter breakpoints
 	const functionTypeBreakpoints = getFunctionTypeBreakpoints(
@@ -315,7 +218,7 @@ export default function detectSignalBreakpoints(data, windowSize, tolerances) {
 		tolerances.general,
 		lastTimeValues
 	);
-	console.log("Filtered breakpoints:\n", functionTypeBreakpoints);
+	// console.log("Filtered breakpoints:\n", functionTypeBreakpoints);
 
 	// Find breakpoints inside sines
 	const finalBreakpoints = getFinalBreakpoints(

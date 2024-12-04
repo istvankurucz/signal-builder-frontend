@@ -1,3 +1,7 @@
+.generation__section--signals {
+	max-width: 800px;
+}
+
 .generation__signals__general {
 	margin-bottom: 3rem;
 }
