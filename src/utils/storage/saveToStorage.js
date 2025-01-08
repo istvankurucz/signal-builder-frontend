@@ -17,7 +17,7 @@ export default function saveSignals(signals = []) {
 
 		// Save the signals to localstorage
 		const avlSignalBuilderData = {
-			signals,
+			signals: signals.map((signal) => signal.toJSON()),
 			recentImportFilePaths: [],
 			updatedAt: new Date(),
 		};
