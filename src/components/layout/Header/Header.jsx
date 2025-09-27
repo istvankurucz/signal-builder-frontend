@@ -8,11 +8,9 @@ import {
 	faFileImport,
 	faGear,
 } from "@fortawesome/free-solid-svg-icons";
-import logo from "../../../assets/images/avl.png";
 import Container from "../Container/Container";
 import Button from "../../ui/Button/Button";
 import "./Header.css";
-import Dropdown from "../../ui/Dropdown/Dropdown";
 
 function Header() {
 	const [showNav, setShowNav] = useState(false);
@@ -41,7 +39,6 @@ function Header() {
 		<header className="header">
 			<Container centered className="header__container">
 				<Link to="/" className="header__logo">
-					<img src={logo} alt="AVL" className="header__logo__img" />
 					<span className="header__logo__text">Signal builder</span>
 				</Link>
 
